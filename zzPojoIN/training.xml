@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HattrickData>
+  <FileName>training.xml</FileName>
+  <Version>2.2</Version>
+  <UserID>4495104</UserID>
+  <FetchedDate>2025-05-06 16:23:29</FetchedDate>
+  <UserSupporterTier>platinum</UserSupporterTier>
+  <Team>
+    <TeamID>2351860</TeamID>
+    <TeamName>Gentleman</TeamName>
+    <TrainingLevel>100</TrainingLevel>
+    <NewTrainingLevel>99</NewTrainingLevel>
+    <TrainingType>9</TrainingType>
+    <StaminaTrainingPart>10</StaminaTrainingPart>
+    <LastTrainingTrainingType>9</LastTrainingTrainingType>
+    <LastTrainingTrainingLevel>100</LastTrainingTrainingLevel>
+    <LastTrainingStaminaTrainingPart>10</LastTrainingStaminaTrainingPart>
+    <Trainer>
+      <TrainerID>491217369</TrainerID>
+      <TrainerName>Ricardo Ndong</TrainerName>
+      <ArrivalDate>2025-04-15 13:45:00</ArrivalDate>
+    </Trainer>
+    <SpecialTraining/>
+    <Morale>4</Morale>
+    <SelfConfidence>5</SelfConfidence>
+    <Experience442>3</Experience442>
+    <Experience433>3</Experience433>
+    <Experience451>3</Experience451>
+    <Experience352>10</Experience352>
+    <Experience532>3</Experience532>
+    <Experience343>6</Experience343>
+    <Experience541>3</Experience541>
+    <Experience523>3</Experience523>
+    <Experience550>3</Experience550>
+    <Experience253>8</Experience253>
+  </Team>
+</HattrickData>

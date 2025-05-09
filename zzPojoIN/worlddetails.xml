@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HattrickData>
+  <FileName>worlddetails.xml</FileName>
+  <Version>1.9</Version>
+  <UserID>4495104</UserID>
+  <FetchedDate>2025-05-07 23:40:39</FetchedDate>
+  <LeagueList>
+    <League>
+      <LeagueID>1</LeagueID>
+      <LeagueName>Suecia</LeagueName>
+      <Season>91</Season>
+      <SeasonOffset>0</SeasonOffset>
+      <MatchRound>2</MatchRound>
+      <ShortName>Sverige</ShortName>
+      <Continent>Europe</Continent>
+      <ZoneName>Northern Europe</ZoneName>
+      <EnglishName>Sweden</EnglishName>
+      <LanguageId>1</LanguageId>
+      <LanguageName>Svenska</LanguageName>
+      <Country>
+        <CountryID>1</CountryID>
+        <CountryName>Sverige</CountryName>
+        <CurrencyName>kr</CurrencyName>
+        <CurrencyRate>0,05</CurrencyRate>
+        <CountryCode>SE</CountryCode>
+        <DateFormat>YYYY-MM-DD</DateFormat>
+        <TimeFormat>hh:mm</TimeFormat>
+      </Country>
+      <Cups>
+        <Cup>
+          <CupID>1</CupID>
+          <CupName>Svenska Cupen</CupName>
+          <CupLeagueLevel>0</CupLeagueLevel>
+          <CupLevel>1</CupLevel>
+          <CupLevelIndex>1</CupLevelIndex>
+          <MatchRound>2</MatchRound>
+          <MatchRoundsLeft>11</MatchRoundsLeft>
+        </Cup>
+        <Cup>
+          <CupID>512</CupID>
+          <CupName>Smaragdcupen</CupName>
+          <CupLeagueLevel>0</CupLeagueLevel>
+          <CupLevel>2</CupLevel>
+          <CupLevelIndex>1</CupLevelIndex>
+          <MatchRound>1</MatchRound>
+          <MatchRoundsLeft>12</MatchRoundsLeft>
+        </Cup>
+        <Cup>
+          <CupID>641</CupID>
+          <CupName>Rubincupen</CupName>
+          <CupLeagueLevel>0</CupLeagueLevel>
+          <CupLevel>2</CupLevel>
+          <CupLevelIndex>2</CupLevelIndex>
+          <MatchRound>0</MatchRound>
+          <MatchRoundsLeft>12</MatchRoundsLeft>
+        </Cup>
+        <Cup>
+          <CupID>770</CupID>
+          <CupName>Safircupen</CupName>
+          <CupLeagueLevel>0</CupLeagueLevel>
+          <CupLevel>2</CupLevel>
+          <CupLevelIndex>3</CupLevelIndex>
+          <MatchRound>-1</MatchRound>
+          <MatchRoundsLeft>0</MatchRoundsLeft>
+        </Cup>
+        <Cup>
+          <CupID>899</CupID>
+          <CupName>Tröstcupen</CupName>
+          <CupLeagueLevel>0</CupLeagueLevel>
+          <CupLevel>3</CupLevel>
+          <CupLevelIndex>1</CupLevelIndex>
+          <MatchRound>0</MatchRound>
+          <MatchRoundsLeft>12</MatchRoundsLeft>
+        </Cup>
+        <Cup>
+          <CupID>1328</CupID>
+          <CupName>Division VI-cupen</CupName>
+          <CupLeagueLevel>7</CupLeagueLevel>
+          <CupLevel>1</CupLevel>
+          <CupLevelIndex>1</CupLevelIndex>
+          <MatchRound>0</MatchRound>
+          <MatchRoundsLeft>0</MatchRoundsLeft>
+        </Cup>
+        <Cup>
+          <CupID>1341</CupID>
+          <CupName>Smaragdcupen Division VI</CupName>
+          <CupLeagueLevel>7</CupLeagueLevel>
+          <CupLevel>2</CupLevel>
+          <CupLevelIndex>1</CupLevelIndex>
+          <MatchRound>0</MatchRound>
+          <MatchRoundsLeft>0</MatchRoundsLeft>
+        </Cup>
+        <Cup>
+          <CupID>1354</CupID>
+          <CupName>Rubincupen Division VI</CupName>
+          <CupLeagueLevel>7</CupLeagueLevel>
+          <CupLevel>2</CupLevel>
+          <CupLevelIndex>2</CupLevelIndex>
+          <MatchRound>0</MatchRound>
+          <MatchRoundsLeft>0</MatchRoundsLeft>
+        </Cup>
+        <Cup>
+          <CupID>1367</CupID>
+          <CupName>Safircupen Division VI</CupName>
+          <CupLeagueLevel>7</CupLeagueLevel>
+          <CupLevel>2</CupLevel>
+          <CupLevelIndex>3</CupLevelIndex>
+          <MatchRound>0</MatchRound>
+          <MatchRoundsLeft>0</MatchRoundsLeft>
+        </Cup>
+        <Cup>
+          <CupID>1380</CupID>
+          <CupName>Tröstcupen Division VI</CupName>
+          <CupLeagueLevel>7</CupLeagueLevel>
+          <CupLevel>3</CupLevel>
+          <CupLevelIndex>1</CupLevelIndex>
+          <MatchRound>0</MatchRound>
+          <MatchRoundsLeft>0</MatchRoundsLeft>
+        </Cup>
+      </Cups>
+      <NationalTeamId>3000</NationalTeamId>
+      <U20TeamId>3041</U20TeamId>
+      <ActiveTeams>6777</ActiveTeams>
+      <ActiveUsers>6448</ActiveUsers>
+      <WaitingUsers>0</WaitingUsers>
+      <TrainingDate>2025-05-08 22:00:00</TrainingDate>
+      <EconomyDate>2025-05-11 00:10:00</EconomyDate>
+      <CupMatchDate>2025-05-14 19:00:00</CupMatchDate>
+      <SeriesMatchDate>2025-05-11 10:00:00</SeriesMatchDate>
+      <Sequence1>2025-05-12 05:00:00</Sequence1>
+      <Sequence2>2025-05-13 05:30:00</Sequence2>
+      <Sequence3>2025-05-14 00:00:01</Sequence3>
+      <Sequence5>2025-05-08 05:00:00</Sequence5>
+      <Sequence7>2025-05-10 05:15:00</Sequence7>
+      <NumberOfLevels>6</NumberOfLevels>
+    </League>
+    <League>
+      <LeagueID>2</LeagueID>
+      <LeagueName>Inglaterra</LeagueName>
+      <Season>91</Season>
+      <SeasonOffset>0</SeasonOffset>
+      <MatchRound>2</MatchRound>
+      <ShortName>England</ShortName>
+      <Continent>Europe</Continent>
+      <ZoneName>Western Europe</ZoneName>
+      <EnglishName>England</EnglishName>
+      <LanguageId>2</LanguageId>
+      <LanguageName>English (UK)</LanguageName>
+      <Country>
+        <CountryID>2</CountryID>
+        <CountryName>England</CountryName>
+        <CurrencyName>£</CurrencyName>
+        <CurrencyRate>15</CurrencyRate>
+        <CountryCode>GB</CountryCode>
+        <DateFormat>DD/MM/YYYY</DateFormat>
+        <TimeFormat>hh.mm</TimeFormat>
+      </Country>
+      <Cups>
+        <Cup>
+          <CupID>3</CupID>
+          <CupName>English Cup</CupName>
+          <CupLeagueLevel>0</CupLeagueLevel>
+          <CupLevel>1</CupLevel>
+          <CupLevelIndex>1</CupLevelIndex>
+          <MatchRound>2</MatchRound>
+          <MatchRoundsLeft>10</MatchRoundsLeft>
+        </Cup>
+        <Cup>
+          <CupID>513</CupID>
+          <CupName>Craig Wozniak Cup</CupName>
+          <CupLeagueLevel>0</CupLeagueLevel>
+          <CupLevel>2</CupLevel>
+          <CupLevelIndex>1</CupLevelIndex>
+          <MatchRound>1</MatchRound>
+          <MatchRoundsLeft>11</MatchRoundsLeft>
+        </Cup>
+        <Cup>
+          <CupID>642</CupID>
+          <CupName>George Carey Cup</CupName>
+          <CupLeagueLevel>0</CupLeagueLevel>
+          <CupLevel>2</CupLevel>
+          <CupLevelIndex>2</CupLevelIndex>
+          <MatchRound>0</MatchRound>
+          <MatchRoundsLeft>11</MatchRoundsLeft>
+        </Cup>
+        <Cup>
+          <CupID>771</CupID>
+          <CupName>Conspirator Memorial Cup</CupName>
+          <CupLeagueLevel>0</CupLeagueLevel>
+          <CupLevel>2</CupLevel>
+          <CupLevelIndex>3</CupLevelIndex>
+          <MatchRound>-1</MatchRound>
+          <MatchRoundsLeft>0</MatchRoundsLeft>
+        </Cup>
+        <Cup>
+          <CupID>900</CupID>
+          <CupName>TomDHT Memorial Cup</CupName>
+          <CupLeagueLevel>0</CupLeagueLevel>
+          <CupLevel>3</CupLevel>
+          <CupLevelIndex>1</CupLevelIndex>
+          <MatchRound>0</MatchRound>
+          <MatchRoundsLeft>11</MatchRoundsLeft>
+        </Cup>
+      </Cups>
+      <NationalTeamId>3001</NationalTeamId>
+      <U20TeamId>3042</U20TeamId>
+      <ActiveTeams>3261</ActiveTeams>
+      <ActiveUsers>2891</ActiveUsers>
+      <WaitingUsers>0</WaitingUsers>
+      <TrainingDate>2025-05-08 21:00:00</TrainingDate>
+      <EconomyDate>2025-05-09 21:00:00</EconomyDate>
+      <CupMatchDate>2025-05-13 21:00:00</CupMatchDate>
+      <SeriesMatchDate>2025-05-11 18:00:00</SeriesMatchDate>
+      <Sequence1>2025-05-12 06:15:00</Sequence1>
+      <Sequence2>2025-05-12 21:00:00</Sequence2>
+      <Sequence3>2025-05-13 06:15:00</Sequence3>
+      <Sequence5>2025-05-08 08:00:00</Sequence5>
+      <Sequence7>2025-05-09 05:26:00</Sequence7>
+      <NumberOfLevels>6</NumberOfLevels>
+    </League>
+    <League>
+      <LeagueID>18</LeagueID>
+      <LeagueName>Chile</LeagueName>
+      <Season>79</Season>
+      <SeasonOffset>-12</SeasonOffset>
+      <MatchRound>2</MatchRound>
+      <ShortName>Chile</ShortName>
+      <Continent>South America</Continent>
+      <ZoneName>South America</ZoneName>
+      <EnglishName>Chile</EnglishName>
+      <LanguageId>51</LanguageId>
+      <LanguageName>Español, Rioplatense</LanguageName>
+      <Country>
+        <CountryID>17</CountryID>
+        <CountryName>Chile</CountryName>
+        <CurrencyName>Pesos</CurrencyName>
+        <CurrencyRate>0,05</CurrencyRate>
+        <CountryCode>CL</CountryCode>
+        <DateFormat>DD/MM/YYYY</DateFormat>
+        <TimeFormat>hh.mm</TimeFormat>
+      </Country>
+      <Cups>
+        <Cup>
+          <CupID>17</CupID>
+          <CupName>Copa Chile</CupName>
+          <CupLeagueLevel>0</CupLeagueLevel>
+          <CupLevel>1</CupLevel>
+          <CupLevelIndex>1</CupLevelIndex>
+          <MatchRound>1</MatchRound>
+          <MatchRoundsLeft>12</MatchRoundsLeft>
+        </Cup>
+        <Cup>
+          <CupID>527</CupID>
+          <CupName>Copa Pau 'La Rompe' Gerpe Esmeralda</CupName>
+          <CupLeagueLevel>0</CupLeagueLevel>
+          <CupLevel>2</CupLevel>
+          <CupLevelIndex>1</CupLevelIndex>
+          <MatchRound>0</MatchRound>
+          <MatchRoundsLeft>13</MatchRoundsLeft>
+        </Cup>
+        <Cup>
+          <CupID>656</CupID>
+          <CupName>Copa Elefante Rubí</CupName>
+          <CupLeagueLevel>0</CupLeagueLevel>
+          <CupLevel>2</CupLevel>
+          <CupLevelIndex>2</CupLevelIndex>
+          <MatchRound>-1</MatchRound>
+          <MatchRoundsLeft>0</MatchRoundsLeft>
+        </Cup>
+        <Cup>
+          <CupID>785</CupID>
+          <CupName>Copa Julio de Pablos Caño Zafiro</CupName>
+          <CupLeagueLevel>0</CupLeagueLevel>
+          <CupLevel>2</CupLevel>
+          <CupLevelIndex>3</CupLevelIndex>
+          <MatchRound>-1</MatchRound>
+          <MatchRoundsLeft>0</MatchRoundsLeft>
+        </Cup>
+        <Cup>
+          <CupID>914</CupID>
+          <CupName>Copa de Cartón</CupName>
+          <CupLeagueLevel>0</CupLeagueLevel>
+          <CupLevel>3</CupLevel>
+          <CupLevelIndex>1</CupLevelIndex>
+          <MatchRound>-1</MatchRound>
+          <MatchRoundsLeft>0</MatchRoundsLeft>
+        </Cup>
+      </Cups>
+      <NationalTeamId>3026</NationalTeamId>
+      <U20TeamId>3067</U20TeamId>
+      <ActiveTeams>4445</ActiveTeams>
+      <ActiveUsers>4283</ActiveUsers>
+      <WaitingUsers>0</WaitingUsers>
+      <TrainingDate>2025-05-09 02:45:00</TrainingDate>
+      <EconomyDate>2025-05-11 03:30:00</EconomyDate>
+      <CupMatchDate>2025-05-07 22:40:00</CupMatchDate>
+      <SeriesMatchDate>2025-05-11 22:40:00</SeriesMatchDate>
+      <Sequence1>2025-05-12 11:45:00</Sequence1>
+      <Sequence2>2025-05-13 11:45:00</Sequence2>
+      <Sequence3>2025-05-13 22:15:00</Sequence3>
+      <Sequence5>2025-05-08 11:45:00</Sequence5>
+      <Sequence7>2025-05-09 19:15:00</Sequence7>
+      <NumberOfLevels>6</NumberOfLevels>
+    </League>
+  </LeagueList>
+</HattrickData>

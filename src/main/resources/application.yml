@@ -1,0 +1,29 @@
+app:
+  version: 3
+
+server:
+  port: 1998
+
+management:
+  server:
+    port: 1999
+
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://ehm_database:3306/ehm
+    username: ehm
+    password: ehm
+
+mybatis:
+  mapper-locations: classpath:sql/*.xml
+  configuration:
+    default-enum-type-handler: org.apache.ibatis.type.EnumOrdinalTypeHandler
+    settings:
+      map-underscore-to-camel-case: true
+
+ehm:
+  oauth-consumer-key: ehm-consumer-key
+  oauth-consumer-secret: ehm-consumer-secret
+  register-callback-url: http://localhost:1997/save

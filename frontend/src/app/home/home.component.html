@@ -1,0 +1,20 @@
+<div class="d-flex flex-column min-vh-100">
+  <header class="d-flex justify-content-between align-items-center bg-light p-3 border-bottom">
+    <h5>Muchas gracias {{ dataResponse?.username }} por colaborar en el desarrollo de Easy Hattrick Manager.</h5>
+    <button class="btn btn-outline-primary" (click)="logout()">Cerrar Sesión</button>
+  </header>
+  <main class="flex-grow-1 d-flex flex-column justify-content-center align-items-center text-center">
+    <div class="mb-4">
+      <div>
+        <i class="bi bi-tools fs-1 text-muted"></i>
+        <p class="mt-3 text-muted">Página en construcción</p>
+      </div>
+    </div>
+  </main>
+  <footer class="bg-light text-center py-3 border-top">
+    <small class="text-secondary">
+      © Easy Hattrick Manager <span *ngIf="dataResponse">v{{ dataResponse.version }}</span> by
+      <a target="_blank" href="http://hattrick.org/goto.ashx?path=/Club/Manager/?userId=4495104">TioJack</a>
+    </small>
+  </footer>
+</div>

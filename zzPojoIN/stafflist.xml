@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HattrickData>
+  <FileName>stafflist.xml</FileName>
+  <Version>1.2</Version>
+  <UserID>4495104</UserID>
+  <FetchedDate>2025-05-06 18:40:54</FetchedDate>
+  <StaffList>
+    <Trainer>
+      <TrainerId>446606376</TrainerId>
+      <Name>Fabián Castellbisbal</Name>
+      <Age>51</Age>
+      <AgeDays>28</AgeDays>
+      <ContractDate>2022-12-24 18:13:00</ContractDate>
+      <Cost>2500</Cost>
+      <CountryID>35</CountryID>
+      <TrainerType>2</TrainerType>
+      <Leadership>3</Leadership>
+      <TrainerSkillLevel>5</TrainerSkillLevel>
+      <TrainerStatus>1</TrainerStatus>
+    </Trainer>
+    <StaffMembers>
+      <Staff>
+        <Name>Marco Aurelio Camerón</Name>
+        <StaffId>2424963</StaffId>
+        <StaffType>1</StaffType>
+        <StaffLevel>5</StaffLevel>
+        <HiredDate>2023-10-18 13:17:00</HiredDate>
+        <Cost>163200</Cost>
+        <HofPlayerId>0</HofPlayerId>
+      </Staff>
+      <Staff>
+        <Name>Samuel Campos</Name>
+        <StaffId>2477961</StaffId>
+        <StaffType>1</StaffType>
+        <StaffLevel>5</StaffLevel>
+        <HiredDate>2023-10-18 13:18:00</HiredDate>
+        <Cost>163200</Cost>
+        <HofPlayerId>0</HofPlayerId>
+      </Staff>
+      <Staff>
+        <Name>David Ibaceta</Name>
+        <StaffId>1502758</StaffId>
+        <StaffType>2</StaffType>
+        <StaffLevel>5</StaffLevel>
+        <HiredDate>2021-10-13 02:45:00</HiredDate>
+        <Cost>163200</Cost>
+        <HofPlayerId>0</HofPlayerId>
+      </Staff>
+      <Staff>
+        <Name>Enrique Toledo</Name>
+        <StaffId>1835420</StaffId>
+        <StaffType>5</StaffType>
+        <StaffLevel>5</StaffLevel>
+        <HiredDate>2025-01-30 13:42:00</HiredDate>
+        <Cost>163200</Cost>
+        <HofPlayerId>0</HofPlayerId>
+      </Staff>
+    </StaffMembers>
+    <TotalStaffMembers>5</TotalStaffMembers>
+    <TotalCost>655300</TotalCost>
+  </StaffList>
+</HattrickData>

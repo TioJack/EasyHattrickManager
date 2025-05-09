@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="easyhattrickmanager.repository.PlayerDataDAO">
+
+  <insert id="insert">
+    INSERT
+    IGNORE INTO player_data (
+      id,
+      season_week,
+      date,
+      team_id,
+      nickName,
+      player_number,
+      age,
+      age_days,
+      TSI,
+      player_form,
+      experience,
+      loyalty,
+      mother_club_bonus,
+      leadership,
+      salary,
+      injury_level,
+      stamina_skill,
+      keeper_skill,
+      playmaker_skill,
+      scorer_skill,
+      passing_skill,
+      winger_skill,
+      defender_skill,
+      set_pieces_skill,
+      htms,
+      htms28
+    )
+    VALUES (
+    #{player.id},
+    #{player.seasonWeek},
+    #{player.date},
+    #{player.teamId},
+    #{player.nickName},
+    #{player.playerNumber},
+    #{player.age},
+    #{player.ageDays},
+    #{player.TSI},
+    #{player.playerForm},
+    #{player.experience},
+    #{player.loyalty},
+    #{player.motherClubBonus},
+    #{player.leadership},
+    #{player.salary},
+    #{player.injuryLevel},
+    #{player.staminaSkill},
+    #{player.keeperSkill},
+    #{player.playmakerSkill},
+    #{player.scorerSkill},
+    #{player.passingSkill},
+    #{player.wingerSkill},
+    #{player.defenderSkill},
+    #{player.setPiecesSkill},
+    #{player.htms},
+    #{player.htms28}
+    );
+  </insert>
+
+</mapper>

@@ -1,0 +1,31 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-4">
+      <div class="card shadow">
+        <div class="card-body text-center">
+          <div *ngIf="loading">
+            <h4>Procesando respuesta...</h4>
+            <div class="spinner-border text-primary" role="status"></div>
+          </div>
+          <div *ngIf="saveResponse" class="alert alert-success">
+            <h4>¡Bienvenido, {{ saveResponse.username }}!</h4>
+            <p>A partir de ahora, Easy Hattrick Manager se va a encargar semanalmente de guardar el historial de tus equipos:</p>
+            <ul class="list-group">
+              <li class="list-group-item" *ngFor="let team of saveResponse.teams">
+                {{ team }}
+              </li>
+            </ul>
+            <div class="mt-3 text-center">
+              <a routerLink="/login" class="text-decoration-none">Ya puedes iniciar sesión aquí</a>
+            </div>
+          </div>
+          <div *ngIf="errorMessage" class="alert alert-danger">
+            {{ errorMessage }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="easyhattrickmanager.repository.StaffDAO">
+
+  <insert id="insert">
+    INSERT
+    IGNORE INTO staff (
+      season_week,
+      date,
+      team_id,
+      trainer_id,
+      trainer_name,
+      trainer_type,
+      trainer_leadership,
+      trainer_skill_level,
+      trainer_status,
+      staff1_id,
+      staff1_name,
+      staff1_type,
+      staff1_level,
+      staff1_hof_player_id,
+      staff2_id,
+      staff2_name,
+      staff2_type,
+      staff2_level,
+      staff2_hof_player_id,
+      staff3_id,
+      staff3_name,
+      staff3_type,
+      staff3_level,
+      staff3_hof_player_id,
+      staff4_id,
+      staff4_name,
+      staff4_type,
+      staff4_level,
+      staff4_hof_player_id
+    )
+    VALUES (
+      #{staff.seasonWeek},
+      #{staff.date},
+      #{staff.teamId},
+      #{staff.trainerId},
+      #{staff.trainerName},
+      #{staff.trainerType},
+      #{staff.trainerLeadership},
+      #{staff.trainerSkillLevel},
+      #{staff.trainerStatus},
+      #{staff.staff1Id},
+      #{staff.staff1Name},
+      #{staff.staff1Type},
+      #{staff.staff1Level},
+      #{staff.staff1HofPlayerId},
+      #{staff.staff2Id},
+      #{staff.staff2Name},
+      #{staff.staff2Type},
+      #{staff.staff2Level},
+      #{staff.staff2HofPlayerId},
+      #{staff.staff3Id},
+      #{staff.staff3Name},
+      #{staff.staff3Type},
+      #{staff.staff3Level},
+      #{staff.staff3HofPlayerId},
+      #{staff.staff4Id},
+      #{staff.staff4Name},
+      #{staff.staff4Type},
+      #{staff.staff4Level},
+      #{staff.staff4HofPlayerId}
+    );
+  </insert>
+
+</mapper>

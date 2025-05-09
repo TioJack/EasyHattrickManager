@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="easyhattrickmanager.repository.UserDAO">
+
+  <insert id="insert">
+    INSERT INTO user (id, name, language_id, activation_date, token, token_secret, active)
+    VALUES (#{user.id},
+            #{user.name},
+            #{user.languageId},
+            #{user.activationDate},
+            #{user.token},
+            #{user.tokenSecret},
+            #{user.active}) ON DUPLICATE KEY
+    UPDATE
+      name = #{user.name},
+      language_id = #{user.languageId},
+      activation_date = #{user.activationDate},
+      token = #{user.token},
+      token_secret = #{user.tokenSecret},
+      active = #{user.active};
+  </insert>
+
+  <insert id="link">
+    INSERT
+    IGNORE INTO user_ehm_user (user_ehm_id, user_id)
+    VALUES (
+    #{userEhmId},
+    #{userId}
+    );
+  </insert>
+
+  <select id="get" resultType="easyhattrickmanager.repository.model.User">
+    SELECT u.id, u.name, u.language_id, u.activation_date, u.token, u.token_secret, u.active
+    FROM user u
+           JOIN user_ehm_user ueu ON ueu.user_id = u.id
+           JOIN user_ehm ue ON ue.id = ueu.user_ehm_id
+    WHERE ue.username = #{username};
+  </select>
+
+  <select id="getByTeamId" resultType="easyhattrickmanager.repository.model.User">
+    SELECT u.id, u.name, u.language_id, u.activation_date, u.token, u.token_secret, u.active
+    FROM user u
+           JOIN team t ON t.user_id = u.id
+    WHERE u.active
+      AND NOT t.bot
+      AND t.id = #{teamId};
+  </select>
+
+</mapper>
