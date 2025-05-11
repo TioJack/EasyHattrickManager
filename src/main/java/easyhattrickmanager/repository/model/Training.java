@@ -1,6 +1,6 @@
 package easyhattrickmanager.repository.model;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,7 +9,7 @@ import lombok.Data;
 public class Training {
 
     String seasonWeek;
-    LocalDateTime date;
+    ZonedDateTime date;
     int teamId;
     int trainingType;
     int trainingLevel;

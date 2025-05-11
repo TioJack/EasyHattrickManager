@@ -8,14 +8,14 @@ import static com.fasterxml.jackson.databind.node.JsonNodeType.OBJECT;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import easyhattrickmanager.client.LocalDateTimeDeserializer;
+import easyhattrickmanager.client.ZonedDateTimeDeserializer;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.AbstractMap;
 import java.util.HashSet;
@@ -40,7 +40,7 @@ public class PojoController {
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final XmlMapper XMLMAPPER = XmlMapper.builder()
-        .addModule(new JavaTimeModule().addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(FORMATTER)))
+        .addModule(new JavaTimeModule().addDeserializer(ZonedDateTime.class, new ZonedDateTimeDeserializer(FORMATTER)))
         .configure(WRITE_DATES_AS_TIMESTAMPS, false)
         .configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
         .build();
@@ -180,7 +180,7 @@ public class PojoController {
             return "float";
         }
         if (jsonNode.textValue().matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}")) {
-            return "LocalDateTime";
+            return "ZonedDateTime";
         }
         return "String";
     }

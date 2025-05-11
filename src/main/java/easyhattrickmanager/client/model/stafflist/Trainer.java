@@ -1,7 +1,7 @@
 package easyhattrickmanager.client.model.stafflist;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import lombok.Data;
 
 @Data
@@ -20,7 +20,7 @@ public class Trainer {
     private int ageDays;
 
     @JacksonXmlProperty(localName = "ContractDate")
-    private LocalDateTime contractDate;
+    private ZonedDateTime contractDate;
 
     @JacksonXmlProperty(localName = "Cost")
     private int cost;

@@ -1,6 +1,6 @@
 package easyhattrickmanager.repository.model;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import lombok.Builder;
 import lombok.Data;
 
@@ -11,7 +11,7 @@ public class User {
     int id;
     String name;
     int languageId;
-    LocalDateTime activationDate;
+    ZonedDateTime activationDate;
     String token;
     String tokenSecret;
     boolean active;

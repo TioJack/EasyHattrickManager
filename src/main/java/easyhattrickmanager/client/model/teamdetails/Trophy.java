@@ -1,7 +1,7 @@
 package easyhattrickmanager.client.model.teamdetails;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import lombok.Data;
 
 @Data
@@ -23,7 +23,7 @@ public class Trophy {
     private String leagueLevelUnitName;
 
     @JacksonXmlProperty(localName = "GainedDate")
-    private LocalDateTime gainedDate;
+    private ZonedDateTime gainedDate;
 
     @JacksonXmlProperty(localName = "ImageUrl")
     private String imageUrl;

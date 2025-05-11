@@ -1,6 +1,6 @@
 package easyhattrickmanager.repository.model;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import lombok.Builder;
 import lombok.Data;
 
@@ -11,5 +11,5 @@ public class UserEhm {
     int id;
     String username;
     String password;
-    LocalDateTime createdAt;
+    ZonedDateTime createdAt;
 }

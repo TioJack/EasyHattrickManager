@@ -1,7 +1,7 @@
 package easyhattrickmanager.client.model.teamdetails;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import lombok.Data;
 
 @Data
@@ -14,6 +14,6 @@ public class PressAnnouncement {
     private String body;
 
     @JacksonXmlProperty(localName = "SendDate")
-    private LocalDateTime sendDate;
+    private ZonedDateTime sendDate;
 
 }

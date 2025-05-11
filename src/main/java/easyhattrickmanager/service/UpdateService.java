@@ -1,6 +1,7 @@
 package easyhattrickmanager.service;
 
 import easyhattrickmanager.client.model.players.Players;
+import easyhattrickmanager.client.model.stafflist.Stafflist;
 import easyhattrickmanager.client.model.worlddetails.WorldDetails;
 import easyhattrickmanager.repository.LeagueDAO;
 import easyhattrickmanager.repository.PlayerDAO;
@@ -16,8 +17,8 @@ import easyhattrickmanager.repository.model.Team;
 import easyhattrickmanager.repository.model.Training;
 import easyhattrickmanager.service.model.HTMS;
 import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -37,17 +38,18 @@ public class UpdateService {
 
     public void update(int teamId) {
         int adjustmentDays = getAdjustmentDays(teamId);
+        String seasonWeek = convertToSeasonWeek(ZonedDateTime.now().plusDays(adjustmentDays));
         Players players = hattrickService.getPlayers(teamId);
         players.getTeam().getPlayers()
             .forEach(playerHT -> {
                 playerDAO.insert(getPlayer(playerHT));
-                PlayerData playerData = getPlayerData(teamId, playerHT, adjustmentDays);
+                PlayerData playerData = getPlayerData(teamId, playerHT, adjustmentDays, seasonWeek);
                 if (playerData.getAge() > 16) {
                     playerDataDAO.insert(playerData);
                 }
             });
-        trainingDAO.insert(getTraining(hattrickService.getTraining(teamId)));
-        staffDAO.insert(getStaff(teamId, hattrickService.getStaff(teamId)));
+        trainingDAO.insert(getTraining(hattrickService.getTraining(teamId), seasonWeek));
+        staffDAO.insert(getStaff(teamId, hattrickService.getStaff(teamId), seasonWeek));
     }
 
     public void updateLeagues() {
@@ -73,10 +75,10 @@ public class UpdateService {
         return getAdjustmentDays(league.getTrainingDate());
     }
 
-    private int getAdjustmentDays(LocalDateTime inputDate) {
+    private int getAdjustmentDays(ZonedDateTime inputDate) {
         DayOfWeek targetDay = inputDate.getDayOfWeek();
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime adjustedNow = now
+        ZonedDateTime now = ZonedDateTime.now();
+        ZonedDateTime adjustedNow = now
             .withHour(inputDate.getHour())
             .withMinute(inputDate.getMinute())
             .withSecond(inputDate.getSecond())
@@ -101,7 +103,7 @@ public class UpdateService {
             .build();
     }
 
-    private PlayerData getPlayerData(int teamId, easyhattrickmanager.client.model.players.Player playerHT, int adjustmentDays) {
+    private PlayerData getPlayerData(int teamId, easyhattrickmanager.client.model.players.Player playerHT, int adjustmentDays, String seasonWeek) {
         int adjustedAgeDays = playerHT.getAgeDays() + adjustmentDays;
         int adjustedAge = playerHT.getAge();
         if (adjustedAgeDays >= 112) {
@@ -116,8 +118,8 @@ public class UpdateService {
         HTMS htms = calculateHTMS(playerHT);
         return PlayerData.builder()
             .id(playerHT.getPlayerId())
-            .seasonWeek(convertToSeasonWeek(LocalDate.now()))
-            .date(LocalDateTime.now())
+            .seasonWeek(seasonWeek)
+            .date(ZonedDateTime.now())
             .teamId(teamId)
             .nickName(playerHT.getNickName())
             .playerNumber(playerHT.getPlayerNumber() < 100 ? playerHT.getPlayerNumber() : null)
@@ -144,11 +146,11 @@ public class UpdateService {
             .build();
     }
 
-    private String convertToSeasonWeek(LocalDate date) {
-        LocalDate referenceDate = LocalDate.of(2025, 5, 5);
+    private String convertToSeasonWeek(ZonedDateTime date) {
+        ZonedDateTime referenceDate = ZonedDateTime.of(2025, 5, 5, 0, 0, 0, 0, ZoneId.of("Europe/Madrid"));
         int referenceSeason = 91;
         int referenceWeekInSeason = 2;
-        LocalDate startOfReferenceSeason = referenceDate.minusWeeks(referenceWeekInSeason - 1);
+        ZonedDateTime startOfReferenceSeason = referenceDate.minusWeeks(referenceWeekInSeason - 1);
         long weeksBetween = ChronoUnit.WEEKS.between(startOfReferenceSeason, date);
         long seasonsSinceReference = weeksBetween / 16;
         long weekInSeason = (weeksBetween % 16) + 1;
@@ -156,7 +158,7 @@ public class UpdateService {
         return String.format("S%03dW%02d", season, weekInSeason);
     }
 
-    private LocalDate convertFromSeasonWeek(String seasonWeek) {
+    private ZonedDateTime convertFromSeasonWeek(String seasonWeek) {
         if (!seasonWeek.matches("S\\d{3}W\\d{2}")) {
             throw new IllegalArgumentException("Incorrect format SxxxWyy");
         }
@@ -165,13 +167,13 @@ public class UpdateService {
         if (week < 1 || week > 16) {
             throw new IllegalArgumentException("Week will be between 1-16");
         }
-        LocalDate referenceDate = LocalDate.of(2025, 5, 5);
+        ZonedDateTime referenceDate = ZonedDateTime.of(2025, 5, 5, 0, 0, 0, 0, ZoneId.of("Europe/Madrid"));
         int referenceSeason = 91;
         int referenceWeekInSeason = 2;
-        LocalDate startOfReferenceSeason = referenceDate.minusWeeks(referenceWeekInSeason - 1);
+        ZonedDateTime startOfReferenceSeason = referenceDate.minusWeeks(referenceWeekInSeason - 1);
         int seasonsDifference = season - referenceSeason;
-        LocalDate startOfRequestedSeason = startOfReferenceSeason.plusWeeks(seasonsDifference * 16);
-        LocalDate startOfRequestedWeek = startOfRequestedSeason.plusWeeks(week - 1);
+        ZonedDateTime startOfRequestedSeason = startOfReferenceSeason.plusWeeks(seasonsDifference * 16);
+        ZonedDateTime startOfRequestedWeek = startOfRequestedSeason.plusWeeks(week - 1);
         return startOfRequestedWeek;
     }
 
@@ -286,10 +288,10 @@ public class UpdateService {
             .build();
     }
 
-    private Training getTraining(easyhattrickmanager.client.model.training.Training training) {
+    private Training getTraining(easyhattrickmanager.client.model.training.Training training, String seasonWeek) {
         return Training.builder()
-            .seasonWeek(convertToSeasonWeek(LocalDate.now()))
-            .date(LocalDateTime.now())
+            .seasonWeek(seasonWeek)
+            .date(ZonedDateTime.now())
             .teamId(training.getTeam().getTeamId())
             .trainingType(training.getTeam().getLastTrainingTrainingType())
             .trainingLevel(training.getTeam().getLastTrainingTrainingLevel())
@@ -297,16 +299,15 @@ public class UpdateService {
             .build();
     }
 
-    private Staff getStaff(int teamId, easyhattrickmanager.client.model.stafflist.Stafflist stafflist) {
-
+    private Staff getStaff(int teamId, Stafflist stafflist, String seasonWeek) {
         var staffs = stafflist.getStaffList().getStaffs();
         var staff1 = Optional.ofNullable(staffs.size() > 0 ? staffs.get(0) : null);
         var staff2 = Optional.ofNullable(staffs.size() > 1 ? staffs.get(1) : null);
         var staff3 = Optional.ofNullable(staffs.size() > 2 ? staffs.get(2) : null);
         var staff4 = Optional.ofNullable(staffs.size() > 3 ? staffs.get(3) : null);
         return Staff.builder()
-            .seasonWeek(convertToSeasonWeek(LocalDate.now()))
-            .date(LocalDateTime.now())
+            .seasonWeek(seasonWeek)
+            .date(ZonedDateTime.now())
             .teamId(teamId)
             .trainerId(stafflist.getStaffList().getTrainer().getTrainerId())
             .trainerName(stafflist.getStaffList().getTrainer().getName())

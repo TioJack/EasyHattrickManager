@@ -6,8 +6,7 @@ import easyhattrickmanager.repository.model.Team;
 import easyhattrickmanager.repository.model.UpdateExecution;
 import jakarta.annotation.PostConstruct;
 import java.time.DayOfWeek;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,7 @@ public class UpdateExecutionService {
 
     public void scheduleTask(UpdateExecution updateExecution) {
         Runnable task = () -> processExecution(updateExecution);
-        taskScheduler.schedule(task, updateExecution.getExecutionTime().atZone(ZoneId.systemDefault()).toInstant());
+        taskScheduler.schedule(task, updateExecution.getExecutionTime().toInstant());
     }
 
     private void processExecution(UpdateExecution updateExecution) {
@@ -41,7 +40,7 @@ public class UpdateExecutionService {
             if (updateExecution.getRetries() < 3) {
                 updateExecution.setStatus("PENDING");
                 updateExecution.setRetries(updateExecution.getRetries() + 1);
-                updateExecution.setExecutionTime(LocalDateTime.now().plusHours(updateExecution.getRetries() + 1));
+                updateExecution.setExecutionTime(ZonedDateTime.now().plusHours(updateExecution.getRetries() + 1));
                 scheduleTask(updateExecution);
             } else {
                 updateExecution.setStatus("ERROR");
@@ -50,21 +49,22 @@ public class UpdateExecutionService {
         }
     }
 
-    private void insert(Team team) {
+    public void addUpdateExecution(int teamId) {
+        Team team = teamDAO.get(teamId);
         UpdateExecution updateExecution = UpdateExecution.builder().teamId(team.getId()).executionTime(getNextUpdateExecution(team)).build();
-        updateExecution.setExecutionTime(LocalDateTime.now().plusMinutes(-10));
         updateExecutionDAO.insert(updateExecution);
+        scheduleTask(updateExecution);
     }
 
-    private LocalDateTime getNextUpdateExecution(Team team) {
+    private ZonedDateTime getNextUpdateExecution(Team team) {
         var league = updateService.getLeague(team.getLeagueId());
         return getNextDayOfWeek(league.getTrainingDate()).plusHours(1);
     }
 
-    private LocalDateTime getNextDayOfWeek(LocalDateTime inputDate) {
+    private ZonedDateTime getNextDayOfWeek(ZonedDateTime inputDate) {
         DayOfWeek targetDay = inputDate.getDayOfWeek();
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime start = now
+        ZonedDateTime now = ZonedDateTime.now();
+        ZonedDateTime start = now
             .withHour(inputDate.getHour())
             .withMinute(inputDate.getMinute())
             .withSecond(inputDate.getSecond())

@@ -6,10 +6,11 @@ services:
       - ../../db/scripts:/docker-entrypoint-initdb.d
     environment:
       - MYSQL_ROOT_PASSWORD=ehm
+      - TZ=Europe/Madrid
     ports:
       - 2000:3306
     image: mysql:5.7.28
-    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci  --default-time-zone=Europe/Madrid
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
     restart: unless-stopped
 
   ehm_backend:
@@ -21,11 +22,13 @@ services:
     volumes:
       - ../../target/easyhattrickmanager.jar:/application/easyhattrickmanager.jar
       - ../../src/main/resources/application.yml:/application/config/application.yml
+    environment:
+      - TZ=Europe/Madrid
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:1999/actuator/health" ]
       interval: 5s
-      timeout: 2s
-      retries: 20
+      timeout: 10s
+      retries: 10
     working_dir: /application
     command: [ "java", "-jar", "easyhattrickmanager.jar" ]
     restart: unless-stopped
@@ -39,8 +42,9 @@ services:
     volumes:
       - ../../frontend/nginx.conf:/etc/nginx/nginx.conf
       - ../../frontend/dist:/usr/share/nginx/html
+    environment:
+      - TZ=Europe/Madrid
     restart: unless-stopped
     depends_on:
       ehm_backend:
         condition: service_healthy
-

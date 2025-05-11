@@ -18,7 +18,7 @@ import easyhattrickmanager.client.model.training.Training;
 import easyhattrickmanager.client.model.worlddetails.WorldDetails;
 import easyhattrickmanager.configuration.HattrickClientConfiguration;
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ public class HattrickClient {
 
     private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final XmlMapper XMLMAPPER = XmlMapper.builder()
-        .addModule(new JavaTimeModule().addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DATE_TIME_FORMAT)))
+        .addModule(new JavaTimeModule().addDeserializer(ZonedDateTime.class, new ZonedDateTimeDeserializer(DATE_TIME_FORMAT)))
         .configure(WRITE_DATES_AS_TIMESTAMPS, false)
         .configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
         .build();

@@ -1,6 +1,6 @@
 package easyhattrickmanager.repository.model;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import lombok.Builder;
 import lombok.Data;
 
@@ -13,5 +13,5 @@ public class UpdateExecution {
     private String status; // PENDING, ERROR, OK
     private int retries;
     private String errorMessage;
-    private LocalDateTime executionTime;
+    private ZonedDateTime executionTime;
 }

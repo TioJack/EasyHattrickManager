@@ -1,7 +1,7 @@
 package easyhattrickmanager.client.model.worlddetails;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.Data;
 
@@ -63,31 +63,31 @@ public class League {
     private int waitingUsers;
 
     @JacksonXmlProperty(localName = "TrainingDate")
-    private LocalDateTime trainingDate;
+    private ZonedDateTime trainingDate;
 
     @JacksonXmlProperty(localName = "EconomyDate")
-    private LocalDateTime economyDate;
+    private ZonedDateTime economyDate;
 
     @JacksonXmlProperty(localName = "CupMatchDate")
-    private LocalDateTime cupMatchDate;
+    private ZonedDateTime cupMatchDate;
 
     @JacksonXmlProperty(localName = "SeriesMatchDate")
-    private LocalDateTime seriesMatchDate;
+    private ZonedDateTime seriesMatchDate;
 
     @JacksonXmlProperty(localName = "Sequence1")
-    private LocalDateTime sequence1;
+    private ZonedDateTime sequence1;
 
     @JacksonXmlProperty(localName = "Sequence2")
-    private LocalDateTime sequence2;
+    private ZonedDateTime sequence2;
 
     @JacksonXmlProperty(localName = "Sequence3")
-    private LocalDateTime sequence3;
+    private ZonedDateTime sequence3;
 
     @JacksonXmlProperty(localName = "Sequence5")
-    private LocalDateTime sequence5;
+    private ZonedDateTime sequence5;
 
     @JacksonXmlProperty(localName = "Sequence7")
-    private LocalDateTime sequence7;
+    private ZonedDateTime sequence7;
 
     @JacksonXmlProperty(localName = "NumberOfLevels")
     private int numberOfLevels;

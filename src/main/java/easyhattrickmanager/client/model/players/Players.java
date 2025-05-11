@@ -1,7 +1,7 @@
 package easyhattrickmanager.client.model.players;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import lombok.Data;
 
 @Data
@@ -17,7 +17,7 @@ public class Players {
     private int userId;
 
     @JacksonXmlProperty(localName = "FetchedDate")
-    private LocalDateTime fetchedDate;
+    private ZonedDateTime fetchedDate;
 
     @JacksonXmlProperty(localName = "UserSupporterTier")
     private String userSupporterTier;
