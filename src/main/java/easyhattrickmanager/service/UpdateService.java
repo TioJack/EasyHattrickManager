@@ -6,13 +6,16 @@ import easyhattrickmanager.repository.LeagueDAO;
 import easyhattrickmanager.repository.PlayerDAO;
 import easyhattrickmanager.repository.PlayerDataDAO;
 import easyhattrickmanager.repository.StaffDAO;
+import easyhattrickmanager.repository.TeamDAO;
 import easyhattrickmanager.repository.TrainingDAO;
 import easyhattrickmanager.repository.model.League;
 import easyhattrickmanager.repository.model.Player;
 import easyhattrickmanager.repository.model.PlayerData;
 import easyhattrickmanager.repository.model.Staff;
+import easyhattrickmanager.repository.model.Team;
 import easyhattrickmanager.repository.model.Training;
 import easyhattrickmanager.service.model.HTMS;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -30,13 +33,18 @@ public class UpdateService {
     private final TrainingDAO trainingDAO;
     private final StaffDAO staffDAO;
     private final LeagueDAO leagueDAO;
+    private final TeamDAO teamDAO;
 
     public void update(int teamId) {
+        int adjustmentDays = getAdjustmentDays(teamId);
         Players players = hattrickService.getPlayers(teamId);
         players.getTeam().getPlayers()
             .forEach(playerHT -> {
                 playerDAO.insert(getPlayer(playerHT));
-                playerDataDAO.insert(getPlayerData(teamId, playerHT));
+                PlayerData playerData = getPlayerData(teamId, playerHT, adjustmentDays);
+                if (playerData.getAge() > 16) {
+                    playerDataDAO.insert(playerData);
+                }
             });
         trainingDAO.insert(getTraining(hattrickService.getTraining(teamId)));
         staffDAO.insert(getStaff(teamId, hattrickService.getStaff(teamId)));
@@ -44,8 +52,28 @@ public class UpdateService {
 
     public void updateLeagues() {
         WorldDetails worldDetails = hattrickService.getWorlddetails();
-        worldDetails.getLeagues()
-            .forEach(leagueHT -> leagueDAO.insert(getLeague(leagueHT)));
+        worldDetails.getLeagues().forEach(leagueHT -> leagueDAO.insert(getLeague(leagueHT)));
+    }
+
+    private int getAdjustmentDays(int teamId) {
+        Team team = teamDAO.get(teamId);
+        League league = leagueDAO.get(team.getLeagueId()).orElseThrow(() -> new IllegalArgumentException("League not found"));
+        return getAdjustmentDays(league.getTrainingDate());
+    }
+
+    private int getAdjustmentDays(LocalDateTime inputDate) {
+        DayOfWeek targetDay = inputDate.getDayOfWeek();
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime adjustedNow = now
+            .withHour(inputDate.getHour())
+            .withMinute(inputDate.getMinute())
+            .withSecond(inputDate.getSecond())
+            .withNano(inputDate.getNano());
+        int daysToSubtract = now.getDayOfWeek().getValue() - targetDay.getValue();
+        if (daysToSubtract < 0 || (daysToSubtract == 0 && adjustedNow.isBefore(now))) {
+            daysToSubtract += 7;
+        }
+        return -1 * daysToSubtract;
     }
 
     private Player getPlayer(easyhattrickmanager.client.model.players.Player playerHT) {
@@ -61,7 +89,18 @@ public class UpdateService {
             .build();
     }
 
-    private PlayerData getPlayerData(int teamId, easyhattrickmanager.client.model.players.Player playerHT) {
+    private PlayerData getPlayerData(int teamId, easyhattrickmanager.client.model.players.Player playerHT, int adjustmentDays) {
+        int adjustedAgeDays = playerHT.getAgeDays() + adjustmentDays;
+        int adjustedAge = playerHT.getAge();
+        if (adjustedAgeDays >= 112) {
+            adjustedAge++;
+            adjustedAgeDays -= 112;
+        } else if (adjustedAgeDays < 0) {
+            adjustedAge--;
+            adjustedAgeDays += 112;
+        }
+        playerHT.setAge(adjustedAge);
+        playerHT.setAgeDays(adjustedAgeDays);
         HTMS htms = calculateHTMS(playerHT);
         return PlayerData.builder()
             .id(playerHT.getPlayerId())

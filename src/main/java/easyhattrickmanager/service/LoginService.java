@@ -38,6 +38,7 @@ public class LoginService {
     private final UserDAO userDAO;
     private final TeamDAO teamDAO;
     private final Map<String, LoginData> temporaryLoginDataStorage = new HashMap<>();
+    private final UpdateService updateService;
 
     public boolean existUserEhm(String username) {
         return userEhmDAO.get(username).isPresent();
@@ -90,6 +91,7 @@ public class LoginService {
         int userId = saveUser(accessToken, teamDetails);
         saveUserEhmUser(userEhmId, userId);
         saveTeams(teamDetails);
+        teamDetails.getTeams().forEach(team -> updateService.update(team.getTeamId()));
         return getSaveResponse(teamDetails);
     }
 

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="easyhattrickmanager.repository.UpdateExecutionDAO">
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="updateExecution.id">
+    INSERT
+    IGNORE INTO update_execution (team_id, execution_time)
+    VALUES (
+    #{updateExecution.teamId},
+    #{updateExecution.executionTime}
+    );
+  </insert>
+
+  <update id="update">
+    UPDATE update_execution
+    SET status         = #{updateExecution.status},
+        error_message  = #{updateExecution.errorMessage},
+        execution_time = #{updateExecution.executionTime},
+        retries        = #{updateExecution.retries}
+    WHERE id = #{updateExecution.id}
+  </update>
+
+  <select id="getPending" resultType="easyhattrickmanager.repository.model.UpdateExecution">
+    SELECT id, team_id, status, retries, error_message, execution_time
+    FROM update_execution
+    WHERE status = 'PENDING'
+    ORDER BY execution_time ASC
+  </select>
+
+</mapper>

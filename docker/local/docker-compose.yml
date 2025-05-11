@@ -9,7 +9,7 @@ services:
     ports:
       - 2000:3306
     image: mysql:5.7.28
-    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci  --default-time-zone=Europe/Madrid
     restart: unless-stopped
 
   ehm_backend:

@@ -152,3 +152,15 @@ CREATE TABLE IF NOT EXISTS `league` (
     seasonOffset INT NOT NULL,
     training_date DATETIME NOT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `update_execution` (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    team_id INT NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'PENDING', -- PENDING, ERROR, OK
+    retries INT NOT NULL DEFAULT 0,
+    error_message TEXT,
+    execution_time DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_team_execution_time (team_id, execution_time)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -23,4 +23,34 @@
       bot = #{team.bot};
   </insert>
 
+  <select id="get" resultType="easyhattrickmanager.repository.model.Team">
+    SELECT t.user_id,
+           t.id,
+           t.name,
+           t.primary_club,
+           t.founded_date,
+           t.closure_date,
+           t.league_id,
+           t.country_id,
+           t.bot
+    FROM team t
+    WHERE t.id = #{id};
+  </select>
+
+  <select id="getActiveTeams" resultType="easyhattrickmanager.repository.model.Team">
+    SELECT t.user_id,
+           t.id,
+           t.name,
+           t.primary_club,
+           t.founded_date,
+           t.closure_date,
+           t.league_id,
+           t.country_id,
+           t.bot
+    FROM team t
+           JOIN user u ON u.id = t.user_id
+    WHERE u.active
+      AND NOT t.bot;
+  </select>
+
 </mapper>

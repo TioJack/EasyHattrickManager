@@ -23,4 +23,10 @@
       training_date = #{league.trainingDate};
   </insert>
 
+  <select id="get" resultType="easyhattrickmanager.repository.model.League">
+    SELECT id, name, english_name, season, seasonOffset, training_date
+    FROM league
+    WHERE id = #{id};
+  </select>
+
 </mapper>
