@@ -1,6 +1,5 @@
 package easyhattrickmanager.service;
 
-import easyhattrickmanager.repository.LeagueDAO;
 import easyhattrickmanager.repository.TeamDAO;
 import easyhattrickmanager.repository.UpdateExecutionDAO;
 import easyhattrickmanager.repository.model.Team;
@@ -21,7 +20,6 @@ public class UpdateExecutionService {
     private final UpdateService updateService;
     private final UpdateExecutionDAO updateExecutionDAO;
     private final TeamDAO teamDAO;
-    private final LeagueDAO leagueDAO;
 
     @PostConstruct
     public void initializePendingTasks() {
@@ -59,15 +57,8 @@ public class UpdateExecutionService {
     }
 
     private LocalDateTime getNextUpdateExecution(Team team) {
-        var league = leagueDAO.get(team.getLeagueId());
-        if (league.isEmpty()) {
-            updateService.updateLeagues();
-            league = leagueDAO.get(team.getLeagueId());
-            if (league.isEmpty()) {
-                throw new RuntimeException("League not found: " + team.getLeagueId());
-            }
-        }
-        return getNextDayOfWeek(league.get().getTrainingDate()).plusHours(1);
+        var league = updateService.getLeague(team.getLeagueId());
+        return getNextDayOfWeek(league.getTrainingDate()).plusHours(1);
     }
 
     private LocalDateTime getNextDayOfWeek(LocalDateTime inputDate) {

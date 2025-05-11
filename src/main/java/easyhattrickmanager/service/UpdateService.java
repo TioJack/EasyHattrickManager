@@ -55,9 +55,21 @@ public class UpdateService {
         worldDetails.getLeagues().forEach(leagueHT -> leagueDAO.insert(getLeague(leagueHT)));
     }
 
+    public League getLeague(int id) {
+        var league = leagueDAO.get(id);
+        if (league.isEmpty()) {
+            updateLeagues();
+            league = leagueDAO.get(id);
+            if (league.isEmpty()) {
+                throw new RuntimeException("League not found: " + id);
+            }
+        }
+        return league.get();
+    }
+
     private int getAdjustmentDays(int teamId) {
         Team team = teamDAO.get(teamId);
-        League league = leagueDAO.get(team.getLeagueId()).orElseThrow(() -> new IllegalArgumentException("League not found"));
+        League league = getLeague(team.getLeagueId());
         return getAdjustmentDays(league.getTrainingDate());
     }
 
