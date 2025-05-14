@@ -12,5 +12,6 @@ public class EhmConfiguration {
     private String oauthConsumerKey;
     private String oauthConsumerSecret;
     private String registerCallbackUrl;
+    private String cronAddActiveUpdateExecutions;
 
 }

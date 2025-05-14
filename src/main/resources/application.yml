@@ -1,5 +1,5 @@
 app:
-  version: 3
+  version: 4
 
 server:
   port: 1998
@@ -12,7 +12,7 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://ehm_database:3306/ehm?serverTimezone=Europe/Madrid
+    url: jdbc:mysql://localhost:2000/ehm?serverTimezone=Europe/Madrid
     username: ehm
     password: ehm
 
@@ -24,6 +24,9 @@ mybatis:
       map-underscore-to-camel-case: true
 
 ehm:
-  oauth-consumer-key: ehm-consumer-key
-  oauth-consumer-secret: ehm-consumer-secret
+  oauth-consumer-key: dZu6jUUw3bO7IWUeV2nAew
+  oauth-consumer-secret: 3bHDETKbOKHTJcCiaFdfhqQm1xbiYSNNw4HhzIBAd4D
   register-callback-url: http://localhost:1997/save
+  #cron-add-active-update-executions: "0 0 1 * * MON"
+  cron-add-active-update-executions: "0 */5 * * * *"
+

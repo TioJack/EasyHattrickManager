@@ -1,5 +1,6 @@
 package easyhattrickmanager.service;
 
+import easyhattrickmanager.configuration.EhmConfiguration;
 import easyhattrickmanager.repository.TeamDAO;
 import easyhattrickmanager.repository.UpdateExecutionDAO;
 import easyhattrickmanager.repository.model.Team;
@@ -7,18 +8,33 @@ import easyhattrickmanager.repository.model.UpdateExecution;
 import jakarta.annotation.PostConstruct;
 import java.time.DayOfWeek;
 import java.time.ZonedDateTime;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class UpdateExecutionService {
 
     private final TaskScheduler taskScheduler;
     private final UpdateService updateService;
     private final UpdateExecutionDAO updateExecutionDAO;
     private final TeamDAO teamDAO;
+    private final EhmConfiguration ehmConfiguration;
+
+    public UpdateExecutionService(
+        @Qualifier("UpdateExecutionTaskScheduler")
+        TaskScheduler taskScheduler,
+        UpdateService updateService,
+        UpdateExecutionDAO updateExecutionDAO,
+        TeamDAO teamDAO,
+        EhmConfiguration ehmConfiguration) {
+        this.taskScheduler = taskScheduler;
+        this.updateService = updateService;
+        this.updateExecutionDAO = updateExecutionDAO;
+        this.teamDAO = teamDAO;
+        this.ehmConfiguration = ehmConfiguration;
+    }
 
     @PostConstruct
     public void initializePendingTasks() {
@@ -47,6 +63,11 @@ public class UpdateExecutionService {
             }
             updateExecutionDAO.update(updateExecution);
         }
+    }
+
+    @Scheduled(cron = "#{ehmConfiguration.cronAddActiveUpdateExecutions}")
+    public void addActiveUpdateExecutions() {
+        teamDAO.getActiveTeams().forEach(team -> addUpdateExecution(team.getId()));
     }
 
     public void addUpdateExecution(int teamId) {
