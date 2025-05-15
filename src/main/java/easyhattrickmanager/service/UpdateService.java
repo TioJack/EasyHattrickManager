@@ -84,7 +84,7 @@ public class UpdateService {
             .withSecond(inputDate.getSecond())
             .withNano(inputDate.getNano());
         int daysToSubtract = now.getDayOfWeek().getValue() - targetDay.getValue();
-        if (daysToSubtract < 0 || (daysToSubtract == 0 && adjustedNow.isBefore(now))) {
+        if (daysToSubtract < 0 || (daysToSubtract == 0 && now.isBefore(adjustedNow))) {
             daysToSubtract += 7;
         }
         return -1 * daysToSubtract;
