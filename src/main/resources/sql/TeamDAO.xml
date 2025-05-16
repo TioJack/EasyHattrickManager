@@ -37,6 +37,20 @@
     WHERE t.id = #{id};
   </select>
 
+  <select id="getByUserId" resultType="easyhattrickmanager.repository.model.Team">
+    SELECT t.user_id,
+           t.id,
+           t.name,
+           t.primary_club,
+           t.founded_date,
+           t.closure_date,
+           t.league_id,
+           t.country_id,
+           t.bot
+    FROM team t
+    WHERE t.user_id = #{userId};
+  </select>
+
   <select id="getActiveTeams" resultType="easyhattrickmanager.repository.model.Team">
     SELECT t.user_id,
            t.id,

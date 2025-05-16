@@ -12,6 +12,8 @@ public interface TeamDAO {
 
     Team get(@Param("id") int id);
 
+    List<Team> getByUserId(@Param("userId") int userId);
+
     List<Team> getActiveTeams();
 
 }

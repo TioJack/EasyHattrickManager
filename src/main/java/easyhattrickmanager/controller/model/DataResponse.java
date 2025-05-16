@@ -1,5 +1,8 @@
 package easyhattrickmanager.controller.model;
 
+import easyhattrickmanager.service.model.dataresponse.TeamExtendedInfo;
+import easyhattrickmanager.service.model.dataresponse.UserInfo;
+import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 
@@ -7,6 +10,7 @@ import lombok.Data;
 @Builder
 public class DataResponse {
 
-    String username;
     String version;
+    UserInfo user;
+    List<TeamExtendedInfo> teams;
 }

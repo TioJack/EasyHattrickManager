@@ -17,4 +17,18 @@
     );
   </insert>
 
+  <select id="get" resultType="easyhattrickmanager.repository.model.Player">
+    SELECT DISTINCT p.id,
+                    p.first_name,
+                    p.last_name,
+                    p.agreeability,
+                    p.aggressiveness,
+                    p.honesty,
+                    p.specialty,
+                    p.country_id
+    FROM player p
+           JOIN player_data pd ON pd.id = p.id
+    WHERE pd.team_id = #{teamId};
+  </select>
+
 </mapper>
