@@ -12,5 +12,6 @@ import org.mapstruct.Mapping;
 public interface PlayerInfoMapper {
 
     @Mapping(target = "id", source = "player.id")
+    @Mapping(target = "piecesSkill", source = "playerData.setPiecesSkill")
     PlayerInfo toInfo(Player player, PlayerData playerData);
 }

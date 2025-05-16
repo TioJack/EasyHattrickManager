@@ -12,6 +12,7 @@ import org.mapstruct.Mapping;
 public interface TeamExtendedInfoMapper {
 
     @Mapping(target = "league.id", source = "leagueId")
+    @Mapping(target = "weeklyData", ignore = true)
     TeamExtendedInfo toInfo(Team team);
 
     List<TeamExtendedInfo> toInfos(List<Team> teams);
