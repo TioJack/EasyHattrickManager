@@ -1,0 +1,14 @@
+.dropdown-toggle i {
+  font-size: 1.5rem; /* Ajusta el tamaño del ícono */
+}
+
+.dropdown-menu .dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dropdown-menu .dropdown-item i {
+  font-size: 1.2rem;
+}
+

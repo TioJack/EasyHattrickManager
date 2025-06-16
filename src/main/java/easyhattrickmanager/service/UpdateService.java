@@ -146,14 +146,22 @@ public class UpdateService {
             .build();
     }
 
-    private String convertToSeasonWeek(ZonedDateTime date) {
+    public String convertToSeasonWeek(ZonedDateTime date) {
         ZonedDateTime referenceDate = ZonedDateTime.of(2025, 5, 5, 0, 0, 0, 0, ZoneId.of("Europe/Madrid"));
         int referenceSeason = 91;
         int referenceWeekInSeason = 2;
         ZonedDateTime startOfReferenceSeason = referenceDate.minusWeeks(referenceWeekInSeason - 1);
-        long weeksBetween = ChronoUnit.WEEKS.between(startOfReferenceSeason, date);
-        long seasonsSinceReference = weeksBetween / 16;
-        long weekInSeason = (weeksBetween % 16) + 1;
+        long weeksSinceReference = ChronoUnit.WEEKS.between(startOfReferenceSeason, date);
+        ZonedDateTime calculatedStartOfWeek = startOfReferenceSeason.plusWeeks(weeksSinceReference);
+        if (date.isBefore(calculatedStartOfWeek)) {
+            weeksSinceReference -= 1;
+        }
+        long seasonsSinceReference = weeksSinceReference / 16;
+        long weekInSeason = (weeksSinceReference % 16) + 1;
+        if (weekInSeason <= 0) {
+            weekInSeason += 16;
+            seasonsSinceReference -= 1;
+        }
         long season = referenceSeason + seasonsSinceReference;
         return String.format("S%03dW%02d", season, weekInSeason);
     }

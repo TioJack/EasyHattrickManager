@@ -1,4 +1,3 @@
-### IntelliJ IDEA ###
 .idea
 *.iws
 *.iml
@@ -6,8 +5,10 @@
 /target/
 /db/data/
 /db/backups/
+/docker/dev/
 /docker/remote/
 deploy.sh
 upload.sh
-/frontend/nginx-remote.conf
-/src/main/resources/application-remote.yml
+/frontend/nginx-*.conf
+/src/main/resources/application-*.yml
+/old_frontend/

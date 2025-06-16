@@ -1,0 +1,8 @@
+<div *ngIf="players.length > 0">
+  <div class="row g-3 p-3">
+    <div class="col-6" *ngFor="let player of players">
+      <app-player-card [player]="player"></app-player-card>
+    </div>
+  </div>
+</div>
+

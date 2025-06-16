@@ -24,6 +24,7 @@ import easyhattrickmanager.service.model.dataresponse.mapper.StaffInfoMapper;
 import easyhattrickmanager.service.model.dataresponse.mapper.TeamExtendedInfoMapper;
 import easyhattrickmanager.service.model.dataresponse.mapper.TrainingInfoMapper;
 import easyhattrickmanager.service.model.dataresponse.mapper.UserInfoMapper;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -67,7 +68,9 @@ public class DataService {
             team.getLeague().setName(league.getName());
             team.setWeeklyData(getWeeklyData(team.getTeam().getId(), league.getSeasonOffset()));
         });
-        return teams;
+        return teams.stream()
+            .sorted(Comparator.comparing(team -> team.getTeam().getFoundedDate()))
+            .toList();
     }
 
     private List<WeeklyInfo> getWeeklyData(int teamId, int seasonOffset) {
@@ -85,7 +88,7 @@ public class DataService {
                 .staff(staffs.get(seasonWeek))
                 .players(players.get(seasonWeek))
                 .build()
-        ).toList();
+        ).sorted(Comparator.comparingInt(WeeklyInfo::getSeason).thenComparingInt(WeeklyInfo::getWeek)).toList();
     }
 
 }

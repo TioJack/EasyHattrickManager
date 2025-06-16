@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `player_data` (
     mother_club_bonus BOOLEAN NOT NULL,
     leadership INT NOT NULL,
     salary INT NOT NULL,
-    injury_level FLOAT NOT NULL,
+    injury_level INT NOT NULL,
     stamina_skill INT NOT NULL,
     keeper_skill INT NOT NULL,
     playmaker_skill INT NOT NULL,

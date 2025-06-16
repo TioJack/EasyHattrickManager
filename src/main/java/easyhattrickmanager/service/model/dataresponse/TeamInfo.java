@@ -1,5 +1,6 @@
 package easyhattrickmanager.service.model.dataresponse;
 
+import java.time.ZonedDateTime;
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,4 +10,5 @@ public class TeamInfo {
 
     int id;
     String name;
+    ZonedDateTime foundedDate;
 }

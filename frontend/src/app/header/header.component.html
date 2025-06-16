@@ -1,0 +1,77 @@
+<header class="d-flex justify-content-between align-items-center bg-light p-1 border-bottom">
+  <div>
+    <div class="dropdown">
+      <button class="btn btn-outline-primary dropdown-toggle" type="button" id="teamDropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+        Equipo: {{ selectedTeam?.team?.name }}
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="teamDropdownMenuButton">
+        <li *ngFor="let team of dataResponse.teams">
+          <button class="dropdown-item" (click)="selectTeam(team)">
+            {{ team.team.name }}
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="d-flex align-items-center">
+    <button class="btn btn-outline-secondary" (click)="onFirstWeek()">
+      <i class="bi bi-chevron-bar-left"></i>
+    </button>
+    <button class="btn btn-outline-secondary" (click)="onPreviousSeason()">
+      <i class="bi bi-chevron-double-left"></i>
+    </button>
+    <button class="btn btn-outline-secondary" (click)="onPreviousWeek()">
+      <i class="bi bi-chevron-left"></i>
+    </button>
+    <span class="fw-bold mx-3">
+      Temporada {{ selectedTeam?.weeklyData?.[selectedWeekIndex]?.season || 'Seleccionar' }}
+      Semana {{ selectedTeam?.weeklyData?.[selectedWeekIndex]?.week || 'Seleccionar' }}
+    </span>
+    <button class="btn btn-outline-secondary" (click)="onNextWeek()">
+      <i class="bi bi-chevron-right"></i>
+    </button>
+    <button class="btn btn-outline-secondary" (click)="onNextSeason()">
+      <i class="bi bi-chevron-double-right"></i>
+    </button>
+    <button class="btn btn-outline-secondary" (click)="onLastWeek()">
+      <i class="bi bi-chevron-bar-right"></i>
+    </button>
+  </div>
+
+  <div class="dropdown">
+    <button class="btn btn-primary" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+      <i class="bi bi-list"></i>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-auto" aria-labelledby="dropdownMenuButton">
+      <li>
+        <a class="dropdown-item" target="_blank" href="http://hattrick.org/goto.ashx?path=/Club/Manager/?userId={{ dataResponse.user.id }}">
+          <i class="bi bi-file-earmark-person me-2"></i>{{ dataResponse.user.name }}
+        </a>
+      </li>
+      <li>
+        <button class="dropdown-item" (click)="downloadData()">
+          <i class="bi bi-download me-2"></i>Descargar Datos
+        </button>
+      </li>
+      <li>
+        <button class="dropdown-item" (click)="logout()">
+          <i class="bi bi-power me-2"></i>Cerrar Sesión
+        </button>
+      </li>
+      <li>
+        <hr class="dropdown-divider">
+      </li>
+      <li>
+        <a class="dropdown-item" target="_blank" href="https://github.com/TioJack/EasyHattrickManager">
+          <i class="bi bi-code-slash me-2"></i>Easy Hattrick Manager v{{ dataResponse.version }}
+        </a>
+      </li>
+      <li>
+        <a class="dropdown-item" target="_blank" href="http://hattrick.org/goto.ashx?path=/Club/Manager/?userId=4495104">
+          <i class="bi bi-pen me-2"></i>TioJack
+        </a>
+      </li>
+    </ul>
+  </div>
+</header>
