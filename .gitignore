@@ -9,6 +9,7 @@
 /docker/remote/
 deploy.sh
 upload.sh
+upload_README.txt
 /frontend/nginx-*.conf
 /src/main/resources/application-*.yml
 /old_frontend/
