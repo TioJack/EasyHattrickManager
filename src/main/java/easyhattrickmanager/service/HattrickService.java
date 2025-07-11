@@ -2,11 +2,13 @@ package easyhattrickmanager.service;
 
 import com.github.scribejava.core.model.OAuth1AccessToken;
 import easyhattrickmanager.client.HattrickClient;
+import easyhattrickmanager.client.model.managercompendium.ManagerCompendium;
 import easyhattrickmanager.client.model.players.Players;
 import easyhattrickmanager.client.model.stafflist.Stafflist;
 import easyhattrickmanager.client.model.teamdetails.TeamDetails;
 import easyhattrickmanager.client.model.training.Training;
 import easyhattrickmanager.client.model.worlddetails.WorldDetails;
+import easyhattrickmanager.client.model.worldlanguages.WorldLanguages;
 import easyhattrickmanager.repository.UserDAO;
 import easyhattrickmanager.repository.model.User;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +41,14 @@ public class HattrickService {
 
     public WorldDetails getWorlddetails() {
         return this.hattrickClient.getWorlddetails(getAccessToken(DEFAULT_TEAM_ID));
+    }
+
+    public ManagerCompendium getManagerCompendium(OAuth1AccessToken accessToken) {
+        return this.hattrickClient.getManagerCompendium(accessToken);
+    }
+
+    public WorldLanguages getWorldLanguages() {
+        return this.hattrickClient.getWorldLanguages(getAccessToken(DEFAULT_TEAM_ID));
     }
 
     private OAuth1AccessToken getAccessToken(int teamId) {

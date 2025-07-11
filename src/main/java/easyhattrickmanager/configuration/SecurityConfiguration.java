@@ -20,7 +20,7 @@ public class SecurityConfiguration {
             .cors(AbstractHttpConfigurer::disable)
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/actuator/**", "/login/**", "/pojo/**", "/update/**").permitAll()
+                .requestMatchers("/actuator/**", "/login/**", "/pojo/**", "/update/**", "/shar/**").permitAll()
                 .requestMatchers("/data/**").authenticated()
             )
             .addFilter(new JwtAuthenticationFilter(jwtService));

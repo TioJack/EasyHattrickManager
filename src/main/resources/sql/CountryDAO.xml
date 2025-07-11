@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="easyhattrickmanager.repository.CountryDAO">
+
+  <insert id="insert">
+    INSERT INTO country (id,
+                         name,
+                         code,
+                         currency_name,
+                         currency_rate,
+                         date_format,
+                         time_format)
+    VALUES (#{country.id},
+            #{country.name},
+            #{country.code},
+            #{country.currencyName},
+            #{country.currencyRate},
+            #{country.dateFormat},
+            #{country.timeFormat}) ON DUPLICATE KEY
+    UPDATE
+      name = #{country.name},
+      code = #{country.code},
+      currency_name = #{country.currencyName},
+      currency_rate = #{country.currencyRate},
+      date_format = #{country.dateFormat},
+      time_format = #{country.timeFormat};
+  </insert>
+
+  <insert id="insertLeagueCountry">
+    INSERT
+    IGNORE INTO league_country (league_id, country_id)
+    VALUES (
+    #{leagueId},
+    #{countryId}
+    );
+  </insert>
+
+  <select id="get" resultType="easyhattrickmanager.repository.model.Country">
+    SELECT id, name, code, currency_name, currency_rate, date_format, time_format
+    FROM country
+    WHERE id = #{id};
+  </select>
+
+  <select id="getAllLeagueCountry" resultType="easyhattrickmanager.repository.model.LeagueCountry">
+    SELECT league_id, country_id
+    FROM league_country;
+  </select>
+
+</mapper>

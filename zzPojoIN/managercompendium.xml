@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HattrickData>
+  <FileName>managercompendium.xml</FileName>
+  <Version>1.5</Version>
+  <UserID>4495104</UserID>
+  <FetchedDate>2025-07-11 23:25:25</FetchedDate>
+  <Manager>
+    <UserId>4495104</UserId>
+    <Loginname>TioJack</Loginname>
+    <SupporterTier>platinum</SupporterTier>
+    <LastLogins>
+      <LoginTime>2025-07-11 23:25:11 : 95.17.***.***</LoginTime>
+      <LoginTime>2025-07-11 20:16:03 : 95.17.***.***</LoginTime>
+      <LoginTime>2025-07-11 14:17:36 : 95.17.***.***</LoginTime>
+      <LoginTime>2025-07-11 14:05:04 : 95.17.***.***</LoginTime>
+      <LoginTime>2025-07-11 08:26:59 : 95.17.***.***</LoginTime>
+      <LoginTime>2025-07-11 08:26:59 : 95.17.***.***</LoginTime>
+    </LastLogins>
+    <Language>
+      <LanguageId>6</LanguageId>
+      <LanguageName>Español, España</LanguageName>
+    </Language>
+    <Country>
+      <CountryId>35</CountryId>
+      <CountryName>España</CountryName>
+    </Country>
+    <Currency>
+      <CurrencyName>€</CurrencyName>
+      <CurrencyRate>10</CurrencyRate>
+    </Currency>
+    <Teams>
+      <Team>
+        <TeamId>1333746</TeamId>
+        <TeamName>Com jugam!!!</TeamName>
+        <Arena>
+          <ArenaId>1330308</ArenaId>
+          <ArenaName>Memorial Joaquín Báscones</ArenaName>
+        </Arena>
+        <League>
+          <LeagueId>36</LeagueId>
+          <LeagueName>España</LeagueName>
+          <Season>79</Season>
+        </League>
+        <Country>
+          <CountryId>35</CountryId>
+          <CountryName>España</CountryName>
+        </Country>
+        <LeagueLevelUnit>
+          <LeagueLevelUnitId>38874</LeagueLevelUnitId>
+          <LeagueLevelUnitName>VII.838</LeagueLevelUnitName>
+        </LeagueLevelUnit>
+        <Region>
+          <RegionId>807</RegionId>
+          <RegionName>Illes Balears</RegionName>
+        </Region>
+        <YouthTeam>
+          <YouthTeamId>131878</YouthTeamId>
+          <YouthTeamName>Es primer gat!!!</YouthTeamName>
+          <YouthLeague>
+            <YouthLeagueId>85139</YouthLeagueId>
+            <YouthLeagueName>Juvenils FeFeros</YouthLeagueName>
+          </YouthLeague>
+        </YouthTeam>
+      </Team>
+      <Team>
+        <TeamId>2351860</TeamId>
+        <TeamName>Gentleman</TeamName>
+        <Arena>
+          <ArenaId>2348603</ArenaId>
+          <ArenaName>Gentleman Stadium</ArenaName>
+        </Arena>
+        <League>
+          <LeagueId>175</LeagueId>
+          <LeagueName>Guinea Ecuatorial</LeagueName>
+          <Season>1</Season>
+        </League>
+        <Country>
+          <CountryId>201</CountryId>
+          <CountryName>Guinea Ecuatorial</CountryName>
+        </Country>
+        <LeagueLevelUnit>
+          <LeagueLevelUnitId>268560</LeagueLevelUnitId>
+          <LeagueLevelUnitName>IV.44</LeagueLevelUnitName>
+        </LeagueLevelUnit>
+        <Region>
+          <RegionId>3013</RegionId>
+          <RegionName>Litoral</RegionName>
+        </Region>
+        <YouthTeam>
+          <YouthTeamId>3169231</YouthTeamId>
+          <YouthTeamName>Gentleboy</YouthTeamName>
+          <YouthLeague>
+            <YouthLeagueId>85139</YouthLeagueId>
+            <YouthLeagueName>Juvenils FeFeros</YouthLeagueName>
+          </YouthLeague>
+        </YouthTeam>
+      </Team>
+    </Teams>
+    <NationalTeamCoach/>
+    <NationalTeamAssistant/>
+    <Avatar>
+      <BackgroundImage>/Img/Avatar/backgrounds/card1.png</BackgroundImage>
+      <Layer>
+        <Image>/Img/Avatar/backgrounds/bg_blue.png</Image>
+      </Layer>
+      <Layer>
+        <Image>/Img/Avatar/bodies/f9man1b.png</Image>
+      </Layer>
+      <Layer>
+        <Image>/Img/Avatar/faces/f9j.png</Image>
+      </Layer>
+      <Layer>
+        <Image>/Img/Avatar/eyes/e36c.png</Image>
+      </Layer>
+      <Layer>
+        <Image>/Img/Avatar/mouths/m33c.png</Image>
+      </Layer>
+      <Layer>
+        <Image>/Img/Avatar/goatees/g5.png</Image>
+      </Layer>
+      <Layer>
+        <Image>/Img/Avatar/noses/n34.png</Image>
+      </Layer>
+      <Layer>
+        <Image>/Img/Avatar/hair/f9h2d.png</Image>
+      </Layer>
+    </Avatar>
+  </Manager>
+</HattrickData>

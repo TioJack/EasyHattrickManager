@@ -3,10 +3,12 @@
 <mapper namespace="easyhattrickmanager.repository.UserDAO">
 
   <insert id="insert">
-    INSERT INTO user (id, name, language_id, activation_date, token, token_secret, active)
+    INSERT INTO user (id, name, language_id, country_id, currency, activation_date, token, token_secret, active)
     VALUES (#{user.id},
             #{user.name},
             #{user.languageId},
+            #{user.countryId},
+            #{user.currency},
             #{user.activationDate},
             #{user.token},
             #{user.tokenSecret},
@@ -14,6 +16,8 @@
     UPDATE
       name = #{user.name},
       language_id = #{user.languageId},
+      country_id = #{user.countryId},
+      currency = #{user.currency},
       activation_date = #{user.activationDate},
       token = #{user.token},
       token_secret = #{user.tokenSecret},
@@ -30,7 +34,15 @@
   </insert>
 
   <select id="get" resultType="easyhattrickmanager.repository.model.User">
-    SELECT u.id, u.name, u.language_id, u.activation_date, u.token, u.token_secret, u.active
+    SELECT u.id,
+           u.name,
+           u.language_id,
+           u.country_id,
+           u.currency,
+           u.activation_date,
+           u.token,
+           u.token_secret,
+           u.active
     FROM user u
            JOIN user_ehm_user ueu ON ueu.user_id = u.id
            JOIN user_ehm ue ON ue.id = ueu.user_ehm_id
@@ -38,7 +50,15 @@
   </select>
 
   <select id="getByTeamId" resultType="easyhattrickmanager.repository.model.User">
-    SELECT u.id, u.name, u.language_id, u.activation_date, u.token, u.token_secret, u.active
+    SELECT u.id,
+           u.name,
+           u.language_id,
+           u.country_id,
+           u.currency,
+           u.activation_date,
+           u.token,
+           u.token_secret,
+           u.active
     FROM user u
            JOIN team t ON t.user_id = u.id
     WHERE u.active

@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS `user` (
     `id` int(11) NOT NULL,
     `name` varchar(50) NOT NULL,
     `language_id` int(11) NOT NULL,
+    `country_id` int(11) NOT NULL,
+    `currency` varchar(50) NOT NULL,
     `activation_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `token` varchar(255) NOT NULL,
     `token_secret` varchar(255) NOT NULL,
@@ -151,6 +153,28 @@ CREATE TABLE IF NOT EXISTS `league` (
     season INT NOT NULL,
     seasonOffset INT NOT NULL,
     training_date DATETIME NOT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `country` (
+    id INT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    code VARCHAR(2) NOT NULL,
+    currency_name VARCHAR(10) NOT NULL,
+    currency_rate DECIMAL(10, 4) NOT NULL,
+    date_format VARCHAR(20) NOT NULL,
+    time_format VARCHAR(20) NOT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `league_country` (
+    league_id INT PRIMARY KEY,
+    country_id INT NOT NULL,
+    CONSTRAINT `league_country_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`),
+    CONSTRAINT `league_country_ibfk_2` FOREIGN KEY (`country_id`) REFERENCES `country` (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `language` (
+    id INT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `update_execution` (

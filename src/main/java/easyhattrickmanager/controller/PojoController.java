@@ -170,6 +170,9 @@ public class PojoController {
         if (jsonNode.getNodeType().equals(OBJECT)) {
             return nodeName;
         }
+        if (Objects.isNull(jsonNode.textValue())) {
+            return "String";
+        }
         if (jsonNode.textValue().equals("True") || jsonNode.textValue().equals("False")) {
             return "boolean";
         }

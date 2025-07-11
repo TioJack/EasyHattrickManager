@@ -11,11 +11,13 @@ import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth10aService;
+import easyhattrickmanager.client.model.managercompendium.ManagerCompendium;
 import easyhattrickmanager.client.model.players.Players;
 import easyhattrickmanager.client.model.stafflist.Stafflist;
 import easyhattrickmanager.client.model.teamdetails.TeamDetails;
 import easyhattrickmanager.client.model.training.Training;
 import easyhattrickmanager.client.model.worlddetails.WorldDetails;
+import easyhattrickmanager.client.model.worldlanguages.WorldLanguages;
 import easyhattrickmanager.configuration.HattrickClientConfiguration;
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -97,6 +99,26 @@ public class HattrickClient {
             String xml = this.getXML(accessToken, "worlddetails&version=1.9&includeRegions=false");
             WorldDetails worlddetails = XMLMAPPER.readValue(xml, WorldDetails.class);
             return worlddetails;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public ManagerCompendium getManagerCompendium(OAuth1AccessToken accessToken) {
+        try {
+            String xml = this.getXML(accessToken, "managercompendium&version=1.5");
+            ManagerCompendium managerCompendium = XMLMAPPER.readValue(xml, ManagerCompendium.class);
+            return managerCompendium;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public WorldLanguages getWorldLanguages(OAuth1AccessToken accessToken) {
+        try {
+            String xml = this.getXML(accessToken, "worldlanguages&version=1.2");
+            WorldLanguages worldLanguages = XMLMAPPER.readValue(xml, WorldLanguages.class);
+            return worldLanguages;
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e.getMessage());
         }

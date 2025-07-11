@@ -3,12 +3,14 @@ package easyhattrickmanager.service;
 import easyhattrickmanager.client.model.players.Players;
 import easyhattrickmanager.client.model.stafflist.Stafflist;
 import easyhattrickmanager.client.model.worlddetails.WorldDetails;
+import easyhattrickmanager.repository.CountryDAO;
 import easyhattrickmanager.repository.LeagueDAO;
 import easyhattrickmanager.repository.PlayerDAO;
 import easyhattrickmanager.repository.PlayerDataDAO;
 import easyhattrickmanager.repository.StaffDAO;
 import easyhattrickmanager.repository.TeamDAO;
 import easyhattrickmanager.repository.TrainingDAO;
+import easyhattrickmanager.repository.model.Country;
 import easyhattrickmanager.repository.model.League;
 import easyhattrickmanager.repository.model.Player;
 import easyhattrickmanager.repository.model.PlayerData;
@@ -16,6 +18,7 @@ import easyhattrickmanager.repository.model.Staff;
 import easyhattrickmanager.repository.model.Team;
 import easyhattrickmanager.repository.model.Training;
 import easyhattrickmanager.service.model.HTMS;
+import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -29,11 +32,12 @@ import org.springframework.stereotype.Service;
 public class UpdateService {
 
     private final HattrickService hattrickService;
+    private final CountryDAO countryDAO;
+    private final LeagueDAO leagueDAO;
     private final PlayerDAO playerDAO;
     private final PlayerDataDAO playerDataDAO;
     private final TrainingDAO trainingDAO;
     private final StaffDAO staffDAO;
-    private final LeagueDAO leagueDAO;
     private final TeamDAO teamDAO;
 
     public void update(int teamId) {
@@ -54,7 +58,13 @@ public class UpdateService {
 
     public void updateLeagues() {
         WorldDetails worldDetails = hattrickService.getWorlddetails();
-        worldDetails.getLeagues().forEach(leagueHT -> leagueDAO.insert(getLeague(leagueHT)));
+        worldDetails.getLeagues().forEach(leagueHT -> {
+            leagueDAO.insert(getLeague(leagueHT));
+            if (leagueHT.getCountry().getCountryId() > 0) {
+                countryDAO.insert(getCountry(leagueHT.getCountry()));
+                countryDAO.insertLeagueCountry(leagueHT.getLeagueId(), leagueHT.getCountry().getCountryId());
+            }
+        });
     }
 
     public League getLeague(int id) {
@@ -166,7 +176,7 @@ public class UpdateService {
         return String.format("S%03dW%02d", season, weekInSeason);
     }
 
-    private ZonedDateTime convertFromSeasonWeek(String seasonWeek) {
+    public ZonedDateTime convertFromSeasonWeek(String seasonWeek) {
         if (!seasonWeek.matches("S\\d{3}W\\d{2}")) {
             throw new IllegalArgumentException("Incorrect format SxxxWyy");
         }
@@ -199,7 +209,7 @@ public class UpdateService {
         );
     }
 
-    private HTMS calculateHTMS(int years, int days, int keeper, int defending, int playmaking, int winger, int passing, int scoring, int setPieces) {
+    public HTMS calculateHTMS(int years, int days, int keeper, int defending, int playmaking, int winger, int passing, int scoring, int setPieces) {
         double[] WEEK_PTS_PER_AGE = new double[46];
         WEEK_PTS_PER_AGE[17] = 10;
         WEEK_PTS_PER_AGE[18] = 9.92;
@@ -354,6 +364,18 @@ public class UpdateService {
             .season(leagueHT.getSeason())
             .seasonOffset(leagueHT.getSeasonOffset())
             .trainingDate(leagueHT.getTrainingDate())
+            .build();
+    }
+
+    private Country getCountry(easyhattrickmanager.client.model.worlddetails.Country countryHT) {
+        return Country.builder()
+            .id(countryHT.getCountryId())
+            .name(countryHT.getCountryName())
+            .code(countryHT.getCountryCode())
+            .currencyName(countryHT.getCurrencyName())
+            .currencyRate(new BigDecimal(countryHT.getCurrencyRate().replace(",", ".")))
+            .dateFormat(countryHT.getDateFormat())
+            .timeFormat(countryHT.getTimeFormat())
             .build();
     }
 

@@ -3,14 +3,18 @@ package easyhattrickmanager.service;
 import com.github.scribejava.core.model.OAuth1AccessToken;
 import com.github.scribejava.core.model.OAuth1RequestToken;
 import com.github.scribejava.core.oauth.OAuth10aService;
+import easyhattrickmanager.client.model.managercompendium.ManagerCompendium;
 import easyhattrickmanager.client.model.teamdetails.TeamDetails;
+import easyhattrickmanager.client.model.worldlanguages.WorldLanguages;
 import easyhattrickmanager.controller.model.SaveResponse;
 import easyhattrickmanager.controller.model.TokenRequest;
 import easyhattrickmanager.controller.model.UserRequest;
+import easyhattrickmanager.repository.LanguageDAO;
 import easyhattrickmanager.repository.TeamDAO;
 import easyhattrickmanager.repository.UserDAO;
 import easyhattrickmanager.repository.UserEhmDAO;
 import easyhattrickmanager.repository.UserEhmHistoryDAO;
+import easyhattrickmanager.repository.model.Language;
 import easyhattrickmanager.repository.model.Team;
 import easyhattrickmanager.repository.model.User;
 import easyhattrickmanager.repository.model.UserEhm;
@@ -37,6 +41,7 @@ public class LoginService {
     private final UserEhmHistoryDAO userEhmHistoryDAO;
     private final UserDAO userDAO;
     private final TeamDAO teamDAO;
+    private final LanguageDAO languageDAO;
     private final Map<String, LoginData> temporaryLoginDataStorage = new HashMap<>();
     private final UpdateService updateService;
     private final UpdateExecutionService updateExecutionService;
@@ -88,9 +93,11 @@ public class LoginService {
             throw new RuntimeException(ex);
         }
         TeamDetails teamDetails = hattrickService.getTeamDetails(accessToken);
+        ManagerCompendium managerCompendium = hattrickService.getManagerCompendium(accessToken);
         int userEhmId = saveUserEhm(loginData);
-        int userId = saveUser(accessToken, teamDetails);
-        saveUserEhmUser(userEhmId, userId);
+        User user = saveUser(accessToken, teamDetails, managerCompendium);
+        saveLanguage(user.getLanguageId());
+        saveUserEhmUser(userEhmId, user.getId());
         saveTeams(teamDetails);
         teamDetails.getTeams().forEach(team -> {
             updateService.update(team.getTeamId());
@@ -108,18 +115,20 @@ public class LoginService {
         return userEhm.getId();
     }
 
-    private int saveUser(OAuth1AccessToken accessToken, TeamDetails teamDetails) {
+    private User saveUser(OAuth1AccessToken accessToken, TeamDetails teamDetails, ManagerCompendium managerCompendium) {
         User user = User.builder()
             .id(teamDetails.getUser().getUserId())
             .name(teamDetails.getUser().getLoginname())
             .languageId(teamDetails.getUser().getLanguage().getLanguageId())
+            .countryId(managerCompendium.getManager().getCountry().getCountryId())
+            .currency(managerCompendium.getManager().getCurrency().getCurrencyName())
             .activationDate(teamDetails.getUser().getActivationDate())
             .token(accessToken.getToken())
             .tokenSecret(accessToken.getTokenSecret())
             .active(true)
             .build();
         userDAO.insert(user);
-        return user.getId();
+        return user;
     }
 
     private void saveUserEhmUser(int userEhmId, int userId) {
@@ -140,6 +149,31 @@ public class LoginService {
                 .build();
             teamDAO.insert(team);
         });
+    }
+
+    private void saveLanguage(int id) {
+        var language = languageDAO.get(id);
+        if (language.isEmpty()) {
+            updateLanguages();
+            language = languageDAO.get(id);
+            if (language.isEmpty()) {
+                throw new RuntimeException("Language not found: " + id);
+            }
+        }
+    }
+
+    private void updateLanguages() {
+        WorldLanguages worldLanguages = hattrickService.getWorldLanguages();
+        worldLanguages.getLanguages().forEach(languageHT -> {
+            languageDAO.insert(getLanguage(languageHT));
+        });
+    }
+
+    private Language getLanguage(easyhattrickmanager.client.model.worldlanguages.Language languageHT) {
+        return Language.builder()
+            .id(languageHT.getLanguageId())
+            .name(languageHT.getLanguageName())
+            .build();
     }
 
     private SaveResponse getSaveResponse(TeamDetails teamDetails) {
