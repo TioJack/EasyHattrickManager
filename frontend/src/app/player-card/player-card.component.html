@@ -8,7 +8,9 @@
         {{ player.lastName }}
       </a>
     </div>
-    <div class="col-3">countryId[{{ player.countryId }}]</div>
+    <div class="col-3 text-end">
+      <img src="assets/flags/{{ player.countryId }}.png" alt=""/>
+    </div>
   </div>
   <div class="row">
     <div class="col text-start">Una persona {{ player.agreeability }} que es {{ player.aggressiveness }} además de {{ player.honesty }}.</div>

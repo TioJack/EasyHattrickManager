@@ -12,7 +12,7 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:2000/ehm?serverTimezone=Europe/Madrid
+    url: jdbc:mysql://ehm_database:3306/ehm?serverTimezone=Europe/Madrid
     username: ehm
     password: ehm
 
