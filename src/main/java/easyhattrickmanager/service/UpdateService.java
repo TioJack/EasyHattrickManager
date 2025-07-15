@@ -1,8 +1,12 @@
 package easyhattrickmanager.service;
 
+import easyhattrickmanager.client.model.avatars.Avatar;
+import easyhattrickmanager.client.model.avatars.Avatars;
+import easyhattrickmanager.client.model.avatars.Layer;
 import easyhattrickmanager.client.model.players.Players;
 import easyhattrickmanager.client.model.stafflist.Stafflist;
 import easyhattrickmanager.client.model.worlddetails.WorldDetails;
+import easyhattrickmanager.configuration.AssetsConfiguration;
 import easyhattrickmanager.repository.CountryDAO;
 import easyhattrickmanager.repository.LeagueDAO;
 import easyhattrickmanager.repository.PlayerDAO;
@@ -18,12 +22,22 @@ import easyhattrickmanager.repository.model.Staff;
 import easyhattrickmanager.repository.model.Team;
 import easyhattrickmanager.repository.model.Training;
 import easyhattrickmanager.service.model.HTMS;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.InputStream;
 import java.math.BigDecimal;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.DayOfWeek;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import javax.imageio.ImageIO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +53,9 @@ public class UpdateService {
     private final TrainingDAO trainingDAO;
     private final StaffDAO staffDAO;
     private final TeamDAO teamDAO;
+    private final AssetsConfiguration assetsConfiguration;
+
+    private List<String> images = new ArrayList<>();
 
     public void update(int teamId) {
         int adjustmentDays = getAdjustmentDays(teamId);
@@ -54,6 +71,7 @@ public class UpdateService {
             });
         trainingDAO.insert(getTraining(hattrickService.getTraining(teamId), seasonWeek));
         staffDAO.insert(getStaff(teamId, hattrickService.getStaff(teamId), seasonWeek));
+        saveAvatars(hattrickService.getAvatars(teamId));
     }
 
     public void updateLeagues() {
@@ -377,6 +395,74 @@ public class UpdateService {
             .dateFormat(countryHT.getDateFormat())
             .timeFormat(countryHT.getTimeFormat())
             .build();
+    }
+
+    private void saveAvatars(Avatars avatars) {
+        avatars.getTeam().getPlayers().forEach(
+            playerHT -> {
+                if (!Files.exists(Paths.get(assetsConfiguration.getAssetsPath() + "/avatars/" + playerHT.getPlayerId() + ".png"))) {
+                    saveImage(playerHT.getAvatar().getBackgroundImage());
+                    playerHT.getAvatar().getLayers().forEach(layer -> saveImage(layer.getImage()));
+                    saveImage(mountImage(playerHT.getAvatar()), playerHT.getPlayerId());
+                }
+            }
+        );
+    }
+
+    private BufferedImage mountImage(Avatar avatar) {
+        try {
+            List<Layer> layers = avatar.getLayers();
+            Layer background = layers.get(0);
+            int offsetX = background.getX();
+            int offsetY = background.getY();
+            BufferedImage backgroundImage = ImageIO.read(new File(assetsConfiguration.getAssetsPath() + background.getImage()));
+            BufferedImage finalImage = new BufferedImage(backgroundImage.getWidth(), backgroundImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            Graphics2D graphic = finalImage.createGraphics();
+            graphic.drawImage(backgroundImage, 0, 0, null);
+            for (int i = 1; i < avatar.getLayers().size(); i++) {
+                Layer layer = layers.get(i);
+                if (!layer.getImage().contains("misc")) {
+                    String layerImagePath = assetsConfiguration.getAssetsPath() + layer.getImage();
+                    BufferedImage layerImage = ImageIO.read(new File(layerImagePath));
+                    graphic.drawImage(layerImage, layer.getX() - offsetX, layer.getY() - offsetY, null);
+                }
+            }
+            graphic.dispose();
+            return finalImage;
+        } catch (Exception e) {
+            System.err.printf("Error mountImage. %s%n", e.getMessage());
+        }
+        return null;
+    }
+
+    private void saveImage(BufferedImage image, int id) {
+        try {
+            String outputPath = assetsConfiguration.getAssetsPath() + "/avatars/" + id + ".png";
+            Files.createDirectories(Paths.get(outputPath).getParent());
+            ImageIO.write(image, "png", new File(outputPath));
+        } catch (Exception e) {
+            System.err.printf("Error saveImage %d. %s%n", id, e.getMessage());
+        }
+    }
+
+    private void saveImage(String url) {
+        if (!images.contains(url)) {
+            String imageUrl = assetsConfiguration.getHattrickUrl() + url;
+            String destinationPath = assetsConfiguration.getAssetsPath() + url;
+            if (!Files.exists(Paths.get(destinationPath))) {
+                downloadFile(imageUrl, destinationPath);
+            }
+            images.add(url);
+        }
+    }
+
+    private void downloadFile(String fileUrl, String destinationPath) {
+        try (InputStream in = new URL(fileUrl).openStream()) {
+            Files.createDirectories(Paths.get(destinationPath).getParent());
+            Files.copy(in, Paths.get(destinationPath));
+        } catch (Exception e) {
+            System.err.printf("Error downloadFile %s %s. %s%n", fileUrl, destinationPath, e.getMessage());
+        }
     }
 
 }

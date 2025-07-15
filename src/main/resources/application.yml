@@ -1,5 +1,5 @@
 app:
-  version: 8
+  version: 9
 
 server:
   port: 1998
@@ -29,3 +29,6 @@ ehm:
   register-callback-url: http://localhost:1997/save
   cron-add-active-update-executions: "0 0 1 * * SUN,MON,TUE"
 
+assets:
+  hattrick-url: https://www.hattrick.org
+  assets-path: /application/assets

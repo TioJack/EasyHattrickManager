@@ -11,6 +11,7 @@ import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth10aService;
+import easyhattrickmanager.client.model.avatars.Avatars;
 import easyhattrickmanager.client.model.managercompendium.ManagerCompendium;
 import easyhattrickmanager.client.model.players.Players;
 import easyhattrickmanager.client.model.stafflist.Stafflist;
@@ -119,6 +120,16 @@ public class HattrickClient {
             String xml = this.getXML(accessToken, "worldlanguages&version=1.2");
             WorldLanguages worldLanguages = XMLMAPPER.readValue(xml, WorldLanguages.class);
             return worldLanguages;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public Avatars getAvatars(OAuth1AccessToken accessToken, int teamId) {
+        try {
+            String xml = this.getXML(accessToken, "avatars&version=1.1&actionType=players&teamId=" + teamId);
+            Avatars avatars = XMLMAPPER.readValue(xml, Avatars.class);
+            return avatars;
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e.getMessage());
         }

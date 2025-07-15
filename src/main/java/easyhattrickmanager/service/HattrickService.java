@@ -2,6 +2,7 @@ package easyhattrickmanager.service;
 
 import com.github.scribejava.core.model.OAuth1AccessToken;
 import easyhattrickmanager.client.HattrickClient;
+import easyhattrickmanager.client.model.avatars.Avatars;
 import easyhattrickmanager.client.model.managercompendium.ManagerCompendium;
 import easyhattrickmanager.client.model.players.Players;
 import easyhattrickmanager.client.model.stafflist.Stafflist;
@@ -54,6 +55,10 @@ public class HattrickService {
     private OAuth1AccessToken getAccessToken(int teamId) {
         User user = userDAO.getByTeamId(teamId);
         return new OAuth1AccessToken(user.getToken(), user.getTokenSecret());
+    }
+
+    public Avatars getAvatars(int teamId) {
+        return this.hattrickClient.getAvatars(getAccessToken(teamId), teamId);
     }
 
 }

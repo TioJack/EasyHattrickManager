@@ -13,5 +13,6 @@ upload_README.txt
 /frontend/nginx-*.conf
 /src/main/resources/application-*.yml
 /old_frontend/
+/assets/avatars/
 /assets/flags/
-/assets/players/
+/assets/Img/
