@@ -6,10 +6,20 @@ $primary: #277f31;
 @import "bootstrap-icons/font/bootstrap-icons";
 
 body {
+  font-family: Roboto, Verdana, Helvetica, Sans-Serif, serif;
+  font-size: small;
   background-image: url('/assets/bg.png');
   background-repeat: repeat;
   background-size: auto;
   background-color: rgba(255, 255, 255, 0.6);
   background-blend-mode: lighten;
   overflow-x: hidden;
+}
+
+.shadow-2 {
+  box-shadow: grey 0px 0px 2px;
+}
+
+.shadow-6 {
+  box-shadow: grey 0px 0px 6px;
 }

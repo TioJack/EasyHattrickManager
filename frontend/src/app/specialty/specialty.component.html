@@ -1,0 +1,7 @@
+<ng-container *ngIf="specialty != undefined">
+  <ng-container *ngIf="specialty > 0">
+    <img src="assets/specialty/{{ specialty }}.png" alt="" class="specialty-icon"/>
+    {{ 'ht.specialty-' + specialty | translate }}
+  </ng-container>
+  <ng-container *ngIf="specialty == 0">-</ng-container>
+</ng-container>

@@ -17,7 +17,7 @@ public class DataController {
     private final DataService dataService;
 
     @GetMapping
-    public ResponseEntity<DataResponse> data() {
+    public ResponseEntity<DataResponse> getData() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         DataResponse dataResponse = dataService.getData(username);
         return ResponseEntity.ok(dataResponse);

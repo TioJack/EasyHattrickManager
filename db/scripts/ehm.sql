@@ -177,6 +177,14 @@ CREATE TABLE IF NOT EXISTS `language` (
     name VARCHAR(255) NOT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS `translation` (
+    language_id INT NOT NULL,
+    `key` VARCHAR(255) NOT NULL,
+    `value` TEXT NOT NULL,
+    PRIMARY KEY (`language_id`, `key`),
+    CONSTRAINT `translation_ibfk_1` FOREIGN KEY (`language_id`) REFERENCES `language` (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE IF NOT EXISTS `update_execution` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     team_id INT NOT NULL,

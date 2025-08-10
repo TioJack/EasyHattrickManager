@@ -1,5 +1,5 @@
 app:
-  version: 9
+  version: 10
 
 server:
   port: 1998
@@ -32,3 +32,7 @@ ehm:
 assets:
   hattrick-url: https://www.hattrick.org
   assets-path: /application/assets
+
+libre-translate-feign-client:
+  name: libre-translate-api
+  url: http://localhost:5555

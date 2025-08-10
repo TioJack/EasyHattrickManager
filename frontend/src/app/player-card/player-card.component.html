@@ -1,89 +1,108 @@
-<div class="card container" *ngIf="player">
+<div class="card container" *ngIf="player && userConfig">
   <div class="row">
-    <div class="col-9 text-start">
-      <span *ngIf="player.playerNumber">{{ player.playerNumber }}.</span>
+    <div class="col-9 text-start fw-bold fs-6">
+      <span *ngIf="player.playerNumber">{{ player.playerNumber }}. </span>
       <a target="_blank" href="http://hattrick.org/goto.ashx?path=/Club/Players/Player.aspx?playerId={{ player.id }}">
-        {{ player.firstName }}
-        <span *ngIf="player.nickName">'{{ player.nickName }}'</span>
-        {{ player.lastName }}
+        <span>
+          {{ player.firstName }}
+          <span *ngIf="player.nickName">'{{ player.nickName }}'</span>
+          {{ player.lastName }}
+        </span>
       </a>
     </div>
     <div class="col-3 text-end">
-      <img src="assets/flags/{{ player.countryId }}.png" alt=""/>
+      <img src="assets/flags/{{ player.countryId }}.png" alt="" class="shadow-2"/>
     </div>
   </div>
   <div class="row">
-    <div class="col text-start">Una persona {{ player.agreeability }} que es {{ player.aggressiveness }} además de {{ player.honesty }}.</div>
+    <div class="col text-start">{{ 'ehm.person' | translate }} {{ 'ht.agreeability-' + player.agreeability | translate }}, {{ 'ht.agressiveness-' + player.aggressiveness | translate }} {{ 'ehm.and' | translate }} {{ 'ht.honesty-' + player.honesty | translate }}.
+    </div>
   </div>
   <div class="row">
-    <div class="col text-start">Tiene nivel {{ player.experience }} en experiencia y liderazgo {{ player.leadership }}. Tiene {{ player.loyalty }} fidelidad.</div>
+    <div class="col text-start">
+      {{ 'ehm.has' | translate }} {{ 'ht.skill-level-' + player.experience | translate }} ({{ player.experience }}) {{ 'ht.skill-experience' | translate | lowercase }},
+      {{ 'ht.skill-level-' + player.leadership | translate }} ({{ player.leadership }}) {{ 'ht.skill-leadership' | translate | lowercase }} {{ 'ehm.and' | translate }}
+      {{ 'ht.skill-level-' + player.loyalty | translate }} ({{ player.loyalty }}) {{ 'ehm.loyalty' | translate }}.
+    </div>
   </div>
   <div class="row">
-    <div class="col col-2 d-flex align-items-center justify-content-center">
-      <img [src]="'assets/avatars/' + player.id + '.png'"
-           (error)="onImageError($event)"
-           alt=""/>
-    </div>
-    <div class="col col-6">
-      <div class="row">
-        <div class="col text-end">Edad</div>
-        <div class="col text-start">{{ player.age }} años y {{ player.ageDays }} días</div>
-      </div>
-      <div class="row">
-        <div class="col text-end">TSI</div>
-        <div class="col text-start">{{ player.tsi }}</div>
-      </div>
-      <div class="row">
-        <div class="col text-end">Salario</div>
-        <div class="col text-start">{{ player.salary }} €/semana</div>
-      </div>
-      <div class="row">
-        <div class="col text-end">Especialidad</div>
-        <div class="col text-start">{{ player.specialty }}</div>
-      </div>
-      <div class="row">
-        <div class="col text-end">Forma</div>
-        <div class="col text-start">{{ player.playerForm }}</div>
-      </div>
-      <div class="row">
-        <div class="col text-end">Resistencia</div>
-        <div class="col text-start">{{ player.staminaSkill }}</div>
-      </div>
-      <div class="row">
-        <div class="col text-end">HTMS</div>
-        <div class="col text-start">{{ player.htms }} | {{ player.htms28 }}</div>
-      </div>
-    </div>
-    <div class="col col-4">
-      <div class="row">
-        <div class="col text-end">Portería</div>
-        <div class="col text-start">{{ player.keeperSkill }}</div>
-      </div>
-      <div class="row">
-        <div class="col text-end">Defensa</div>
-        <div class="col text-start">{{ player.defenderSkill }}</div>
-      </div>
-      <div class="row">
-        <div class="col text-end">Jugadas</div>
-        <div class="col text-start">{{ player.playmakerSkill }}</div>
-      </div>
-      <div class="row">
-        <div class="col text-end">Lateral</div>
-        <div class="col text-start">{{ player.wingerSkill }}</div>
-      </div>
-      <div class="row">
-        <div class="col text-end">Pases</div>
-        <div class="col text-start">{{ player.passingSkill }}</div>
-      </div>
-      <div class="row">
-        <div class="col text-end">Anotación</div>
-        <div class="col text-start">{{ player.scorerSkill }}</div>
-      </div>
-      <div class="row">
-        <div class="col text-end">Balón parado</div>
-        <div class="col text-start">{{ player.setPiecesSkill }}</div>
-      </div>
+    <div class="col w-100">
+      <table class="w-100">
+        <tr>
+          <td rowspan="7">
+            <img [src]="'assets/avatars/' + player.id + '.png'" (error)="onImageError($event)" alt="" class="shadow-6"/>
+          </td>
+          <td class="text-end pe-1">{{ 'ehm.age' | translate }}</td>
+          <td class="text-start" colspan="2">{{ player.age }}{{ 'ehm.years' | translate | firstLetter }} {{ player.ageDays }}{{ 'ehm.days' | translate | firstLetter }}</td>
+          <td class="text-end pe-1">{{ 'ht.skill-keeper' | translate }}</td>
+          <td>
+            <app-skill [skill]="player.keeperSkill" [max]="20"></app-skill>
+          </td>
+          <td class="text-end" style="width: 3%;">{{ player.keeperSkill }}</td>
+        </tr>
+        <tr>
+          <td class="text-end pe-1">TSI</td>
+          <td class="text-start" colspan="2">{{ player.tsi }}</td>
+          <td class="text-end pe-1">{{ 'ht.skill-defender' | translate }}</td>
+          <td>
+            <app-skill [skill]="player.defenderSkill" [max]="20"></app-skill>
+          </td>
+          <td class="text-end">{{ player.defenderSkill }}</td>
+        </tr>
+        <tr>
+          <td class="text-end pe-1">{{ 'ehm.wage' | translate }}</td>
+          <td class="text-start" colspan="2">{{ player.salary | salary:userConfig.currency }}</td>
+          <td class="text-end pe-1">{{ 'ht.skill-playmaker' | translate }}</td>
+          <td>
+            <app-skill [skill]="player.playmakerSkill" [max]="20"></app-skill>
+          </td>
+          <td class="text-end">{{ player.playmakerSkill }}</td>
+        </tr>
+        <tr>
+          <td class="text-end pe-1">{{ 'ht.specialty' | translate }}</td>
+          <td class="text-start" colspan="2">
+            <app-specialty [specialty]="player.specialty"></app-specialty>
+          </td>
+          <td class="text-end pe-1">{{ 'ht.skill-winger' | translate }}</td>
+          <td>
+            <app-skill [skill]="player.wingerSkill" [max]="20"></app-skill>
+          </td>
+          <td class="text-end">{{ player.wingerSkill }}</td>
+        </tr>
+        <tr>
+          <td class="text-end pe-1">{{ 'ht.skill-form' | translate }}</td>
+          <td class="text-start">
+            <app-skill [skill]="player.playerForm" [max]="8"></app-skill>
+          </td>
+          <td class="text-start">{{ player.playerForm }}</td>
+          <td class="text-end pe-1">{{ 'ht.skill-passer' | translate }}</td>
+          <td>
+            <app-skill [skill]="player.passingSkill" [max]="20"></app-skill>
+          </td>
+          <td class="text-end">{{ player.passingSkill }}</td>
+        </tr>
+        <tr>
+          <td class="text-end pe-1">{{ 'ht.skill-stamina' | translate }}</td>
+          <td class="text-start">
+            <app-skill [skill]="player.staminaSkill" [max]="9"></app-skill>
+          </td>
+          <td class="text-start">{{ player.staminaSkill }}</td>
+          <td class="text-end pe-1">{{ 'ht.skill-scorer' | translate }}</td>
+          <td>
+            <app-skill [skill]="player.scorerSkill" [max]="20"></app-skill>
+          </td>
+          <td class="text-end">{{ player.scorerSkill }}</td>
+        </tr>
+        <tr>
+          <td class="text-end pe-1">HTMS</td>
+          <td class="text-start" colspan="2">{{ player.htms }} | {{ player.htms28 }}</td>
+          <td class="text-end pe-1">{{ 'ht.skill-kicker' | translate }}</td>
+          <td>
+            <app-skill [skill]="player.setPiecesSkill" [max]="20"></app-skill>
+          </td>
+          <td class="text-end">{{ player.setPiecesSkill }}</td>
+        </tr>
+      </table>
     </div>
   </div>
 </div>
-

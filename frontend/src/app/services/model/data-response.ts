@@ -2,6 +2,7 @@ export interface DataResponse {
   version: string;
   user: User;
   teams: TeamExtendedInfo[];
+  userConfig: UserConfig;
 }
 
 export interface User {
@@ -103,4 +104,13 @@ export interface PlayerInfo {
   setPiecesSkill: number;
   htms: number;
   htms28: number;
+}
+
+export interface UserConfig {
+  currency: Currency;
+}
+
+export interface Currency {
+  currencyCode: string;
+  currencyRate: number;
 }

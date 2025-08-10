@@ -3,9 +3,9 @@ package easyhattrickmanager.service;
 import com.github.scribejava.core.model.OAuth1AccessToken;
 import com.github.scribejava.core.model.OAuth1RequestToken;
 import com.github.scribejava.core.oauth.OAuth10aService;
-import easyhattrickmanager.client.model.managercompendium.ManagerCompendium;
-import easyhattrickmanager.client.model.teamdetails.TeamDetails;
-import easyhattrickmanager.client.model.worldlanguages.WorldLanguages;
+import easyhattrickmanager.client.hattrick.model.managercompendium.ManagerCompendium;
+import easyhattrickmanager.client.hattrick.model.teamdetails.TeamDetails;
+import easyhattrickmanager.client.hattrick.model.worldlanguages.WorldLanguages;
 import easyhattrickmanager.controller.model.SaveResponse;
 import easyhattrickmanager.controller.model.TokenRequest;
 import easyhattrickmanager.controller.model.UserRequest;
@@ -169,7 +169,7 @@ public class LoginService {
         });
     }
 
-    private Language getLanguage(easyhattrickmanager.client.model.worldlanguages.Language languageHT) {
+    private Language getLanguage(easyhattrickmanager.client.hattrick.model.worldlanguages.Language languageHT) {
         return Language.builder()
             .id(languageHT.getLanguageId())
             .name(languageHT.getLanguageName())

@@ -1,0 +1,32 @@
+.ht-bar {
+  display: inline-block;
+  height: 15px;
+  position: relative;
+}
+
+.ht-bar .bar-denomination {
+  display: flex;
+  white-space: nowrap;
+  margin-left: 2px;
+  line-height: 15px;
+  font-size: 80%;
+}
+
+.ht-bar .bar-level {
+  position: absolute;
+  background-color: #59965d;
+  color: #f7f8f7;
+  height: 100%;
+  overflow: hidden;
+  margin-top: 2px;
+}
+
+.ht-bar .bar-max {
+  position: absolute;
+  background-color: #ececec;
+  color: #3f7137;
+  height: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-top: 2px;
+}

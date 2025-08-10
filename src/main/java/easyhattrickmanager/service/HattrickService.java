@@ -1,15 +1,16 @@
 package easyhattrickmanager.service;
 
 import com.github.scribejava.core.model.OAuth1AccessToken;
-import easyhattrickmanager.client.HattrickClient;
-import easyhattrickmanager.client.model.avatars.Avatars;
-import easyhattrickmanager.client.model.managercompendium.ManagerCompendium;
-import easyhattrickmanager.client.model.players.Players;
-import easyhattrickmanager.client.model.stafflist.Stafflist;
-import easyhattrickmanager.client.model.teamdetails.TeamDetails;
-import easyhattrickmanager.client.model.training.Training;
-import easyhattrickmanager.client.model.worlddetails.WorldDetails;
-import easyhattrickmanager.client.model.worldlanguages.WorldLanguages;
+import easyhattrickmanager.client.hattrick.HattrickClient;
+import easyhattrickmanager.client.hattrick.model.avatars.Avatars;
+import easyhattrickmanager.client.hattrick.model.managercompendium.ManagerCompendium;
+import easyhattrickmanager.client.hattrick.model.players.Players;
+import easyhattrickmanager.client.hattrick.model.stafflist.Stafflist;
+import easyhattrickmanager.client.hattrick.model.teamdetails.TeamDetails;
+import easyhattrickmanager.client.hattrick.model.training.Training;
+import easyhattrickmanager.client.hattrick.model.translations.Translations;
+import easyhattrickmanager.client.hattrick.model.worlddetails.WorldDetails;
+import easyhattrickmanager.client.hattrick.model.worldlanguages.WorldLanguages;
 import easyhattrickmanager.repository.UserDAO;
 import easyhattrickmanager.repository.model.User;
 import lombok.RequiredArgsConstructor;
@@ -59,6 +60,10 @@ public class HattrickService {
 
     public Avatars getAvatars(int teamId) {
         return this.hattrickClient.getAvatars(getAccessToken(teamId), teamId);
+    }
+
+    public Translations getTranslations(int languageId) {
+        return this.hattrickClient.getTranslations(getAccessToken(DEFAULT_TEAM_ID), languageId);
     }
 
 }

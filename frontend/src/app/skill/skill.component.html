@@ -1,0 +1,8 @@
+<div *ngIf="skill != undefined" class="ht-bar" [style]="'width:' + this.width">
+  <div class="bar-max w-100">
+    <span class="bar-denomination">{{ skill | skillLevel }}</span>
+  </div>
+  <div class="bar-level" [style]="'width:' + this.percentage + '%'">
+    <span class="bar-denomination">{{ skill | skillLevel }}</span>
+  </div>
+</div>

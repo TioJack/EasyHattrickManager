@@ -14,4 +14,9 @@
     WHERE id = #{id};
   </select>
 
+  <select id="getAllLanguages" resultType="easyhattrickmanager.repository.model.Language">
+    SELECT id, name
+    FROM language;
+  </select>
+
 </mapper>

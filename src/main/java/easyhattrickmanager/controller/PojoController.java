@@ -8,7 +8,7 @@ import static com.fasterxml.jackson.databind.node.JsonNodeType.OBJECT;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import easyhattrickmanager.client.ZonedDateTimeDeserializer;
+import easyhattrickmanager.client.hattrick.ZonedDateTimeDeserializer;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -19,11 +19,13 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.AbstractMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.atteo.evo.inflector.English;
+import org.mapstruct.ap.internal.util.Strings;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,7 +47,6 @@ public class PojoController {
         .configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
         .build();
 
-    // Remove attributes from xml before generate
     @PostMapping("generate")
     public String generate(@RequestParam("file") MultipartFile file) {
         try {
@@ -102,6 +103,7 @@ public class PojoController {
     }
 
     private void generateClass(JsonNode jsonNode, String nodeName, StringBuilder codeBuilder) {
+        System.out.println("Generating class: " + nodeName);
         Set<Entry<String, JsonNode>> classesToBeGenerated = new HashSet<>();
         StringBuilder classCodeBuilder = new StringBuilder();
         classCodeBuilder.append("@Data\n");
@@ -155,9 +157,20 @@ public class PojoController {
     }
 
     private void generateProperty(JsonNode jsonNode, String nodeName, StringBuilder codeBuilder) {
-        codeBuilder
-            .append("\t").append("@JacksonXmlProperty(localName = \"").append(nodeName).append("\")\n")
-            .append("\t").append("private ").append(getType(jsonNode, nodeName)).append(" ").append(normalizeName(nodeName)).append(";\n\n");
+        List<String> attributes = List.of("Id", "Type", "Value", "Label");
+        if (attributes.contains(nodeName)) {
+            codeBuilder
+                .append("\t").append("@JacksonXmlProperty(localName = \"").append(nodeName).append("\", isAttribute = true)\n")
+                .append("\t").append("private ").append(getType(jsonNode, nodeName)).append(" ").append(normalizeName(nodeName)).append(";\n\n");
+        } else if (Strings.isEmpty(nodeName)) {
+            codeBuilder
+                .append("\t").append("@JacksonXmlText\n")
+                .append("\t").append("private ").append(getType(jsonNode, nodeName)).append(" ").append("text").append(";\n\n");
+        } else {
+            codeBuilder
+                .append("\t").append("@JacksonXmlProperty(localName = \"").append(nodeName).append("\")\n")
+                .append("\t").append("private ").append(getType(jsonNode, nodeName)).append(" ").append(normalizeName(nodeName)).append(";\n\n");
+        }
     }
 
     private void generateListProperty(final String xmlProperty, final String classOfList, StringBuilder codeBuilder) {

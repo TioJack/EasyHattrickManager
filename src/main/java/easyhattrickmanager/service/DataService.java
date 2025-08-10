@@ -14,16 +14,19 @@ import easyhattrickmanager.repository.model.PlayerData;
 import easyhattrickmanager.repository.model.Staff;
 import easyhattrickmanager.repository.model.Training;
 import easyhattrickmanager.repository.model.User;
+import easyhattrickmanager.service.model.dataresponse.Currency;
 import easyhattrickmanager.service.model.dataresponse.PlayerInfo;
 import easyhattrickmanager.service.model.dataresponse.StaffInfo;
 import easyhattrickmanager.service.model.dataresponse.TeamExtendedInfo;
 import easyhattrickmanager.service.model.dataresponse.TrainingInfo;
+import easyhattrickmanager.service.model.dataresponse.UserConfig;
 import easyhattrickmanager.service.model.dataresponse.WeeklyInfo;
 import easyhattrickmanager.service.model.dataresponse.mapper.PlayerInfoMapper;
 import easyhattrickmanager.service.model.dataresponse.mapper.StaffInfoMapper;
 import easyhattrickmanager.service.model.dataresponse.mapper.TeamExtendedInfoMapper;
 import easyhattrickmanager.service.model.dataresponse.mapper.TrainingInfoMapper;
 import easyhattrickmanager.service.model.dataresponse.mapper.UserInfoMapper;
+import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +61,12 @@ public class DataService {
             .version(appVersion)
             .user(userInfoMapper.toInfo(user))
             .teams(getTeams(user.getId()))
+            .userConfig(UserConfig.builder()
+                .currency(Currency.builder()
+                    .currencyCode("€")
+                    .currencyRate(BigDecimal.TEN)
+                    .build())
+                .build())
             .build();
     }
 

@@ -1,8 +1,8 @@
-<header class="d-flex justify-content-between align-items-center bg-light p-1 border-bottom">
+<header class="d-flex justify-content-between align-items-center bg-light p-1 border-bottom swipe-container">
   <div>
     <div class="dropdown">
       <button class="btn btn-outline-primary dropdown-toggle" type="button" id="teamDropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-        Equipo: {{ selectedTeam?.team?.name }}
+        {{ 'ehm.project' | translate }}: {{ selectedTeam?.team?.name }}
       </button>
       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="teamDropdownMenuButton">
         <li *ngFor="let team of dataResponse.teams">
@@ -25,8 +25,8 @@
       <i class="bi bi-chevron-left"></i>
     </button>
     <span class="fw-bold mx-3">
-      Temporada {{ selectedTeam?.weeklyData?.[selectedWeekIndex]?.season || 'Seleccionar' }}
-      Semana {{ selectedTeam?.weeklyData?.[selectedWeekIndex]?.week || 'Seleccionar' }}
+      {{ 'ehm.season' | translate }} {{ selectedTeam?.weeklyData?.[selectedWeekIndex]?.season }}
+      {{ 'ehm.week' | translate }} {{ selectedTeam?.weeklyData?.[selectedWeekIndex]?.week }}
     </span>
     <button class="btn btn-outline-secondary" (click)="onNextWeek()">
       <i class="bi bi-chevron-right"></i>
@@ -37,6 +37,7 @@
     <button class="btn btn-outline-secondary" (click)="onLastWeek()">
       <i class="bi bi-chevron-bar-right"></i>
     </button>
+    <i class="bi bi-info-circle ms-2 fs-4" title="{{ 'ehm.navigate-help' | translate }}"></i>
   </div>
 
   <div class="dropdown">
@@ -51,12 +52,12 @@
       </li>
       <li>
         <button class="dropdown-item" (click)="downloadData()">
-          <i class="bi bi-download me-2"></i>Descargar Datos
+          <i class="bi bi-download me-2"></i>{{ 'ehm.download-data' | translate }}
         </button>
       </li>
       <li>
         <button class="dropdown-item" (click)="logout()">
-          <i class="bi bi-power me-2"></i>Cerrar Sesión
+          <i class="bi bi-power me-2"></i>{{ 'ehm.log-out' | translate }}
         </button>
       </li>
       <li>

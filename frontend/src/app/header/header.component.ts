@@ -1,15 +1,15 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, HostListener, Input, OnInit} from '@angular/core';
 import {AuthService} from '../services/auth.service';
 import {TeamExtendedInfo} from '../services/model/data-response';
 import {NgForOf} from '@angular/common';
 import {PlayService} from '../services/play.service';
+import {UserConfigService} from '../services/user-config.service';
+import {TranslatePipe} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [
-    NgForOf
-  ],
+  imports: [NgForOf, TranslatePipe],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
@@ -20,11 +20,15 @@ export class HeaderComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private playService: PlayService
+    private playService: PlayService,
+    private userConfigService: UserConfigService
   ) {
   }
 
   ngOnInit(): void {
+    if (this.dataResponse.userConfig) {
+      this.userConfigService.setUserConfig(this.dataResponse.userConfig);
+    }
     if (this.dataResponse.teams.length > 0) {
       this.selectTeam(this.dataResponse.teams[0]);
     }
@@ -118,4 +122,15 @@ export class HeaderComponent implements OnInit {
       this.playService.selectSeasonAndWeek(selectedWeekData.season, selectedWeekData.week);
     }
   }
+
+  @HostListener('window:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent): void {
+    if (event.key === 'ArrowRight') {
+      this.onNextWeek();
+    }
+    if (event.key === 'ArrowLeft') {
+      this.onPreviousWeek();
+    }
+  }
+
 }

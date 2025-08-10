@@ -1,11 +1,13 @@
 package easyhattrickmanager.service;
 
-import easyhattrickmanager.client.model.avatars.Avatar;
-import easyhattrickmanager.client.model.avatars.Avatars;
-import easyhattrickmanager.client.model.avatars.Layer;
-import easyhattrickmanager.client.model.players.Players;
-import easyhattrickmanager.client.model.stafflist.Stafflist;
-import easyhattrickmanager.client.model.worlddetails.WorldDetails;
+import static java.lang.Integer.parseInt;
+
+import easyhattrickmanager.client.hattrick.model.avatars.Avatar;
+import easyhattrickmanager.client.hattrick.model.avatars.Avatars;
+import easyhattrickmanager.client.hattrick.model.avatars.Layer;
+import easyhattrickmanager.client.hattrick.model.players.Players;
+import easyhattrickmanager.client.hattrick.model.stafflist.Stafflist;
+import easyhattrickmanager.client.hattrick.model.worlddetails.WorldDetails;
 import easyhattrickmanager.configuration.AssetsConfiguration;
 import easyhattrickmanager.repository.CountryDAO;
 import easyhattrickmanager.repository.LeagueDAO;
@@ -118,7 +120,7 @@ public class UpdateService {
         return -1 * daysToSubtract;
     }
 
-    private Player getPlayer(easyhattrickmanager.client.model.players.Player playerHT) {
+    private Player getPlayer(easyhattrickmanager.client.hattrick.model.players.Player playerHT) {
         return Player.builder()
             .id(playerHT.getPlayerId())
             .firstName(playerHT.getFirstName())
@@ -131,7 +133,7 @@ public class UpdateService {
             .build();
     }
 
-    private PlayerData getPlayerData(int teamId, easyhattrickmanager.client.model.players.Player playerHT, int adjustmentDays, String seasonWeek) {
+    private PlayerData getPlayerData(int teamId, easyhattrickmanager.client.hattrick.model.players.Player playerHT, int adjustmentDays, String seasonWeek) {
         int adjustedAgeDays = playerHT.getAgeDays() + adjustmentDays;
         int adjustedAge = playerHT.getAge();
         if (adjustedAgeDays >= 112) {
@@ -198,8 +200,8 @@ public class UpdateService {
         if (!seasonWeek.matches("S\\d{3}W\\d{2}")) {
             throw new IllegalArgumentException("Incorrect format SxxxWyy");
         }
-        int season = Integer.parseInt(seasonWeek.substring(1, 4));
-        int week = Integer.parseInt(seasonWeek.substring(5, 7));
+        int season = parseInt(seasonWeek.substring(1, 4));
+        int week = parseInt(seasonWeek.substring(5, 7));
         if (week < 1 || week > 16) {
             throw new IllegalArgumentException("Week will be between 1-16");
         }
@@ -213,7 +215,7 @@ public class UpdateService {
         return startOfRequestedWeek;
     }
 
-    private HTMS calculateHTMS(easyhattrickmanager.client.model.players.Player playerHT) {
+    private HTMS calculateHTMS(easyhattrickmanager.client.hattrick.model.players.Player playerHT) {
         return calculateHTMS(
             playerHT.getAge(),
             playerHT.getAgeDays(),
@@ -324,7 +326,7 @@ public class UpdateService {
             .build();
     }
 
-    private Training getTraining(easyhattrickmanager.client.model.training.Training training, String seasonWeek) {
+    private Training getTraining(easyhattrickmanager.client.hattrick.model.training.Training training, String seasonWeek) {
         return Training.builder()
             .seasonWeek(seasonWeek)
             .date(ZonedDateTime.now())
@@ -374,7 +376,7 @@ public class UpdateService {
             .build();
     }
 
-    private League getLeague(easyhattrickmanager.client.model.worlddetails.League leagueHT) {
+    private League getLeague(easyhattrickmanager.client.hattrick.model.worlddetails.League leagueHT) {
         return League.builder()
             .id(leagueHT.getLeagueId())
             .name(leagueHT.getLeagueName())
@@ -385,7 +387,7 @@ public class UpdateService {
             .build();
     }
 
-    private Country getCountry(easyhattrickmanager.client.model.worlddetails.Country countryHT) {
+    private Country getCountry(easyhattrickmanager.client.hattrick.model.worlddetails.Country countryHT) {
         return Country.builder()
             .id(countryHT.getCountryId())
             .name(countryHT.getCountryName())
