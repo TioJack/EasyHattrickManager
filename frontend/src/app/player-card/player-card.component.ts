@@ -7,11 +7,12 @@ import {SkillComponent} from '../skill/skill.component';
 import {TranslatePipe} from '@ngx-translate/core';
 import {FirstLetterPipe} from '../pipes/first-letter.pipe';
 import {SpecialtyComponent} from '../specialty/specialty.component';
+import {FirstCapitalizePipe} from '../pipes/first-capitalize.pipe';
 
 @Component({
   selector: 'app-player-card',
   standalone: true,
-  imports: [NgIf, SalaryPipe, SkillComponent, TranslatePipe, FirstLetterPipe, SpecialtyComponent, LowerCasePipe],
+  imports: [NgIf, SalaryPipe, SkillComponent, TranslatePipe, FirstLetterPipe, SpecialtyComponent, LowerCasePipe, FirstCapitalizePipe],
   templateUrl: './player-card.component.html'
 })
 export class PlayerCardComponent implements OnInit {

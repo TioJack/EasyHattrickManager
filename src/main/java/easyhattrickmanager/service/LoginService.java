@@ -1,5 +1,6 @@
 package easyhattrickmanager.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.scribejava.core.model.OAuth1AccessToken;
 import com.github.scribejava.core.model.OAuth1RequestToken;
 import com.github.scribejava.core.oauth.OAuth10aService;
@@ -11,6 +12,7 @@ import easyhattrickmanager.controller.model.TokenRequest;
 import easyhattrickmanager.controller.model.UserRequest;
 import easyhattrickmanager.repository.LanguageDAO;
 import easyhattrickmanager.repository.TeamDAO;
+import easyhattrickmanager.repository.UserConfigDAO;
 import easyhattrickmanager.repository.UserDAO;
 import easyhattrickmanager.repository.UserEhmDAO;
 import easyhattrickmanager.repository.UserEhmHistoryDAO;
@@ -20,7 +22,10 @@ import easyhattrickmanager.repository.model.User;
 import easyhattrickmanager.repository.model.UserEhm;
 import easyhattrickmanager.repository.model.UserEhmHistory;
 import easyhattrickmanager.service.model.LoginData;
+import easyhattrickmanager.service.model.dataresponse.CurrencyInfo;
+import easyhattrickmanager.service.model.dataresponse.UserConfig;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -45,6 +50,7 @@ public class LoginService {
     private final Map<String, LoginData> temporaryLoginDataStorage = new HashMap<>();
     private final UpdateService updateService;
     private final UpdateExecutionService updateExecutionService;
+    private final UserConfigDAO userConfigDAO;
 
     public boolean existUserEhm(String username) {
         return userEhmDAO.get(username).isPresent();
@@ -103,6 +109,7 @@ public class LoginService {
             updateService.update(team.getTeamId());
             updateExecutionService.addUpdateExecution(team.getTeamId());
         });
+        saveUserConfig(managerCompendium);
         return getSaveResponse(teamDetails);
     }
 
@@ -181,5 +188,21 @@ public class LoginService {
             .username(teamDetails.getUser().getLoginname())
             .teams(teamDetails.getTeams().stream().map(team -> team.getTeamName()).toList())
             .build();
+    }
+
+    private void saveUserConfig(ManagerCompendium managerCompendium) {
+        try {
+            UserConfig userConfig = UserConfig.builder()
+                .languageId(managerCompendium.getManager().getLanguage().getLanguageId())
+                .currency(CurrencyInfo.builder()
+                    .countryId(managerCompendium.getManager().getCountry().getCountryId())
+                    .currencyCode(managerCompendium.getManager().getCurrency().getCurrencyName())
+                    .currencyRate(new BigDecimal(managerCompendium.getManager().getCurrency().getCurrencyRate().replace(",", ".")))
+                    .build())
+                .build();
+            userConfigDAO.upsert(managerCompendium.getManager().getUserId(), new ObjectMapper().writeValueAsString(userConfig));
+        } catch (Exception e) {
+            System.err.printf("Error saveUserConfig %s%n", e.getMessage());
+        }
     }
 }

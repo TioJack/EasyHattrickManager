@@ -3,20 +3,24 @@
 <mapper namespace="easyhattrickmanager.repository.LanguageDAO">
 
   <insert id="insert">
-    INSERT INTO language (id, name)
-    VALUES (#{language.id}, #{language.name}) ON DUPLICATE KEY
-    UPDATE name = #{language.name};
+    INSERT INTO language (id, name, friendly_name)
+    VALUES (#{language.id}, #{language.name}, #{language.friendlyName}) ON DUPLICATE KEY
+    UPDATE
+      name = #{language.name},
+      friendly_name = #{language.friendlyName};
   </insert>
 
   <select id="get" resultType="easyhattrickmanager.repository.model.Language">
-    SELECT id, name
+    SELECT id, name, friendly_name
     FROM language
     WHERE id = #{id};
   </select>
 
   <select id="getAllLanguages" resultType="easyhattrickmanager.repository.model.Language">
-    SELECT id, name
-    FROM language;
+    SELECT id, name, friendly_name
+    FROM language
+    WHERE friendly_name IS NOT NULL
+    ORDER BY name;
   </select>
 
 </mapper>

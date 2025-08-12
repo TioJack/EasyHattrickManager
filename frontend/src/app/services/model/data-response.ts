@@ -3,6 +3,8 @@ export interface DataResponse {
   user: User;
   teams: TeamExtendedInfo[];
   userConfig: UserConfig;
+  languages: Language[];
+  currencies: Currency[];
 }
 
 export interface User {
@@ -107,10 +109,18 @@ export interface PlayerInfo {
 }
 
 export interface UserConfig {
+  languageId: number;
   currency: Currency;
 }
 
 export interface Currency {
+  countryId: number;
+  currencyName: string;
   currencyCode: string;
   currencyRate: number;
+}
+
+export interface Language {
+  id: number;
+  name: string;
 }

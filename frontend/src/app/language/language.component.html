@@ -1,0 +1,5 @@
+<select class="form-select w-auto d-inline" [(ngModel)]="selectedLanguageId" (change)="onLanguageChange($event)">
+  <option *ngFor="let language of languages" [value]="language.id">
+    {{ language.name }}
+  </option>
+</select>

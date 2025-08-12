@@ -5,11 +5,14 @@ import {NgForOf} from '@angular/common';
 import {PlayService} from '../services/play.service';
 import {UserConfigService} from '../services/user-config.service';
 import {TranslatePipe} from '@ngx-translate/core';
+import {LanguageComponent} from '../language/language.component';
+import {CurrencyComponent} from '../currency/currency.component';
+import {FirstCapitalizePipe} from '../pipes/first-capitalize.pipe';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [NgForOf, TranslatePipe],
+  imports: [NgForOf, TranslatePipe, LanguageComponent, CurrencyComponent, FirstCapitalizePipe],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
@@ -71,7 +74,6 @@ export class HeaderComponent implements OnInit {
 
   onPreviousSeason(): void {
     const {min} = this.playService.getWeekBounds();
-    console.log('onPreviousSeason', this.selectedWeekIndex, min);
     if (this.selectedWeekIndex - 16 > min) {
       this.selectedWeekIndex = this.selectedWeekIndex - 16;
       this.notifyWeekSelection();

@@ -15,12 +15,12 @@
     </div>
   </div>
   <div class="row">
-    <div class="col text-start">{{ 'ehm.person' | translate }} {{ 'ht.agreeability-' + player.agreeability | translate }}, {{ 'ht.agressiveness-' + player.aggressiveness | translate }} {{ 'ehm.and' | translate }} {{ 'ht.honesty-' + player.honesty | translate }}.
+    <div class="col text-start">{{ 'ehm.person' | translate | firstCapitalize }} {{ 'ht.agreeability-' + player.agreeability | translate }}, {{ 'ht.agressiveness-' + player.aggressiveness | translate }} {{ 'ehm.and' | translate }} {{ 'ht.honesty-' + player.honesty | translate }}.
     </div>
   </div>
   <div class="row">
     <div class="col text-start">
-      {{ 'ehm.has' | translate }} {{ 'ht.skill-level-' + player.experience | translate }} ({{ player.experience }}) {{ 'ht.skill-experience' | translate | lowercase }},
+      {{ 'ehm.has' | translate | firstCapitalize }} {{ 'ht.skill-level-' + player.experience | translate }} ({{ player.experience }}) {{ 'ht.skill-experience' | translate | lowercase }},
       {{ 'ht.skill-level-' + player.leadership | translate }} ({{ player.leadership }}) {{ 'ht.skill-leadership' | translate | lowercase }} {{ 'ehm.and' | translate }}
       {{ 'ht.skill-level-' + player.loyalty | translate }} ({{ player.loyalty }}) {{ 'ehm.loyalty' | translate }}.
     </div>
@@ -32,7 +32,7 @@
           <td rowspan="7">
             <img [src]="'assets/avatars/' + player.id + '.png'" (error)="onImageError($event)" alt="" class="shadow-6"/>
           </td>
-          <td class="text-end pe-1">{{ 'ehm.age' | translate }}</td>
+          <td class="text-end pe-1">{{ 'ehm.age' | translate | firstCapitalize }}</td>
           <td class="text-start" colspan="2">{{ player.age }}{{ 'ehm.years' | translate | firstLetter }} {{ player.ageDays }}{{ 'ehm.days' | translate | firstLetter }}</td>
           <td class="text-end pe-1">{{ 'ht.skill-keeper' | translate }}</td>
           <td>
@@ -50,7 +50,7 @@
           <td class="text-end">{{ player.defenderSkill }}</td>
         </tr>
         <tr>
-          <td class="text-end pe-1">{{ 'ehm.wage' | translate }}</td>
+          <td class="text-end pe-1">{{ 'ehm.wage' | translate | firstCapitalize }}</td>
           <td class="text-start" colspan="2">{{ player.salary | salary:userConfig.currency }}</td>
           <td class="text-end pe-1">{{ 'ht.skill-playmaker' | translate }}</td>
           <td>

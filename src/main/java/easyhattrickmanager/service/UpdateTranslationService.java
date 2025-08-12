@@ -33,7 +33,7 @@ public class UpdateTranslationService {
     private final static int EN_LANGUAGE_ID = 2;
     private final static int ES_LANGUAGE_ID = 6;
     private final static int CA_LANGUAGE_ID = 66;
-    private final static int DEFAULT_LANGUAGE_ID = ES_LANGUAGE_ID;
+    private final static int DEFAULT_LANGUAGE_ID = EN_LANGUAGE_ID;
     private final static Map<Integer, String> LANGUAGE_ID_TO_LIBRE_TRANSLATE_CODE = Map.<Integer, String>ofEntries(
         entry(1, "sv"),
         entry(2, "en"),
@@ -209,23 +209,23 @@ public class UpdateTranslationService {
     }
 
     private void uploadDefaultTranslations() {
-        addTranslation_EN_ES_CA("ehm.age", "Age", "Edad", "Edat");
+        addTranslation_EN_ES_CA("ehm.age", "age", "edad", "edat");
         addTranslation_EN_ES_CA("ehm.years", "years", "años", "anys");
         addTranslation_EN_ES_CA("ehm.days", "days", "días", "dies");
-        addTranslation_EN_ES_CA("ehm.wage", "Wage", "Salario", "Salari");
-        addTranslation_EN_ES_CA("ehm.person", "A", "Una persona", "Un");
-        addTranslation_EN_ES_CA("ehm.has", "Has", "Tiene", "Té");
+        addTranslation_EN_ES_CA("ehm.wage", "wage", "salario", "salari");
+        addTranslation_EN_ES_CA("ehm.person", "a", "una persona", "un");
+        addTranslation_EN_ES_CA("ehm.has", "has", "tiene", "té");
         addTranslation_EN_ES_CA("ehm.and", "and", "y", "i");
         addTranslation_EN_ES_CA("ehm.loyalty", "loyalty", "fidelidad", "fidelitat");
-        addTranslation_EN_ES_CA("ehm.season", "Season", "Temporada", "Temporada");
-        addTranslation_EN_ES_CA("ehm.week", "Week", "Semana", "Semana");
-        addTranslation_EN_ES_CA("ehm.project", "Project", "Proyecto", "Projecte");
+        addTranslation_EN_ES_CA("ehm.season", "season", "temporada", "temporada");
+        addTranslation_EN_ES_CA("ehm.week", "week", "semana", "semana");
+        addTranslation_EN_ES_CA("ehm.project", "project", "proyecto", "projecte");
         addTranslation_EN_ES_CA("ehm.download-data", "download data", "descargar datos", "descarregar dades");
         addTranslation_EN_ES_CA("ehm.log-out", "logout", "cerrar sesión", "tancar sessió");
         addTranslation_EN_ES_CA("ehm.navigate-help",
-            "You can navigate using the right and left arrow keys on your keyboard",
-            "Puede navegar usando la flecha derecha y izquierda del teclado",
-            "Podeu navegar amb les tecles de fletxa dreta i esquerra del teclat.");
+            "you can navigate using the right and left arrow keys on your keyboard",
+            "puede navegar usando la flecha derecha y izquierda del teclado",
+            "podeu navegar amb les tecles de fletxa dreta i esquerra del teclat");
     }
 
     private void addTranslation_EN_ES_CA(String key, String en, String es, String ca) {

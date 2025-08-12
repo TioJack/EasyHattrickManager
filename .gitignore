@@ -5,7 +5,6 @@
 /target/
 /db/data/
 /db/backups/
-/docker/dev/
 /docker/remote/
 deploy.sh
 upload.sh

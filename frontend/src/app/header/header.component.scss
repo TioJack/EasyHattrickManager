@@ -12,3 +12,13 @@
   font-size: 1.2rem;
 }
 
+.header-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%; /* Asegura que ocupe todo el ancho */
+  z-index: 1030; /* Coloca el header adelante de otros elementos */
+  background-color: white; /* Esto puede cambiarse según el diseño */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Opcional: agrega sombra para diferenciarlo */
+}
+

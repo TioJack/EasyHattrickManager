@@ -1,8 +1,8 @@
-<header class="d-flex justify-content-between align-items-center bg-light p-1 border-bottom swipe-container">
+<header class="d-flex justify-content-between align-items-center bg-light p-1 border-bottom header-fixed">
   <div>
     <div class="dropdown">
       <button class="btn btn-outline-primary dropdown-toggle" type="button" id="teamDropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-        {{ 'ehm.project' | translate }}: {{ selectedTeam?.team?.name }}
+        {{ 'ehm.project' | translate | firstCapitalize }}: {{ selectedTeam?.team?.name }}
       </button>
       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="teamDropdownMenuButton">
         <li *ngFor="let team of dataResponse.teams">
@@ -49,6 +49,18 @@
         <a class="dropdown-item" target="_blank" href="http://hattrick.org/goto.ashx?path=/Club/Manager/?userId={{ dataResponse.user.id }}">
           <i class="bi bi-file-earmark-person me-2"></i>{{ dataResponse.user.name }}
         </a>
+      </li>
+      <li>
+        <button class="dropdown-item">
+          <i class="bi bi-translate me-2"></i>
+          <app-language [languages]="dataResponse.languages"></app-language>
+        </button>
+      </li>
+      <li>
+        <button class="dropdown-item">
+          <i class="bi bi-currency-exchange me-2"></i>
+          <app-currency [currencies]="dataResponse.currencies"></app-currency>
+        </button>
       </li>
       <li>
         <button class="dropdown-item" (click)="downloadData()">

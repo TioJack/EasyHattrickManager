@@ -10,7 +10,7 @@ public class Currency {
     private String currencyName;
 
     @JacksonXmlProperty(localName = "CurrencyRate")
-    private int currencyRate;
+    private String currencyRate;
 
 }
 

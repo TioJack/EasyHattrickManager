@@ -14,6 +14,8 @@ public interface CountryDAO {
 
     Optional<Country> get(@Param("id") int id);
 
+    List<Country> getAllCountries();
+
     void insertLeagueCountry(@Param("leagueId") int leagueId, @Param("countryId") int countryId);
 
     List<LeagueCountry> getAllLeagueCountry();

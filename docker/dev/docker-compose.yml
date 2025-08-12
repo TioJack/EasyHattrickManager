@@ -1,0 +1,43 @@
+services:
+  libretranslate:
+    container_name: libretranslate
+    image: libretranslate/libretranslate:latest
+    ports:
+      - 5555:5000
+    restart: unless-stopped
+    healthcheck:
+      test: [ 'CMD-SHELL', './venv/bin/python scripts/healthcheck.py' ]
+      interval: 10s
+      timeout: 4s
+      retries: 4
+      start_period: 5s
+    volumes:
+      - ../../libretranslate/keys:/app/db
+      - ../../libretranslate/local:/home/libretranslate/.local
+    environment:
+      - LT_API_KEYS=false
+
+  ehm_database:
+    container_name: ehm_database
+    volumes:
+      - ../../db/data:/var/lib/mysql
+      - ../../db/scripts:/docker-entrypoint-initdb.d
+    environment:
+      - MYSQL_ROOT_PASSWORD=ehm
+      - TZ=Europe/Madrid
+    ports:
+      - 2000:3306
+    image: mysql:5.7.28
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    restart: unless-stopped
+
+  ehm_frontend:
+    container_name: ehm_frontend
+    image: nginx:alpine
+    network_mode: host
+    volumes:
+      - ../../frontend/nginx-dev.conf:/etc/nginx/nginx.conf
+      - ../../assets:/usr/share/nginx/html/assets
+    environment:
+      - TZ=Europe/Madrid
+    restart: unless-stopped

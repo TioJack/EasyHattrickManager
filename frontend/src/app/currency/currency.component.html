@@ -1,0 +1,5 @@
+<select class="form-select w-auto d-inline" [(ngModel)]="selectedCurrencyCountryId" (change)="onCurrencyChange($event)">
+  <option *ngFor="let currency of currencies" [value]="currency.countryId">
+    {{ 'ht.league-' + ('ht.country-league-' + currency.countryId | translate) | translate }} ({{ currency.currencyName }})
+  </option>
+</select>

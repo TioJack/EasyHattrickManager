@@ -35,6 +35,12 @@
     );
   </insert>
 
+  <select id="getAllCountries" resultType="easyhattrickmanager.repository.model.Country">
+    SELECT id, name, code, currency_name, currency_rate, date_format, time_format
+    FROM country
+    ORDER BY name;
+  </select>
+
   <select id="get" resultType="easyhattrickmanager.repository.model.Country">
     SELECT id, name, code, currency_name, currency_rate, date_format, time_format
     FROM country

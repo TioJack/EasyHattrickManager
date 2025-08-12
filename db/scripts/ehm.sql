@@ -174,7 +174,8 @@ CREATE TABLE IF NOT EXISTS `league_country` (
 
 CREATE TABLE IF NOT EXISTS `language` (
     id INT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
+    name VARCHAR(255) NOT NULL,
+    friendly_name VARCHAR(255)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `translation` (
@@ -195,4 +196,10 @@ CREATE TABLE IF NOT EXISTS `update_execution` (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE KEY unique_team_execution_time (team_id, execution_time)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE user_config (
+    user_id INT PRIMARY KEY,
+    config JSON NOT NULL,
+    CONSTRAINT `user_config_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

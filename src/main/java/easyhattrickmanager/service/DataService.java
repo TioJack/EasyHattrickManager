@@ -1,32 +1,39 @@
 package easyhattrickmanager.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import easyhattrickmanager.controller.model.DataResponse;
+import easyhattrickmanager.repository.CountryDAO;
+import easyhattrickmanager.repository.LanguageDAO;
 import easyhattrickmanager.repository.LeagueDAO;
 import easyhattrickmanager.repository.PlayerDAO;
 import easyhattrickmanager.repository.PlayerDataDAO;
 import easyhattrickmanager.repository.StaffDAO;
 import easyhattrickmanager.repository.TeamDAO;
 import easyhattrickmanager.repository.TrainingDAO;
+import easyhattrickmanager.repository.UserConfigDAO;
 import easyhattrickmanager.repository.UserDAO;
+import easyhattrickmanager.repository.model.Country;
 import easyhattrickmanager.repository.model.League;
 import easyhattrickmanager.repository.model.Player;
 import easyhattrickmanager.repository.model.PlayerData;
 import easyhattrickmanager.repository.model.Staff;
 import easyhattrickmanager.repository.model.Training;
 import easyhattrickmanager.repository.model.User;
-import easyhattrickmanager.service.model.dataresponse.Currency;
+import easyhattrickmanager.service.model.dataresponse.CurrencyInfo;
 import easyhattrickmanager.service.model.dataresponse.PlayerInfo;
 import easyhattrickmanager.service.model.dataresponse.StaffInfo;
 import easyhattrickmanager.service.model.dataresponse.TeamExtendedInfo;
 import easyhattrickmanager.service.model.dataresponse.TrainingInfo;
 import easyhattrickmanager.service.model.dataresponse.UserConfig;
 import easyhattrickmanager.service.model.dataresponse.WeeklyInfo;
+import easyhattrickmanager.service.model.dataresponse.mapper.LanguageInfoMapper;
 import easyhattrickmanager.service.model.dataresponse.mapper.PlayerInfoMapper;
 import easyhattrickmanager.service.model.dataresponse.mapper.StaffInfoMapper;
 import easyhattrickmanager.service.model.dataresponse.mapper.TeamExtendedInfoMapper;
 import easyhattrickmanager.service.model.dataresponse.mapper.TrainingInfoMapper;
 import easyhattrickmanager.service.model.dataresponse.mapper.UserInfoMapper;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +46,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class DataService {
 
+    private static final int BASE_CURRENCY_COUNTRY_ID = 8; // USA
+
     private final UserDAO userDAO;
     private final TeamDAO teamDAO;
     private final LeagueDAO leagueDAO;
@@ -46,11 +55,15 @@ public class DataService {
     private final StaffDAO staffDAO;
     private final PlayerDAO playerDAO;
     private final PlayerDataDAO playerDataDAO;
+    private final LanguageDAO languageDAO;
+    private final UserConfigDAO userConfigDAO;
     private final UserInfoMapper userInfoMapper;
     private final TeamExtendedInfoMapper teamExtendedInfoMapper;
     private final TrainingInfoMapper trainingInfoMapper;
     private final StaffInfoMapper staffInfoMapper;
     private final PlayerInfoMapper playerInfoMapper;
+    private final LanguageInfoMapper languageInfoMapper;
+    private final CountryDAO countryDAO;
 
     @Value("${app.version}")
     private String appVersion;
@@ -61,12 +74,9 @@ public class DataService {
             .version(appVersion)
             .user(userInfoMapper.toInfo(user))
             .teams(getTeams(user.getId()))
-            .userConfig(UserConfig.builder()
-                .currency(Currency.builder()
-                    .currencyCode("€")
-                    .currencyRate(BigDecimal.TEN)
-                    .build())
-                .build())
+            .userConfig(getUserConfig(user.getId()))
+            .languages(languageInfoMapper.toInfo(languageDAO.getAllLanguages()))
+            .currencies(getCurrencies())
             .build();
     }
 
@@ -99,5 +109,43 @@ public class DataService {
                 .build()
         ).sorted(Comparator.comparingInt(WeeklyInfo::getSeason).thenComparingInt(WeeklyInfo::getWeek)).toList();
     }
+
+    private UserConfig getUserConfig(int userId) {
+        try {
+            return new ObjectMapper().readValue(userConfigDAO.get(userId), UserConfig.class);
+        } catch (Exception e) {
+            System.err.printf("Error getUserConfig %s. %s%n", userId, e.getMessage());
+            return null;
+        }
+    }
+
+    private List<CurrencyInfo> getCurrencies() {
+        List<Country> countries = countryDAO.getAllCountries();
+        Country baseCountry = countries.stream().filter(country -> country.getId() == BASE_CURRENCY_COUNTRY_ID).findFirst().orElseThrow();
+        return countries.stream()
+            .map(country -> CurrencyInfo.builder()
+                .countryId(country.getId())
+                .currencyName(getCurrencyFriendyName(country, baseCountry))
+                .currencyCode(country.getCurrencyName())
+                .currencyRate(country.getCurrencyRate())
+                .build())
+            .toList();
+    }
+
+    private String getCurrencyFriendyName(Country country, Country baseCountry) {
+        BigDecimal rateAgainstUSD = country.getCurrencyRate().divide(baseCountry.getCurrencyRate(), 6, RoundingMode.HALF_UP);
+        BigDecimal inverseRate = BigDecimal.ONE.divide(rateAgainstUSD, 4, RoundingMode.HALF_UP);
+        return String.format("%s %s = 1 US$", inverseRate.stripTrailingZeros().toPlainString(), country.getCurrencyName());
+    }
+
+    public void saveUserConfig(String username, UserConfig userConfig) {
+        try {
+            User user = userDAO.get(username);
+            userConfigDAO.upsert(user.getId(), new ObjectMapper().writeValueAsString(userConfig));
+        } catch (Exception e) {
+            System.err.printf("Error saveUserConfig %s %s. %s%n", username, userConfig, e.getMessage());
+        }
+    }
+
 
 }
