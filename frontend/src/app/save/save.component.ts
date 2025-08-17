@@ -3,11 +3,13 @@ import {ActivatedRoute, RouterLink} from '@angular/router';
 import {AuthService} from '../services/auth.service';
 import {NgFor, NgIf} from '@angular/common';
 import {SaveResponse} from './model/save-response';
+import {TranslatePipe, TranslateService} from '@ngx-translate/core';
+import {FirstCapitalizePipe} from '../pipes/first-capitalize.pipe';
 
 @Component({
   selector: 'app-save',
   standalone: true,
-  imports: [NgIf, NgFor, RouterLink],
+  imports: [NgIf, NgFor, RouterLink, TranslatePipe, FirstCapitalizePipe],
   templateUrl: './save.component.html',
   styleUrls: ['./save.component.scss']
 })
@@ -18,7 +20,8 @@ export class SaveComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private authService: AuthService
+    private authService: AuthService,
+    private translateService: TranslateService
   ) {
   }
 
@@ -36,11 +39,15 @@ export class SaveComponent implements OnInit {
           },
           error: (error) => {
             this.loading = false;
-            this.errorMessage = 'Error al registrar el usuario. Intenta nuevamente.';
+            this.translateService.get('ehm.error-register').subscribe((translation: string) => {
+              this.errorMessage = translation;
+            });
           },
         });
       } else {
-        this.errorMessage = 'Faltan parámetros necesarios para completar el registro.';
+        this.translateService.get('ehm.missing-params').subscribe((translation: string) => {
+          this.errorMessage = translation;
+        });
       }
     });
   }

@@ -4,19 +4,19 @@
       <div class="card shadow">
         <div class="card-body text-center">
           <div *ngIf="loading">
-            <h4>Procesando respuesta...</h4>
+            <h4>{{ 'ehm.processing-response' | translate }}</h4>
             <div class="spinner-border text-primary" role="status"></div>
           </div>
           <div *ngIf="saveResponse" class="alert alert-success">
-            <h4>¡Bienvenido, {{ saveResponse.username }}!</h4>
-            <p>A partir de ahora, Easy Hattrick Manager se va a encargar semanalmente de guardar el historial de tus equipos:</p>
+            <h4>{{ 'ehm.welcome' | translate | firstCapitalize }}, {{ saveResponse.username }}!</h4>
+            <p>{{ 'ehm.now-on' | translate | firstCapitalize }}:</p>
             <ul class="list-group">
               <li class="list-group-item" *ngFor="let team of saveResponse.teams">
                 {{ team }}
               </li>
             </ul>
             <div class="mt-3 text-center">
-              <a routerLink="/login" class="text-decoration-none">Ya puedes iniciar sesión aquí</a>
+              <a routerLink="/login" class="text-decoration-none">{{ 'ehm.log-in-here-now' | translate | firstCapitalize }}</a>
             </div>
           </div>
           <div *ngIf="errorMessage" class="alert alert-danger">

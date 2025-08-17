@@ -3,6 +3,7 @@ package easyhattrickmanager.service;
 import static java.lang.Integer.parseInt;
 import static java.util.Map.entry;
 import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.StringUtils.lowerCase;
 
@@ -22,7 +23,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -182,7 +182,7 @@ public class UpdateTranslationService {
         uploadDefaultTranslations();
         Map<Integer, Map<String, String>> translations = translationDAO.getAllTranslations().stream().collect(groupingBy(Translation::getLanguageId, toMap(Translation::getKey, Translation::getValue)));
         Map<String, String> defaultTranslations = translations.get(DEFAULT_LANGUAGE_ID);
-        List<Integer> languageIds = languageDAO.getAllLanguages().stream().map(Language::getId).collect(Collectors.toList());
+        List<Integer> languageIds = languageDAO.getAllLanguages().stream().map(Language::getId).collect(toList());
         languageIds.removeAll(List.of(EN_LANGUAGE_ID, ES_LANGUAGE_ID, CA_LANGUAGE_ID));
         String source = getLibreTranslateLanguageCode(DEFAULT_LANGUAGE_ID);
         languageIds.forEach(languageId ->
@@ -209,6 +209,46 @@ public class UpdateTranslationService {
     }
 
     private void uploadDefaultTranslations() {
+        addTranslation_EN_ES_CA("ehm.log-in", "login", "iniciar sesión", "iniciar sessió");
+        addTranslation_EN_ES_CA("ehm.user", "user", "usuario", "usuari");
+        addTranslation_EN_ES_CA("ehm.password", "password", "contraseña", "contrasenya");
+        addTranslation_EN_ES_CA("ehm.log-in-warning",
+            "Your own credentials are required for this wizard. Do not use Hattrick credentials.",
+            "se solicitan credenciales propias para este asistente. No use las credenciales de Hattrick.",
+            "Se sol·liciten credencials pròpies per a aquest assistent. No utilitzeu les credencials de Hattrick.");
+        addTranslation_EN_ES_CA("ehm.get-into", "login", "ingresar", "ingressar");
+        addTranslation_EN_ES_CA("ehm.error-log-in", "incorrect credentials, please try again.", "credenciales incorrectas, intenta nuevamente.", "credencials incorrectes, intenta novament.");
+        addTranslation_EN_ES_CA("ehm.no-account", "Don't have an account?", "¿No tienes una cuenta?", "No tens un compte?");
+        addTranslation_EN_ES_CA("ehm.register-here", "register here", "regístrate aquí", "registra't aquí");
+        addTranslation_EN_ES_CA("ehm.register", "register", "registro", "registre");
+        addTranslation_EN_ES_CA("ehm.user-name", "user name", "nombre de usuario", "nom d'usuari");
+        addTranslation_EN_ES_CA("ehm.username-required", "username is required.", "el nombre de usuario es obligatorio.", "el nom dusuari és obligatori.");
+        addTranslation_EN_ES_CA("ehm.password-required", "password is required.", "la contraseña es obligatoria.", "la contrasenya és obligatòria.");
+        addTranslation_EN_ES_CA("ehm.password-repeat", "repeat password", "repetir contraseña", "repetir contrasenya");
+        addTranslation_EN_ES_CA("ehm.password-repeat-required", "you must repeat the password.", "debes repetir la contraseña.", "heu de repetir la contrasenya.");
+        addTranslation_EN_ES_CA("ehm.password-no-match", "the passwords do not match.", "las contraseñas no coinciden.", "les contrasenyes no coincideixen.");
+        addTranslation_EN_ES_CA("ehm.do-register", "register", "registrarse", "registrar-se");
+        addTranslation_EN_ES_CA("ehm.user-exists",
+            "the user already exists, please choose another.",
+            "el usuario ya existe, por favor elija otro.",
+            "l'usuari ja existeix, si us plau, trieu-ne un altre.");
+        addTranslation_EN_ES_CA("ehm.error-register", "error registering user.", "error al registrar el usuario.", "error en registrar l'usuari.");
+        addTranslation_EN_ES_CA("ehm.have-account", "already have an account?", "¿Ya tienes una cuenta?", "ja tens un compte?");
+        addTranslation_EN_ES_CA("ehm.log-in-here", "login here", "inicia sesión aquí", "inicia sessió aquí");
+        addTranslation_EN_ES_CA("ehm.processing-response", "processing response ...", "procesando respuesta ...", "processant resposta ...");
+        addTranslation_EN_ES_CA("ehm.welcome", "welcome", "¡Bienvenido", "benvingut");
+        addTranslation_EN_ES_CA("ehm.now-on",
+            "from now on, Easy Hattrick Manager will save your teams' history on a weekly basis",
+            "a partir de ahora, Easy Hattrick Manager se va a encargar semanalmente de guardar el historial de tus equipos",
+            "a partir d'ara, Easy Hattrick Manager s'encarregarà setmanalment de desar l'historial dels teus equips");
+        addTranslation_EN_ES_CA("ehm.log-in-here-now", "you can now login here", "ya puedes iniciar sesión aquí", "ja pots iniciar sessió aquí");
+        addTranslation_EN_ES_CA("ehm.missing-params",
+            "required parameters to complete registration are missing.",
+            "faltan parámetros necesarios para completar el registro.",
+            "manquen paràmetres necessaris per completar el registre.");
+        addTranslation_EN_ES_CA("ehm.loading-data", "loading data ...", "cargando datos ...", "carregant dades ...");
+        addTranslation_EN_ES_CA("ehm.error-loading-data-1", "error loading data.", "error cargando los datos.", "error carregant les dades.");
+        addTranslation_EN_ES_CA("ehm.error-loading-data-2", "please try again.", "por favor, intenta nuevamente.", "si us plau, intenta novament.");
         addTranslation_EN_ES_CA("ehm.age", "age", "edad", "edat");
         addTranslation_EN_ES_CA("ehm.years", "years", "años", "anys");
         addTranslation_EN_ES_CA("ehm.days", "days", "días", "dies");
@@ -220,12 +260,22 @@ public class UpdateTranslationService {
         addTranslation_EN_ES_CA("ehm.season", "season", "temporada", "temporada");
         addTranslation_EN_ES_CA("ehm.week", "week", "semana", "semana");
         addTranslation_EN_ES_CA("ehm.project", "project", "proyecto", "projecte");
+        addTranslation_EN_ES_CA("ehm.manage-projects", "manage projects", "gestionar proyectos", "gestió de projectes");
         addTranslation_EN_ES_CA("ehm.download-data", "download data", "descargar datos", "descarregar dades");
         addTranslation_EN_ES_CA("ehm.log-out", "logout", "cerrar sesión", "tancar sessió");
         addTranslation_EN_ES_CA("ehm.navigate-help",
             "you can navigate using the right and left arrow keys on your keyboard",
             "puede navegar usando la flecha derecha y izquierda del teclado",
             "podeu navegar amb les tecles de fletxa dreta i esquerra del teclat");
+        addTranslation_EN_ES_CA("ehm.list-projects", "list of projects", "lista de proyectos", "llista de projectes");
+        addTranslation_EN_ES_CA("ehm.name", "name", "nombre", "nom");
+        addTranslation_EN_ES_CA("ehm.team", "team", "equipo", "equip");
+        addTranslation_EN_ES_CA("ehm.start", "start", "inicio", "inici");
+        addTranslation_EN_ES_CA("ehm.end", "end", "fin", "fi");
+        addTranslation_EN_ES_CA("ehm.weekly-update", "weekly update", "actualización semanal", "actualització setmanal");
+        addTranslation_EN_ES_CA("ehm.new-config", "new config", "nueva configuración", "nova configuració");
+        addTranslation_EN_ES_CA("ehm.save-return", "save changes and return", "guardar cambios y volver", "guardar canvis i tornar");
+        addTranslation_EN_ES_CA("ehm.only-return", "return without saving changes", "volver sin guardar cambios", "tornar sense desar canvis");
     }
 
     private void addTranslation_EN_ES_CA(String key, String en, String es, String ca) {

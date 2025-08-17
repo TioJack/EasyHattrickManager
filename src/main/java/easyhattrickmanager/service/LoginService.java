@@ -23,11 +23,14 @@ import easyhattrickmanager.repository.model.UserEhm;
 import easyhattrickmanager.repository.model.UserEhmHistory;
 import easyhattrickmanager.service.model.LoginData;
 import easyhattrickmanager.service.model.dataresponse.CurrencyInfo;
+import easyhattrickmanager.service.model.dataresponse.ProjectInfo;
 import easyhattrickmanager.service.model.dataresponse.UserConfig;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
@@ -92,7 +95,7 @@ public class LoginService {
     @Transactional
     public SaveResponse save(TokenRequest request) {
         LoginData loginData = temporaryLoginDataStorage.get(request.getOauthToken());
-        OAuth1AccessToken accessToken = null;
+        OAuth1AccessToken accessToken;
         try {
             accessToken = oAuth10aService.getAccessToken(loginData.getToken(), request.getOauthVerifier());
         } catch (IOException | InterruptedException | ExecutionException ex) {
@@ -192,6 +195,10 @@ public class LoginService {
 
     private void saveUserConfig(ManagerCompendium managerCompendium) {
         try {
+            String config = userConfigDAO.get(managerCompendium.getManager().getUserId());
+            if (Objects.nonNull(config)) {
+                return;
+            }
             UserConfig userConfig = UserConfig.builder()
                 .languageId(managerCompendium.getManager().getLanguage().getLanguageId())
                 .currency(CurrencyInfo.builder()
@@ -199,10 +206,22 @@ public class LoginService {
                     .currencyCode(managerCompendium.getManager().getCurrency().getCurrencyName())
                     .currencyRate(new BigDecimal(managerCompendium.getManager().getCurrency().getCurrencyRate().replace(",", ".")))
                     .build())
+                .projects(createProjects(managerCompendium.getManager().getTeams()))
                 .build();
-            userConfigDAO.upsert(managerCompendium.getManager().getUserId(), new ObjectMapper().writeValueAsString(userConfig));
+            userConfigDAO.insert(managerCompendium.getManager().getUserId(), new ObjectMapper().writeValueAsString(userConfig));
         } catch (Exception e) {
             System.err.printf("Error saveUserConfig %s%n", e.getMessage());
         }
+    }
+
+    private List<ProjectInfo> createProjects(List<easyhattrickmanager.client.hattrick.model.managercompendium.Team> teams) {
+        return teams.stream()
+            .map(team -> ProjectInfo.builder()
+                .name(team.getTeamName())
+                .teamId(team.getTeamId())
+                .iniSeason(team.getLeague().getSeason())
+                .iniWeek(updateService.getActualWeek(team.getTeamId()))
+                .build()
+            ).toList();
     }
 }

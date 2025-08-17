@@ -4,24 +4,23 @@
       <div class="card shadow">
         <div class="card-body text-center">
           <div>
-            <h4>Cargando datos...</h4>
+            <h4>{{ 'ehm.loading-data' | translate }}</h4>
             <div class="spinner-border text-primary" role="status"></div>
-          </div>
-          <div *ngIf="errorMessage" class="alert alert-danger">
-            {{ errorMessage }}
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-<div *ngIf="errorMessage" class="container mt-5">
+<div *ngIf="!loading && !dataResponse" class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-md-4">
       <div class="card shadow">
         <div class="card-body text-center">
-          <div class="alert alert-danger">
-            {{ errorMessage }}
+          <div class="alert alert-danger mb-0">
+            {{ 'ehm.error-loading-data-1' | translate | firstCapitalize }}
+            <br>
+            {{ 'ehm.error-loading-data-2' | translate | firstCapitalize }}
           </div>
         </div>
       </div>

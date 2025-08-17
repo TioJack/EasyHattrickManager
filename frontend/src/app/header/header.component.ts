@@ -1,29 +1,30 @@
 import {Component, HostListener, Input, OnInit} from '@angular/core';
 import {AuthService} from '../services/auth.service';
-import {TeamExtendedInfo} from '../services/model/data-response';
-import {NgForOf} from '@angular/common';
+import {Project, TeamExtendedInfo} from '../services/model/data-response';
+import {AsyncPipe, NgForOf} from '@angular/common';
 import {PlayService} from '../services/play.service';
 import {UserConfigService} from '../services/user-config.service';
 import {TranslatePipe} from '@ngx-translate/core';
 import {LanguageComponent} from '../language/language.component';
 import {CurrencyComponent} from '../currency/currency.component';
 import {FirstCapitalizePipe} from '../pipes/first-capitalize.pipe';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [NgForOf, TranslatePipe, LanguageComponent, CurrencyComponent, FirstCapitalizePipe],
+  imports: [NgForOf, TranslatePipe, LanguageComponent, CurrencyComponent, FirstCapitalizePipe, AsyncPipe, RouterLink],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
   @Input() dataResponse: any;
+  selectedProject: Project | null = null;
   selectedTeam: TeamExtendedInfo | null = null;
-  selectedWeekIndex: number = 0;
 
   constructor(
     private authService: AuthService,
-    private playService: PlayService,
+    protected playService: PlayService,
     private userConfigService: UserConfigService
   ) {
   }
@@ -32,8 +33,8 @@ export class HeaderComponent implements OnInit {
     if (this.dataResponse.userConfig) {
       this.userConfigService.setUserConfig(this.dataResponse.userConfig);
     }
-    if (this.dataResponse.teams.length > 0) {
-      this.selectTeam(this.dataResponse.teams[0]);
+    if (this.dataResponse.userConfig.projects.length > 0) {
+      this.selectProject(this.dataResponse.userConfig.projects[0]);
     }
   }
 
@@ -57,81 +58,26 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  selectTeam(team: TeamExtendedInfo): void {
+  selectProject(project: Project): void {
+    this.selectedProject = project;
+    this.playService.selectProject(project);
+    const team = this.dataResponse.teams.find((team: TeamExtendedInfo) => team.team.id === project.teamId);
+    if (!team) {
+      console.error(`Team with ID ${project.teamId} not found.`);
+      return;
+    }
     this.selectedTeam = team;
     this.playService.selectTeam(team);
-    this.selectedWeekIndex = this.playService.getWeekBounds().max;
-    this.notifyWeekSelection();
-  }
-
-  onFirstWeek(): void {
-    const {min} = this.playService.getWeekBounds();
-    if (this.selectedWeekIndex > min) {
-      this.selectedWeekIndex = min;
-      this.notifyWeekSelection();
-    }
-  }
-
-  onPreviousSeason(): void {
-    const {min} = this.playService.getWeekBounds();
-    if (this.selectedWeekIndex - 16 > min) {
-      this.selectedWeekIndex = this.selectedWeekIndex - 16;
-      this.notifyWeekSelection();
-    } else if (this.selectedWeekIndex > min) {
-      this.selectedWeekIndex = min;
-      this.notifyWeekSelection();
-    }
-  }
-
-  onPreviousWeek(): void {
-    const {min} = this.playService.getWeekBounds();
-    if (this.selectedWeekIndex > min) {
-      this.selectedWeekIndex--;
-      this.notifyWeekSelection();
-    }
-  }
-
-  onNextWeek(): void {
-    const {max} = this.playService.getWeekBounds();
-    if (this.selectedWeekIndex < max) {
-      this.selectedWeekIndex++;
-      this.notifyWeekSelection();
-    }
-  }
-
-  onNextSeason(): void {
-    const {max} = this.playService.getWeekBounds();
-    if (this.selectedWeekIndex + 16 < max) {
-      this.selectedWeekIndex = this.selectedWeekIndex + 16;
-      this.notifyWeekSelection();
-    } else if (this.selectedWeekIndex < max) {
-      this.selectedWeekIndex = max;
-      this.notifyWeekSelection();
-    }
-  }
-
-  onLastWeek(): void {
-    const {max} = this.playService.getWeekBounds();
-    if (this.selectedWeekIndex < max) {
-      this.selectedWeekIndex = max;
-      this.notifyWeekSelection();
-    }
-  }
-
-  notifyWeekSelection(): void {
-    if (this.selectedTeam) {
-      const selectedWeekData = this.selectedTeam.weeklyData[this.selectedWeekIndex];
-      this.playService.selectSeasonAndWeek(selectedWeekData.season, selectedWeekData.week);
-    }
+    this.playService.onLastWeek();
   }
 
   @HostListener('window:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent): void {
     if (event.key === 'ArrowRight') {
-      this.onNextWeek();
+      this.playService.onNextWeek();
     }
     if (event.key === 'ArrowLeft') {
-      this.onPreviousWeek();
+      this.playService.onPreviousWeek();
     }
   }
 

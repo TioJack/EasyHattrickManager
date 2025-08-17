@@ -1,0 +1,125 @@
+<div *ngIf="loading" class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-4">
+      <div class="card shadow">
+        <div class="card-body text-center">
+          <div>
+            <h4>{{ 'ehm.loading-data' | translate }}</h4>
+            <div class="spinner-border text-primary" role="status"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="dataResponse" class="container-fluid fs-6">
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white text-center">
+          <h3>{{ 'ehm.manage-projects' | translate | firstCapitalize }}</h3>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-3 border-end">
+              <h5 class="text-center">{{ 'ehm.list-projects' | translate | firstCapitalize }}</h5>
+              <ul class="list-group">
+                <li *ngFor="let project of dataResponse.userConfig.projects" class="list-group-item">
+                  <strong>{{ project.name }}</strong><br/>
+                  {{ 'ehm.team' | translate | firstCapitalize }}: {{ getTeamNameById(project.teamId) }}<br/>
+                  {{ 'ehm.start' | translate | firstCapitalize }}: {{ 'ehm.season' | translate | firstLetter }}{{ project.iniSeason }} {{ 'ehm.week' | translate | firstLetter }}{{ project.iniWeek }}<br/>
+                  <ng-container *ngIf="project.endSeason && project.endWeek">
+                    {{ 'ehm.end' | translate | firstCapitalize }}: {{ 'ehm.season' | translate | firstLetter }}{{ project.endSeason }} {{ 'ehm.week' | translate | firstLetter }}{{ project.endWeek }}<br/>
+                  </ng-container>
+                  <ng-container *ngIf="!project.endSeason || !project.endWeek">{{ 'ehm.end' | translate | firstCapitalize }}: <em>{{ 'ehm.weekly-update' | translate }}</em></ng-container>
+                </li>
+              </ul>
+            </div>
+            <div class="col-md-9">
+              <h5 class="text-center">{{ 'ehm.new-config' | translate | firstCapitalize }}</h5>
+              <form (ngSubmit)="saveChanges()">
+                <div class="mb-3">
+                  <table class="table table-bordered table-hover fs-sm">
+                    <thead>
+                    <tr>
+                      <th style="width:30%;" class="cell-center">{{ 'ehm.name' | translate | firstCapitalize }}</th>
+                      <th style="width:30%" class="cell-center">{{ 'ehm.team' | translate | firstCapitalize }}</th>
+                      <th style="width:15%" class="cell-center">{{ 'ehm.start' | translate | firstCapitalize }}</th>
+                      <th style="width:20%" class="cell-center" colspan="2">{{ 'ehm.end' | translate | firstCapitalize }}</th>
+                      <th style="width:5%" class="cell-center">
+                        <button type="button" class="btn btn-sm btn-success" (click)="addProject()">+</button>
+                      </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let project of editableProjects; let i = index">
+                      <td><input type="text" [(ngModel)]="project.name" name="name-{{ i }}" class="form-control" required/></td>
+                      <td>
+                        <select [(ngModel)]="project.teamId" name="teamId-{{ i }}" class="form-control" (change)="onTeamChange(project)" required>
+                          <option *ngFor="let team of dataResponse?.teams" [value]="team.team.id">
+                            {{ team.team.name }}
+                          </option>
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          [ngModel]="project.iniSeason + '-' + project.iniWeek"
+                          (ngModelChange)="updateIniSeasonAndWeek(project, $event)"
+                          name="iniSeasonWeek-{{ i }}" class="form-control" required>
+                          <option *ngFor="let weekly of getWeeklyOptionsForTeam(project.teamId)" [value]="weekly.season + '-' + weekly.week">
+                            {{ 'ehm.season' | translate | firstLetter }}{{ weekly.season }}  {{ 'ehm.week' | translate | firstLetter }}{{ weekly.week }}
+                          </option>
+                        </select>
+                      </td>
+                      <td class="cell-center">
+                        <input type="checkbox" [checked]="project.endSeason != null && project.endWeek != null" (change)="toggleEndEnabled(project)"/>
+                      </td>
+                      <td>
+                        <select
+                          [disabled]="project.endSeason == null || project.endWeek == null"
+                          [ngModel]="project.endSeason + '-' + project.endWeek"
+                          (ngModelChange)="updateEndSeasonAndWeek(project, $event)"
+                          name="endSeasonWeek-{{ i }}" class="form-control" required>
+                          <option *ngFor="let weekly of getWeeklyOptionsForTeam(project.teamId)" [value]="weekly.season + '-' + weekly.week">
+                            {{ 'ehm.season' | translate | firstLetter }}{{ weekly.season }}  {{ 'ehm.week' | translate | firstLetter }}{{ weekly.week }}
+                          </option>
+                        </select>
+                      </td>
+                      <td class="cell-center">
+                        <button type="button" class="btn btn-sm btn-danger" (click)="removeProject(i)">X</button>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row text-center">
+                  <div class="col-6">
+                    <a routerLink="/home" class="btn btn-danger w-100">{{ 'ehm.only-return' | translate }}</a>
+                  </div>
+                  <div class="col-6">
+                    <button type="submit" class="btn btn-primary w-100">{{ 'ehm.save-return' | translate }}</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="!loading && !dataResponse" class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-4">
+      <div class="card shadow">
+        <div class="card-body text-center">
+          <div class="alert alert-danger mb-0">
+            {{ 'ehm.error-loading-data-1' | translate | firstCapitalize }}
+            <br>
+            {{ 'ehm.error-loading-data-2' | translate | firstCapitalize }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

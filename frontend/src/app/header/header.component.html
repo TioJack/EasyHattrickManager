@@ -2,12 +2,12 @@
   <div>
     <div class="dropdown">
       <button class="btn btn-outline-primary dropdown-toggle" type="button" id="teamDropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-        {{ 'ehm.project' | translate | firstCapitalize }}: {{ selectedTeam?.team?.name }}
+        {{ 'ehm.project' | translate | firstCapitalize }}: {{ selectedProject?.name }}
       </button>
       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="teamDropdownMenuButton">
-        <li *ngFor="let team of dataResponse.teams">
-          <button class="dropdown-item" (click)="selectTeam(team)">
-            {{ team.team.name }}
+        <li *ngFor="let project of dataResponse.userConfig.projects">
+          <button class="dropdown-item" (click)="selectProject(project)">
+            {{ project.name }}
           </button>
         </li>
       </ul>
@@ -15,26 +15,26 @@
   </div>
 
   <div class="d-flex align-items-center">
-    <button class="btn btn-outline-secondary" (click)="onFirstWeek()">
+    <button class="btn btn-outline-secondary" (click)="playService.onFirstWeek()">
       <i class="bi bi-chevron-bar-left"></i>
     </button>
-    <button class="btn btn-outline-secondary" (click)="onPreviousSeason()">
+    <button class="btn btn-outline-secondary" (click)="playService.onPreviousSeason()">
       <i class="bi bi-chevron-double-left"></i>
     </button>
-    <button class="btn btn-outline-secondary" (click)="onPreviousWeek()">
+    <button class="btn btn-outline-secondary" (click)="playService.onPreviousWeek()">
       <i class="bi bi-chevron-left"></i>
     </button>
     <span class="fw-bold mx-3">
-      {{ 'ehm.season' | translate }} {{ selectedTeam?.weeklyData?.[selectedWeekIndex]?.season }}
-      {{ 'ehm.week' | translate }} {{ selectedTeam?.weeklyData?.[selectedWeekIndex]?.week }}
+      {{ 'ehm.season' | translate }} {{ (playService.selectedSeason$ | async) }}
+      {{ 'ehm.week' | translate }} {{ (playService.selectedWeek$ | async) }}
     </span>
-    <button class="btn btn-outline-secondary" (click)="onNextWeek()">
+    <button class="btn btn-outline-secondary" (click)="playService.onNextWeek()">
       <i class="bi bi-chevron-right"></i>
     </button>
-    <button class="btn btn-outline-secondary" (click)="onNextSeason()">
+    <button class="btn btn-outline-secondary" (click)="playService.onNextSeason()">
       <i class="bi bi-chevron-double-right"></i>
     </button>
-    <button class="btn btn-outline-secondary" (click)="onLastWeek()">
+    <button class="btn btn-outline-secondary" (click)="playService.onLastWeek()">
       <i class="bi bi-chevron-bar-right"></i>
     </button>
     <i class="bi bi-info-circle ms-2 fs-4" title="{{ 'ehm.navigate-help' | translate }}"></i>
@@ -60,6 +60,12 @@
         <button class="dropdown-item">
           <i class="bi bi-currency-exchange me-2"></i>
           <app-currency [currencies]="dataResponse.currencies"></app-currency>
+        </button>
+      </li>
+      <li>
+        <button class="dropdown-item">
+          <i class="bi bi-list-task me-2"></i>
+          <a routerLink="/projects" class="nav-link">{{ 'ehm.manage-projects' | translate }}</a>
         </button>
       </li>
       <li>

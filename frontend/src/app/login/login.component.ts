@@ -4,17 +4,19 @@ import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {AuthService} from '../services/auth.service';
 import {catchError, of, tap} from 'rxjs';
+import {TranslatePipe} from '@ngx-translate/core';
+import {FirstCapitalizePipe} from '../pipes/first-capitalize.pipe';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe, FirstCapitalizePipe],
   templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit {
   username: string = '';
   password: string = '';
-  errorMessage: string | null = null;
+  error: boolean = false;
 
   constructor(private authService: AuthService, private router: Router) {
   }
@@ -34,7 +36,7 @@ export class LoginComponent implements OnInit {
           this.router.navigate(['/home']);
         }),
         catchError((error) => {
-          this.errorMessage = 'Credenciales incorrectas, intenta nuevamente.';
+          this.error = true;
           return of(null);
         })
       )

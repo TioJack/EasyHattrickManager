@@ -1,13 +1,15 @@
 import {Component} from '@angular/core';
-import {Router, RouterLink} from '@angular/router';
+import {RouterLink} from '@angular/router';
 import {AuthService} from '../services/auth.service';
 import {FormsModule} from '@angular/forms';
 import {NgIf} from '@angular/common';
+import {TranslatePipe, TranslateService} from '@ngx-translate/core';
+import {FirstCapitalizePipe} from '../pipes/first-capitalize.pipe';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [FormsModule, NgIf, RouterLink],
+  imports: [FormsModule, NgIf, RouterLink, TranslatePipe, FirstCapitalizePipe],
   templateUrl: './register.component.html'
 })
 export class RegisterComponent {
@@ -15,12 +17,14 @@ export class RegisterComponent {
   confirmPassword: string = '';
   errorMessage: string | null = null;
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(private authService: AuthService, private translateService: TranslateService) {
   }
 
   onRegister(): void {
     if (this.user.password !== this.confirmPassword) {
-      this.errorMessage = 'Las contraseñas no coinciden.';
+      this.translateService.get('ehm.password-no-match').subscribe((translation: string) => {
+        this.errorMessage = translation;
+      });
       return;
     }
     this.authService.check(this.user).subscribe({
@@ -29,9 +33,13 @@ export class RegisterComponent {
       },
       error: (error) => {
         if (error.status === 409) {
-          this.errorMessage = 'El usuario ya existe. Por favor, elige otro nombre de usuario.';
+          this.translateService.get('ehm.user-exists').subscribe((translation: string) => {
+            this.errorMessage = translation;
+          });
         } else {
-          this.errorMessage = 'Error al registrar al usuario.';
+          this.translateService.get('ehm.error-register').subscribe((translation: string) => {
+            this.errorMessage = translation;
+          });
         }
       }
     });

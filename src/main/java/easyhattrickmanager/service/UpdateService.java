@@ -76,6 +76,12 @@ public class UpdateService {
         saveAvatars(hattrickService.getAvatars(teamId));
     }
 
+    public int getActualWeek(int teamId) {
+        int adjustmentDays = getAdjustmentDays(teamId);
+        String seasonWeek = convertToSeasonWeek(ZonedDateTime.now().plusDays(adjustmentDays));
+        return Integer.parseInt(seasonWeek.substring(5, 7));
+    }
+
     public void updateLeagues() {
         WorldDetails worldDetails = hattrickService.getWorlddetails();
         worldDetails.getLeagues().forEach(leagueHT -> {
@@ -176,7 +182,7 @@ public class UpdateService {
             .build();
     }
 
-    public String convertToSeasonWeek(ZonedDateTime date) {
+    private String convertToSeasonWeek(ZonedDateTime date) {
         ZonedDateTime referenceDate = ZonedDateTime.of(2025, 5, 5, 0, 0, 0, 0, ZoneId.of("Europe/Madrid"));
         int referenceSeason = 91;
         int referenceWeekInSeason = 2;

@@ -1,6 +1,5 @@
 package easyhattrickmanager.service.model.dataresponse;
 
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,9 +9,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserConfig {
+public class ProjectInfo {
 
-    Integer languageId;
-    CurrencyInfo currency;
-    List<ProjectInfo> projects;
+    String name;
+    int teamId;
+    int iniSeason;
+    int iniWeek;
+    Integer endSeason;
+    Integer endWeek;
 }

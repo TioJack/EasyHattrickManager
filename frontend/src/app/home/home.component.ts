@@ -4,16 +4,17 @@ import {DataResponse} from '../services/model/data-response';
 import {DataService} from '../services/data.service';
 import {HeaderComponent} from '../header/header.component';
 import {PlayerListComponent} from '../player-list/player-list.component';
+import {TranslatePipe} from '@ngx-translate/core';
+import {FirstCapitalizePipe} from '../pipes/first-capitalize.pipe';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [NgIf, HeaderComponent, PlayerListComponent],
+  imports: [NgIf, HeaderComponent, PlayerListComponent, TranslatePipe, FirstCapitalizePipe],
   templateUrl: './home.component.html'
 })
 export class HomeComponent implements OnInit {
   loading: boolean = false;
-  errorMessage: string | null = null;
   dataResponse: DataResponse | null = null;
 
   constructor(private dataService: DataService) {
@@ -28,7 +29,6 @@ export class HomeComponent implements OnInit {
       },
       error: (error) => {
         this.loading = false;
-        this.errorMessage = 'Error cargando los datos. Por favor, intenta nuevamente.';
       }
     });
   }

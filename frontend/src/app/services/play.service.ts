@@ -1,35 +1,33 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
-import {PlayerInfo, TeamExtendedInfo} from './model/data-response';
+import {PlayerInfo, Project, TeamExtendedInfo} from './model/data-response';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PlayService {
+  private selectedProjectSubject = new BehaviorSubject<Project | null>(null);
   private selectedTeamSubject = new BehaviorSubject<TeamExtendedInfo | null>(null);
   private selectedSeasonSubject = new BehaviorSubject<number | null>(null);
   private selectedWeekSubject = new BehaviorSubject<number | null>(null);
   private playersSubject = new BehaviorSubject<PlayerInfo[]>([]);
 
+  selectedProject$ = this.selectedProjectSubject.asObservable();
   selectedTeam$ = this.selectedTeamSubject.asObservable();
   selectedSeason$ = this.selectedSeasonSubject.asObservable();
   selectedWeek$ = this.selectedWeekSubject.asObservable();
   players$ = this.playersSubject.asObservable();
+
+  selectProject(project: Project): void {
+    this.selectedProjectSubject.next(project);
+  }
 
   selectTeam(team: TeamExtendedInfo): void {
     this.selectedTeamSubject.next(team);
     this.clearSeasonWeek();
   }
 
-  getWeekBounds(): { min: number; max: number } {
-    const team = this.selectedTeamSubject.value;
-    if (team && team.weeklyData.length > 0) {
-      return {min: 0, max: team.weeklyData.length - 1};
-    }
-    return {min: -1, max: -1};
-  }
-
-  selectSeasonAndWeek(season: number, week: number): void {
+  private selectSeasonAndWeek(season: number, week: number): void {
     this.selectedSeasonSubject.next(season);
     this.selectedWeekSubject.next(week);
     const team = this.selectedTeamSubject.value;
@@ -57,4 +55,119 @@ export class PlayService {
     this.clearSeasonWeek();
   }
 
+  onFirstWeek() {
+    const project = this.selectedProjectSubject.value;
+    if (project) {
+      this.selectSeasonAndWeek(project.iniSeason, project.iniWeek);
+    }
+  }
+
+  onPreviousSeason() {
+    const project = this.selectedProjectSubject.value;
+    const currentSeason = this.selectedSeasonSubject.value;
+    const currentWeek = this.selectedWeekSubject.value;
+    if (project && currentSeason && currentWeek) {
+      let nextSeason = currentSeason - 1;
+      let nextWeek = currentWeek;
+      if (nextSeason == project.iniSeason) {
+        if (nextWeek < project.iniWeek) {
+          nextWeek = project.iniWeek;
+        }
+      }
+      if (nextSeason < project.iniSeason) {
+        nextSeason = project.iniSeason;
+        nextWeek = project.iniWeek;
+      }
+      this.selectSeasonAndWeek(nextSeason, nextWeek);
+    }
+  }
+
+  onPreviousWeek() {
+    const project = this.selectedProjectSubject.value;
+    const currentSeason = this.selectedSeasonSubject.value;
+    const currentWeek = this.selectedWeekSubject.value;
+    if (project && currentSeason && currentWeek) {
+      let nextSeason = currentSeason;
+      let nextWeek = currentWeek - 1;
+      if (nextWeek == 0) {
+        nextSeason = currentSeason - 1;
+        nextWeek = 16;
+      }
+      if (nextSeason == project.iniSeason) {
+        if (nextWeek < project.iniWeek) {
+          nextWeek = project.iniWeek;
+        }
+      }
+      if (nextSeason < project.iniSeason) {
+        nextSeason = project.iniSeason;
+        nextWeek = project.iniWeek;
+      }
+      this.selectSeasonAndWeek(nextSeason, nextWeek);
+    }
+  }
+
+  onLastWeek() {
+    const lastWeek = this.getLastSeasonAndWeek();
+    this.selectSeasonAndWeek(lastWeek.season, lastWeek.week);
+  }
+
+  private getLastSeasonAndWeek(): { season: number, week: number } {
+    const project = this.selectedProjectSubject.value;
+    if (project) {
+      if (project.endSeason && project.endWeek) {
+        return {season: project.endSeason, week: project.endWeek};
+      } else {
+        const team = this.selectedTeamSubject.value;
+        if (team) {
+          const lastWeeklyData = team.weeklyData[team.weeklyData.length - 1];
+          return {season: lastWeeklyData.season, week: lastWeeklyData.week};
+        }
+      }
+    }
+    return {season: -1, week: -1};
+  }
+
+  onNextSeason() {
+    const lastWeek = this.getLastSeasonAndWeek();
+    const currentSeason = this.selectedSeasonSubject.value;
+    const currentWeek = this.selectedWeekSubject.value;
+    if (currentSeason && currentWeek) {
+      let nextSeason = currentSeason + 1;
+      let nextWeek = currentWeek;
+      if (nextSeason == lastWeek.season) {
+        if (nextWeek > lastWeek.week) {
+          nextWeek = lastWeek.week;
+        }
+      }
+      if (nextSeason > lastWeek.season) {
+        nextSeason = lastWeek.season;
+        nextWeek = lastWeek.week;
+      }
+      this.selectSeasonAndWeek(nextSeason, nextWeek);
+    }
+  }
+
+  onNextWeek() {
+    const lastWeek = this.getLastSeasonAndWeek();
+    const currentSeason = this.selectedSeasonSubject.value;
+    const currentWeek = this.selectedWeekSubject.value;
+    if (currentSeason && currentWeek) {
+      let nextSeason = currentSeason;
+      let nextWeek = currentWeek + 1;
+      if (nextWeek == 17) {
+        nextSeason = currentSeason + 1;
+        nextWeek = 1;
+      }
+      if (nextSeason == lastWeek.season) {
+        if (nextWeek > lastWeek.week) {
+          nextWeek = lastWeek.week;
+        }
+      }
+      if (nextSeason > lastWeek.season) {
+        nextSeason = lastWeek.season;
+        nextWeek = lastWeek.week;
+      }
+      this.selectSeasonAndWeek(nextSeason, nextWeek);
+    }
+  }
 }

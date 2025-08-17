@@ -111,6 +111,7 @@ export interface PlayerInfo {
 export interface UserConfig {
   languageId: number;
   currency: Currency;
+  projects: Project[];
 }
 
 export interface Currency {
@@ -123,4 +124,13 @@ export interface Currency {
 export interface Language {
   id: number;
   name: string;
+}
+
+export interface Project {
+  name: string;
+  teamId: number;
+  iniSeason: number;
+  iniWeek: number;
+  endSeason?: number;
+  endWeek?: number;
 }

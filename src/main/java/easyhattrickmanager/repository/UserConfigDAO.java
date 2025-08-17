@@ -6,7 +6,9 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface UserConfigDAO {
 
-    void upsert(@Param("userId") int userId, @Param("config") String config);
+    void insert(@Param("userId") int userId, @Param("config") String config);
+
+    void update(@Param("userId") int userId, @Param("config") String config);
 
     String get(@Param("userId") int userId);
 }
