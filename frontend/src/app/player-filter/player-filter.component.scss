@@ -1,0 +1,8 @@
+.player-list-filter-container {
+  max-height: 400px; /* Ajusta esta altura según tus necesidades */
+  overflow-y: auto; /* Habilita el scroll vertical */
+  padding: 10px;
+  border: 1px solid #ddd; /* Agrega un borde opcional */
+  border-radius: 4px; /* Estilo de borde redondeado opcional */
+  background-color: #fff; /* Fondo para que resalte sobre el fondo global */
+}

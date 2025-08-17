@@ -36,7 +36,16 @@ export class PlayService {
         data => data.season === season && data.week === week
       );
       if (matchingWeek) {
-        const players = matchingWeek.players.sort((a, b) => a.id - b.id);
+        const filter = this.selectedProjectSubject.value?.filter;
+        let filteredPlayers = matchingWeek.players;
+        if (filter) {
+          if (filter.mode === 'inclusive') {
+            filteredPlayers = filteredPlayers.filter(player => filter.playerIds.includes(player.id));
+          } else if (filter.mode === 'exclusive') {
+            filteredPlayers = filteredPlayers.filter(player => !filter.playerIds.includes(player.id));
+          }
+        }
+        const players = filteredPlayers.sort((a, b) => a.id - b.id);
         this.playersSubject.next(players);
       } else {
         this.playersSubject.next([]);
@@ -170,4 +179,13 @@ export class PlayService {
       this.selectSeasonAndWeek(nextSeason, nextWeek);
     }
   }
+
+  update() {
+    const currentSeason = this.selectedSeasonSubject.value;
+    const currentWeek = this.selectedWeekSubject.value;
+    if (currentSeason && currentWeek) {
+      this.selectSeasonAndWeek(currentSeason, currentWeek);
+    }
+  }
+
 }

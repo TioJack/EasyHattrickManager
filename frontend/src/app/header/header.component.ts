@@ -1,6 +1,6 @@
 import {Component, HostListener, Input, OnInit} from '@angular/core';
 import {AuthService} from '../services/auth.service';
-import {Project, TeamExtendedInfo} from '../services/model/data-response';
+import {PlayerInfo, Project, TeamExtendedInfo, WeeklyInfo} from '../services/model/data-response';
 import {AsyncPipe, NgForOf} from '@angular/common';
 import {PlayService} from '../services/play.service';
 import {UserConfigService} from '../services/user-config.service';
@@ -9,11 +9,12 @@ import {LanguageComponent} from '../language/language.component';
 import {CurrencyComponent} from '../currency/currency.component';
 import {FirstCapitalizePipe} from '../pipes/first-capitalize.pipe';
 import {RouterLink} from '@angular/router';
+import {PlayerFilterComponent} from '../player-filter/player-filter.component';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [NgForOf, TranslatePipe, LanguageComponent, CurrencyComponent, FirstCapitalizePipe, AsyncPipe, RouterLink],
+  imports: [NgForOf, TranslatePipe, LanguageComponent, CurrencyComponent, FirstCapitalizePipe, AsyncPipe, RouterLink, PlayerFilterComponent],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
@@ -79,6 +80,25 @@ export class HeaderComponent implements OnInit {
     if (event.key === 'ArrowLeft') {
       this.playService.onPreviousWeek();
     }
+  }
+
+  getFilteredPlayers(): PlayerInfo[] {
+    if (!this.selectedProject || !this.dataResponse?.teams) {
+      return [];
+    }
+    const projectTeam = this.dataResponse.teams.find((team: TeamExtendedInfo) => team.team.id == this.selectedProject?.teamId);
+    if (!projectTeam) {
+      return [];
+    }
+    const {iniSeason, iniWeek, endSeason, endWeek} = this.selectedProject;
+    const filteredPlayers: PlayerInfo[] = [];
+    projectTeam.weeklyData.forEach((weekData: WeeklyInfo) => {
+      if ((weekData.season > iniSeason || (weekData.season == iniSeason && weekData.week >= iniWeek)) &&
+        (endSeason == undefined || endWeek == undefined || weekData.season < endSeason || (weekData.season == endSeason && weekData.week <= endWeek))) {
+        filteredPlayers.push(...weekData.players);
+      }
+    });
+    return Array.from(new Map(filteredPlayers.map(player => [player.id, player])).values()).sort((a, b) => a.id - b.id);
   }
 
 }

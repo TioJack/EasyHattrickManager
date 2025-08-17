@@ -276,6 +276,18 @@ public class UpdateTranslationService {
         addTranslation_EN_ES_CA("ehm.new-config", "new config", "nueva configuración", "nova configuració");
         addTranslation_EN_ES_CA("ehm.save-return", "save changes and return", "guardar cambios y volver", "guardar canvis i tornar");
         addTranslation_EN_ES_CA("ehm.only-return", "return without saving changes", "volver sin guardar cambios", "tornar sense desar canvis");
+        addTranslation_EN_ES_CA("ehm.player-filtering", "player filtering", "filtrado de jugadores", "filtratge de jugadors");
+        addTranslation_EN_ES_CA("ehm.inclusive-mode", "inclusive mode", "modo incluyente", "mode inclusiu");
+        addTranslation_EN_ES_CA("ehm.exclusive-mode", "exclusive mode", "modo excluyente", "mode exclusiu");
+        addTranslation_EN_ES_CA("ehm.inclusive-mode-help",
+            "only selected players are displayed in the player list",
+            "solo los jugadores seleccionados se muestran en el listado de jugadores",
+            "només els jugadors seleccionats es mostren al llistat de jugadors");
+        addTranslation_EN_ES_CA("ehm.exclusive-mode-help",
+            "the selected players do not appear in the player lists",
+            "los jugadores seleccionados no aparecen en el listados de jugadores",
+            "els jugadors seleccionats no apareixen al llistats de jugadors");
+        addTranslation_EN_ES_CA("ehm.list-players", "list of players", "lista de jugadores", "llista de jugadors");
     }
 
     private void addTranslation_EN_ES_CA(String key, String en, String es, String ca) {

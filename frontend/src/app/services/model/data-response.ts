@@ -133,4 +133,10 @@ export interface Project {
   iniWeek: number;
   endSeason?: number;
   endWeek?: number;
+  filter: PlayerFilter;
+}
+
+export interface PlayerFilter {
+  mode: string;
+  playerIds: number[];
 }
