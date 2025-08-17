@@ -13,7 +13,8 @@ import {FirstCapitalizePipe} from '../pipes/first-capitalize.pipe';
   selector: 'app-player-card',
   standalone: true,
   imports: [NgIf, SalaryPipe, SkillComponent, TranslatePipe, FirstLetterPipe, SpecialtyComponent, LowerCasePipe, FirstCapitalizePipe],
-  templateUrl: './player-card.component.html'
+  templateUrl: './player-card.component.html',
+  styleUrls: ['./player-card.component.scss']
 })
 export class PlayerCardComponent implements OnInit {
   @Input() player?: PlayerInfo;

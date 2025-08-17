@@ -15,11 +15,11 @@
     </div>
   </div>
   <div class="row">
-    <div class="col text-start">{{ 'ehm.person' | translate | firstCapitalize }} {{ 'ht.agreeability-' + player.agreeability | translate }}, {{ 'ht.agressiveness-' + player.aggressiveness | translate }} {{ 'ehm.and' | translate }} {{ 'ht.honesty-' + player.honesty | translate }}.
+    <div class="col text-start fs-90 text-nowrap">{{ 'ehm.person' | translate | firstCapitalize }} {{ 'ht.agreeability-' + player.agreeability | translate }}, {{ 'ht.agressiveness-' + player.aggressiveness | translate }} {{ 'ehm.and' | translate }} {{ 'ht.honesty-' + player.honesty | translate }}.
     </div>
   </div>
   <div class="row">
-    <div class="col text-start">
+    <div class="col text-start fs-90 text-nowrap">
       {{ 'ehm.has' | translate | firstCapitalize }} {{ 'ht.skill-level-' + player.experience | translate }} ({{ player.experience }}) {{ 'ht.skill-experience' | translate | lowercase }},
       {{ 'ht.skill-level-' + player.leadership | translate }} ({{ player.leadership }}) {{ 'ht.skill-leadership' | translate | lowercase }} {{ 'ehm.and' | translate }}
       {{ 'ht.skill-level-' + player.loyalty | translate }} ({{ player.loyalty }}) {{ 'ehm.loyalty' | translate }}.
@@ -32,49 +32,49 @@
           <td rowspan="7">
             <img [src]="'assets/avatars/' + player.id + '.png'" (error)="onImageError($event)" alt="" class="shadow-6"/>
           </td>
-          <td class="text-end pe-1">{{ 'ehm.age' | translate | firstCapitalize }}</td>
-          <td class="text-start" colspan="2">{{ player.age }}{{ 'ehm.years' | translate | firstLetter }} {{ player.ageDays }}{{ 'ehm.days' | translate | firstLetter }}</td>
-          <td class="text-end pe-1">{{ 'ht.skill-keeper' | translate }}</td>
+          <td class="text-end pe-1 text-nowrap">{{ 'ehm.age' | translate | firstCapitalize }}</td>
+          <td class="text-start text-nowrap" colspan="2">{{ player.age }}{{ 'ehm.years' | translate | firstLetter }} {{ player.ageDays }}{{ 'ehm.days' | translate | firstLetter }}</td>
+          <td class="text-end pe-1 text-nowrap">{{ 'ht.skill-keeper' | translate }}</td>
           <td>
             <app-skill [skill]="player.keeperSkill" [max]="20"></app-skill>
           </td>
           <td class="text-end" style="width: 3%;">{{ player.keeperSkill }}</td>
         </tr>
         <tr>
-          <td class="text-end pe-1">TSI</td>
-          <td class="text-start" colspan="2">{{ player.tsi }}</td>
-          <td class="text-end pe-1">{{ 'ht.skill-defender' | translate }}</td>
+          <td class="text-end pe-1 text-nowrap">TSI</td>
+          <td class="text-start text-nowrap" colspan="2">{{ player.tsi }}</td>
+          <td class="text-end pe-1 text-nowrap">{{ 'ht.skill-defender' | translate }}</td>
           <td>
             <app-skill [skill]="player.defenderSkill" [max]="20"></app-skill>
           </td>
           <td class="text-end">{{ player.defenderSkill }}</td>
         </tr>
         <tr>
-          <td class="text-end pe-1">{{ 'ehm.wage' | translate | firstCapitalize }}</td>
-          <td class="text-start" colspan="2">{{ player.salary | salary:userConfig.currency }}</td>
-          <td class="text-end pe-1">{{ 'ht.skill-playmaker' | translate }}</td>
+          <td class="text-end pe-1 text-nowrap">{{ 'ehm.wage' | translate | firstCapitalize }}</td>
+          <td class="text-start text-nowrap" colspan="2">{{ player.salary | salary:userConfig.currency }}</td>
+          <td class="text-end pe-1 text-nowrap">{{ 'ht.skill-playmaker' | translate }}</td>
           <td>
             <app-skill [skill]="player.playmakerSkill" [max]="20"></app-skill>
           </td>
           <td class="text-end">{{ player.playmakerSkill }}</td>
         </tr>
         <tr>
-          <td class="text-end pe-1">{{ 'ht.specialty' | translate }}</td>
-          <td class="text-start" colspan="2">
+          <td class="text-end pe-1 text-nowrap">{{ 'ht.specialty' | translate }}</td>
+          <td class="text-start text-nowrap" colspan="2">
             <app-specialty [specialty]="player.specialty"></app-specialty>
           </td>
-          <td class="text-end pe-1">{{ 'ht.skill-winger' | translate }}</td>
+          <td class="text-end pe-1 text-nowrap">{{ 'ht.skill-winger' | translate }}</td>
           <td>
             <app-skill [skill]="player.wingerSkill" [max]="20"></app-skill>
           </td>
           <td class="text-end">{{ player.wingerSkill }}</td>
         </tr>
         <tr>
-          <td class="text-end pe-1">{{ 'ht.skill-form' | translate }}</td>
-          <td class="text-start">
+          <td class="text-end pe-1 text-nowrap">{{ 'ht.skill-form' | translate }}</td>
+          <td class="text-start text-nowrap">
             <app-skill [skill]="player.playerForm" [max]="8"></app-skill>
           </td>
-          <td class="text-start">{{ player.playerForm }}</td>
+          <td class="text-start text-nowrap">{{ player.playerForm }}</td>
           <td class="text-end pe-1">{{ 'ht.skill-passer' | translate }}</td>
           <td>
             <app-skill [skill]="player.passingSkill" [max]="20"></app-skill>
@@ -82,21 +82,21 @@
           <td class="text-end">{{ player.passingSkill }}</td>
         </tr>
         <tr>
-          <td class="text-end pe-1">{{ 'ht.skill-stamina' | translate }}</td>
-          <td class="text-start">
+          <td class="text-end pe-1 text-nowrap">{{ 'ht.skill-stamina' | translate }}</td>
+          <td class="text-start text-nowrap">
             <app-skill [skill]="player.staminaSkill" [max]="9"></app-skill>
           </td>
-          <td class="text-start">{{ player.staminaSkill }}</td>
-          <td class="text-end pe-1">{{ 'ht.skill-scorer' | translate }}</td>
+          <td class="text-start text-nowrap">{{ player.staminaSkill }}</td>
+          <td class="text-end pe-1 text-nowrap">{{ 'ht.skill-scorer' | translate }}</td>
           <td>
             <app-skill [skill]="player.scorerSkill" [max]="20"></app-skill>
           </td>
           <td class="text-end">{{ player.scorerSkill }}</td>
         </tr>
         <tr>
-          <td class="text-end pe-1">HTMS</td>
-          <td class="text-start" colspan="2">{{ player.htms }} | {{ player.htms28 }}</td>
-          <td class="text-end pe-1">{{ 'ht.skill-kicker' | translate }}</td>
+          <td class="text-end pe-1 text-nowrap">HTMS</td>
+          <td class="text-start text-nowrap" colspan="2">{{ player.htms }} | {{ player.htms28 }}</td>
+          <td class="text-end pe-1 text-nowrap">{{ 'ht.skill-kicker' | translate }}</td>
           <td>
             <app-skill [skill]="player.setPiecesSkill" [max]="20"></app-skill>
           </td>

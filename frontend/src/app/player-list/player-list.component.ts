@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {PlayService} from '../services/play.service';
 import {PlayerInfo} from '../services/model/data-response';
-import {NgForOf, NgIf} from '@angular/common';
+import {NgClass, NgForOf, NgIf} from '@angular/common';
 import {PlayerCardComponent} from '../player-card/player-card.component';
 
 @Component({
@@ -10,7 +10,8 @@ import {PlayerCardComponent} from '../player-card/player-card.component';
   imports: [
     NgIf,
     NgForOf,
-    PlayerCardComponent
+    PlayerCardComponent,
+    NgClass
   ],
   templateUrl: './player-list.component.html'
 })

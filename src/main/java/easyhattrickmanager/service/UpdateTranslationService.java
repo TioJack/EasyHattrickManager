@@ -284,9 +284,9 @@ public class UpdateTranslationService {
             "solo los jugadores seleccionados se muestran en el listado de jugadores",
             "només els jugadors seleccionats es mostren al llistat de jugadors");
         addTranslation_EN_ES_CA("ehm.exclusive-mode-help",
-            "the selected players do not appear in the player lists",
-            "los jugadores seleccionados no aparecen en el listados de jugadores",
-            "els jugadors seleccionats no apareixen al llistats de jugadors");
+            "the selected players do not appear in the player list",
+            "los jugadores seleccionados no aparecen en el listado de jugadores",
+            "els jugadors seleccionats no apareixen al llistat de jugadors");
         addTranslation_EN_ES_CA("ehm.list-players", "list of players", "lista de jugadores", "llista de jugadors");
     }
 
