@@ -302,6 +302,9 @@ public class UpdateTranslationService {
         addTranslation_EN_ES_CA("ehm.injuries", "injuries", "lesiones", "lesions");
         addTranslation_EN_ES_CA("ehm.htms-ability", "HTMS ability", "habilidad HTMS", "habilitat HTMS");
         addTranslation_EN_ES_CA("ehm.htms-potential", "HTMS potential", "potencial HTMS", "potencial HTMS");
+        addTranslation_EN_ES_CA("ehm.update-data", "update data", "actualizar datos", "actualitzar dades");
+        addTranslation_EN_ES_CA("ehm.update-ok", "update completed successfully!", "¡Actualización completada exitosamente!", "actualització completada correctament!");
+        addTranslation_EN_ES_CA("ehm.update-fail", "update failed, please try again.", "la actualización falló, inténtelo nuevamente.", "l'actualització ha fallat, torna-ho a intentar.");
     }
 
     private void addTranslation_EN_ES_CA(String key, String en, String es, String ca) {

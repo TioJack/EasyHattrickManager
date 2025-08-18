@@ -20,4 +20,8 @@ export class DataService {
     return this.http.post<void>(`${this.apiUrl}/user-config`, config);
   }
 
+  update(): Observable<void> {
+    return this.http.get<void>(`${this.apiUrl}/update`);
+  }
+
 }

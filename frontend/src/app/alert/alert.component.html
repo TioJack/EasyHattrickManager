@@ -1,0 +1,6 @@
+<div *ngIf="alertMessage" class="alert-container">
+  <div class="alert alert-{{ alertType }} alert-dismissible fade show fw-bold" role="alert">
+    {{ alertMessage | translate | firstCapitalize }}
+    <button type="button" class="btn-close" (click)="closeAlert()" aria-label="Close"></button>
+  </div>
+</div>

@@ -16,6 +16,7 @@ import easyhattrickmanager.repository.PlayerDataDAO;
 import easyhattrickmanager.repository.StaffDAO;
 import easyhattrickmanager.repository.TeamDAO;
 import easyhattrickmanager.repository.TrainingDAO;
+import easyhattrickmanager.repository.UserDAO;
 import easyhattrickmanager.repository.model.Country;
 import easyhattrickmanager.repository.model.League;
 import easyhattrickmanager.repository.model.Player;
@@ -23,6 +24,7 @@ import easyhattrickmanager.repository.model.PlayerData;
 import easyhattrickmanager.repository.model.Staff;
 import easyhattrickmanager.repository.model.Team;
 import easyhattrickmanager.repository.model.Training;
+import easyhattrickmanager.repository.model.User;
 import easyhattrickmanager.service.model.HTMS;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -55,9 +57,15 @@ public class UpdateService {
     private final TrainingDAO trainingDAO;
     private final StaffDAO staffDAO;
     private final TeamDAO teamDAO;
+    private final UserDAO userDAO;
     private final AssetsConfiguration assetsConfiguration;
 
     private List<String> images = new ArrayList<>();
+
+    public void update(String username) {
+        User user = userDAO.get(username);
+        teamDAO.getByUserId(user.getId()).forEach(team -> update(team.getId()));
+    }
 
     public void update(int teamId) {
         int adjustmentDays = getAdjustmentDays(teamId);
@@ -430,7 +438,7 @@ public class UpdateService {
             for (int i = 1; i < avatar.getLayers().size(); i++) {
                 Layer layer = layers.get(i);
                 if (!layer.getImage().contains("misc")) {
-                    String layerImagePath = assetsConfiguration.getAssetsPath() + layer.getImage();
+                    String layerImagePath = assetsConfiguration.getAssetsPath() + layer.getImage().replace("http://res.hattrick.org", "/Img/Avatar");
                     BufferedImage layerImage = ImageIO.read(new File(layerImagePath));
                     graphic.drawImage(layerImage, layer.getX() - offsetX, layer.getY() - offsetY, null);
                 }
@@ -455,8 +463,15 @@ public class UpdateService {
 
     private void saveImage(String url) {
         if (!images.contains(url)) {
-            String imageUrl = assetsConfiguration.getHattrickUrl() + url;
-            String destinationPath = assetsConfiguration.getAssetsPath() + url;
+            String imageUrl;
+            String destinationPath;
+            if (url.startsWith("http://res.hattrick.org")) {
+                imageUrl = url;
+                destinationPath = assetsConfiguration.getAssetsPath() + url.replace("http://res.hattrick.org", "/Img/Avatar");
+            } else {
+                imageUrl = assetsConfiguration.getHattrickUrl() + url;
+                destinationPath = assetsConfiguration.getAssetsPath() + url;
+            }
             if (!Files.exists(Paths.get(destinationPath))) {
                 downloadFile(imageUrl, destinationPath);
             }

@@ -1,0 +1,13 @@
+.alert-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1050; /* Asegúrate de que la alerta esté por encima de otros elementos */
+  max-width: 90%; /* Ajuste para pantallas más pequeñas */
+}
+
+.alert {
+  min-width: 300px; /* Controlamos un tamaño mínimo */
+  text-align: center; /* Alineamos el mensaje al centro */
+}

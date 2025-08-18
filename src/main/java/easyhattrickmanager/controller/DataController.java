@@ -2,6 +2,7 @@ package easyhattrickmanager.controller;
 
 import easyhattrickmanager.controller.model.DataResponse;
 import easyhattrickmanager.service.DataService;
+import easyhattrickmanager.service.UpdateService;
 import easyhattrickmanager.service.model.dataresponse.UserConfig;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class DataController {
 
     private final DataService dataService;
+    private final UpdateService updateService;
 
     @GetMapping
     public ResponseEntity<DataResponse> getData() {
@@ -30,6 +32,13 @@ public class DataController {
     public ResponseEntity<Void> saveUserConfig(@RequestBody UserConfig userConfig) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         dataService.saveUserConfig(username, userConfig);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/update")
+    public ResponseEntity<Void> update() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        updateService.update(username);
         return ResponseEntity.ok().build();
     }
 

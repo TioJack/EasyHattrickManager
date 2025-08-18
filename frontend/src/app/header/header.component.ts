@@ -1,4 +1,4 @@
-import {Component, HostListener, Input, OnInit} from '@angular/core';
+import {Component, HostListener, Input, OnInit, ViewChild} from '@angular/core';
 import {AuthService} from '../services/auth.service';
 import {PlayerInfo, Project, TeamExtendedInfo, WeeklyInfo} from '../services/model/data-response';
 import {AsyncPipe, NgForOf} from '@angular/common';
@@ -11,15 +11,18 @@ import {FirstCapitalizePipe} from '../pipes/first-capitalize.pipe';
 import {RouterLink} from '@angular/router';
 import {PlayerFilterComponent} from '../player-filter/player-filter.component';
 import {PlayerSortComponent} from '../player-sort/player-sort.component';
+import {DataService} from '../services/data.service';
+import {AlertComponent} from '../alert/alert.component';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [NgForOf, TranslatePipe, LanguageComponent, CurrencyComponent, FirstCapitalizePipe, AsyncPipe, RouterLink, PlayerFilterComponent, PlayerSortComponent],
+  imports: [NgForOf, TranslatePipe, LanguageComponent, CurrencyComponent, FirstCapitalizePipe, AsyncPipe, RouterLink, PlayerFilterComponent, PlayerSortComponent, AlertComponent],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
+  @ViewChild('alert') alertComponent!: AlertComponent;
   @Input() dataResponse: any;
   selectedProject: Project | null = null;
   selectedTeam: TeamExtendedInfo | null = null;
@@ -27,7 +30,8 @@ export class HeaderComponent implements OnInit {
   constructor(
     private authService: AuthService,
     protected playService: PlayService,
-    private userConfigService: UserConfigService
+    private userConfigService: UserConfigService,
+    private dataService: DataService
   ) {
   }
 
@@ -60,12 +64,22 @@ export class HeaderComponent implements OnInit {
     }
   }
 
+  update(): void {
+    this.dataService.update().subscribe({
+      next: () => {
+        this.alertComponent.showAlert('ehm.update-ok', 'success');
+      },
+      error: (error) => {
+        this.alertComponent.showAlert('ehm.update-fail', 'danger');
+      }
+    });
+  }
+
   selectProject(project: Project): void {
     this.selectedProject = project;
     this.playService.selectProject(project);
     const team = this.dataResponse.teams.find((team: TeamExtendedInfo) => team.team.id === project.teamId);
     if (!team) {
-      console.error(`Team with ID ${project.teamId} not found.`);
       return;
     }
     this.selectedTeam = team;
