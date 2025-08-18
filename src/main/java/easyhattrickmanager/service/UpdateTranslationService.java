@@ -288,6 +288,20 @@ public class UpdateTranslationService {
             "los jugadores seleccionados no aparecen en el listado de jugadores",
             "els jugadors seleccionats no apareixen al llistat de jugadors");
         addTranslation_EN_ES_CA("ehm.list-players", "list of players", "lista de jugadores", "llista de jugadors");
+        addTranslation_EN_ES_CA("ehm.player-sort", "player sorting", "ordenación de jugadores", "ordenació de jugadors");
+        addTranslation_EN_ES_CA("ehm.asc-mode", "ascending mode", "modo ascendente", "mode ascendent");
+        addTranslation_EN_ES_CA("ehm.desc-mode", "descending mode", "modo descendente", "mode descendent");
+        addTranslation_EN_ES_CA("ehm.sort-criteria", "sorting criteria", "critério de ordenación", "criteri d'ordenació");
+        addTranslation_EN_ES_CA("ehm.shirt-number", "Shirt number", "número de camiseta", "dorsal");
+        addTranslation_EN_ES_CA("ehm.full-name", "full name", "nombre completo", "nom complet");
+        addTranslation_EN_ES_CA("ehm.first-name", "first name", "nombre", "nom");
+        addTranslation_EN_ES_CA("ehm.last-name", "last name", "apellidos", "cognoms");
+        addTranslation_EN_ES_CA("ehm.nick-name", "nick name", "apodo", "sobrenom");
+        addTranslation_EN_ES_CA("ehm.player-id", "player ID", "ID del jugador", "ID del jugador");
+        addTranslation_EN_ES_CA("ehm.cards", "cards", "tarjetas", "targetes");
+        addTranslation_EN_ES_CA("ehm.injuries", "injuries", "lesiones", "lesions");
+        addTranslation_EN_ES_CA("ehm.htms-ability", "HTMS ability", "habilidad HTMS", "habilitat HTMS");
+        addTranslation_EN_ES_CA("ehm.htms-potential", "HTMS potential", "potencial HTMS", "potencial HTMS");
     }
 
     private void addTranslation_EN_ES_CA(String key, String en, String es, String ca) {

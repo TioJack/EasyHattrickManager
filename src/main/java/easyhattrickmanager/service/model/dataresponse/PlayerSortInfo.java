@@ -9,14 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProjectInfo {
+public class PlayerSortInfo {
 
-    String name;
-    int teamId;
-    int iniSeason;
-    int iniWeek;
-    Integer endSeason;
-    Integer endWeek;
-    PlayerFilterInfo filter;
-    PlayerSortInfo sort;
+    String mode;
+    String criteria;
 }

@@ -134,9 +134,15 @@ export interface Project {
   endSeason?: number;
   endWeek?: number;
   filter: PlayerFilter;
+  sort: PlayerSort;
 }
 
 export interface PlayerFilter {
   mode: string;
   playerIds: number[];
+}
+
+export interface PlayerSort {
+  mode: string;
+  criteria: string;
 }

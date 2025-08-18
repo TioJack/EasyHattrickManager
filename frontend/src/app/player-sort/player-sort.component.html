@@ -1,0 +1,53 @@
+<h6 class="fw-bold text-nowrap">{{ 'ehm.player-sort' | translate | firstCapitalize }}</h6>
+<div class="mb-3">
+  <div class="form-check">
+    <input
+      class="form-check-input"
+      type="radio"
+      name="sortMode"
+      id="ascMode"
+      value="asc"
+      [checked]="sort.mode == 'asc'"
+      (change)="onSortModeChange('asc')">
+    <label class="form-check-label text-nowrap" for="ascMode">{{ 'ehm.asc-mode' | translate | firstCapitalize }}</label>
+  </div>
+  <div class="form-check">
+    <input class="form-check-input"
+           type="radio"
+           name="sortMode"
+           id="descMode"
+           value="desc"
+           [checked]="sort.mode == 'desc'"
+           (change)="onSortModeChange('desc')">
+    <label class="form-check-label text-nowrap" for="descMode">{{ 'ehm.desc-mode' | translate | firstCapitalize }}</label>
+  </div>
+</div>
+<h6 class="fw-bold text-nowrap">{{ 'ehm.sort-criteria' | translate | firstCapitalize }}</h6>
+<select class="form-select w-auto d-inline" [(ngModel)]="sort.criteria" (change)="onCriteriaChange($event)">
+  <option value="playerNumber">{{ 'ehm.shirt-number' | translate | firstCapitalize }}</option>
+  <option value="name">{{ 'ehm.full-name' | translate | firstCapitalize }}</option>
+  <option value="firstName">{{ 'ehm.first-name' | translate | firstCapitalize }}</option>
+  <option value="lastName">{{ 'ehm.last-name' | translate | firstCapitalize }}</option>
+  <option value="nickName">{{ 'ehm.nick-name' | translate | firstCapitalize }}</option>
+  <option value="id">{{ 'ehm.player-id' | translate | firstCapitalize }}</option>
+  <option value="age">{{ 'ehm.age' | translate | firstCapitalize }}</option>
+  <option value="tsi">TSI</option>
+  <option value="salary">{{ 'ehm.wage' | translate | firstCapitalize }}</option>
+  <option value="playerForm">{{ 'ht.skill-form' | translate | firstCapitalize }}</option>
+  <option value="staminaSkill">{{ 'ht.skill-stamina' | translate | firstCapitalize }}</option>
+  <option value="leadership">{{ 'ht.skill-leadership' | translate | firstCapitalize }}</option>
+  <option value="experience">{{ 'ht.skill-experience' | translate | firstCapitalize }}</option>
+  <option value="loyalty">{{ 'ehm.loyalty' | translate | firstCapitalize }}</option>
+  <option value="injuryLevel">{{ 'ehm.injuries' | translate | firstCapitalize }}</option>
+  <option value="">---</option>
+  <option value="htms">{{ 'ehm.htms-ability' | translate | firstCapitalize }}</option>
+  <option value="htms28">{{ 'ehm.htms-potential' | translate | firstCapitalize }}</option>
+  <option value="">---</option>
+  <option value="keeperSkill">{{ 'ht.skill-keeper' | translate | firstCapitalize }}</option>
+  <option value="defenderSkill">{{ 'ht.skill-defender' | translate | firstCapitalize }}</option>
+  <option value="playmakerSkill">{{ 'ht.skill-playmaker' | translate | firstCapitalize }}</option>
+  <option value="wingerSkill">{{ 'ht.skill-winger' | translate | firstCapitalize }}</option>
+  <option value="passingSkill">{{ 'ht.skill-passer' | translate | firstCapitalize }}</option>
+  <option value="scorerSkill">{{ 'ht.skill-scorer' | translate | firstCapitalize }}</option>
+  <option value="setPiecesSkill">{{ 'ht.skill-kicker' | translate | firstCapitalize }}</option>
+</select>

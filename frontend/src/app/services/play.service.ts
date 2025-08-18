@@ -45,8 +45,49 @@ export class PlayService {
             filteredPlayers = filteredPlayers.filter(player => !filter.playerIds.includes(player.id));
           }
         }
-        const players = filteredPlayers.sort((a, b) => a.id - b.id);
-        this.playersSubject.next(players);
+        const sort = this.selectedProjectSubject.value?.sort;
+        let sortedPlayers = filteredPlayers;
+        if (sort) {
+          sortedPlayers = filteredPlayers.sort((a, b) => {
+            // console.log('before', sort, a, b);
+            let valueA;
+            let valueB;
+            if (sort.criteria === 'name') {
+              valueA = a.firstName + ' ' + a.nickName + ' ' + a.lastName;
+              valueB = b.firstName + ' ' + b.nickName + ' ' + b.lastName;
+            } else if (sort.criteria === 'age') {
+              valueA = a.age + (a.ageDays / 111);
+              valueB = b.age + (b.ageDays / 111);
+            } else {
+              valueA = (a as any)[sort.criteria];
+              valueB = (b as any)[sort.criteria];
+            }
+            // console.log('after', valueA, valueB);
+            if (valueA === null && valueB !== null) {
+              return 1;
+            }
+            if (valueA !== null && valueB === null) {
+              return -1;
+            }
+            if (valueA === null && valueB === null) {
+              return sort.mode === 'asc' ? (a.id - b.id) : (b.id - a.id);
+            }
+            if (typeof valueA === 'string' && typeof valueB === 'string') {
+              const result = valueA.localeCompare(valueB);
+              if (result !== 0) {
+                return sort.mode === 'asc' ? result : -result;
+              }
+            } else {
+              if (valueA < valueB) {
+                return sort.mode === 'asc' ? -1 : 1;
+              } else if (valueA > valueB) {
+                return sort.mode === 'asc' ? 1 : -1;
+              }
+            }
+            return sort.mode === 'asc' ? (a.id - b.id) : (b.id - a.id);
+          });
+        }
+        this.playersSubject.next(sortedPlayers);
       } else {
         this.playersSubject.next([]);
       }

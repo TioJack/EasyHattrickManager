@@ -10,11 +10,12 @@ import {CurrencyComponent} from '../currency/currency.component';
 import {FirstCapitalizePipe} from '../pipes/first-capitalize.pipe';
 import {RouterLink} from '@angular/router';
 import {PlayerFilterComponent} from '../player-filter/player-filter.component';
+import {PlayerSortComponent} from '../player-sort/player-sort.component';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [NgForOf, TranslatePipe, LanguageComponent, CurrencyComponent, FirstCapitalizePipe, AsyncPipe, RouterLink, PlayerFilterComponent],
+  imports: [NgForOf, TranslatePipe, LanguageComponent, CurrencyComponent, FirstCapitalizePipe, AsyncPipe, RouterLink, PlayerFilterComponent, PlayerSortComponent],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })

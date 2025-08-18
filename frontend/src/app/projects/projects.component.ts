@@ -108,7 +108,8 @@ export class ProjectsComponent implements OnInit {
       teamId: 0,
       iniSeason: 0,
       iniWeek: 0,
-      filter: {mode: 'exclusive', playerIds: []}
+      filter: {mode: 'exclusive', playerIds: []},
+      sort: {mode: 'asc', criteria: 'id'}
     });
   }
 
