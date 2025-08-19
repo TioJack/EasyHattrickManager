@@ -6,12 +6,14 @@
 <mapper namespace="easyhattrickmanager.repository.UpdateExecutionDAO">
 
   <insert id="insert" useGeneratedKeys="true" keyProperty="updateExecution.id">
-    INSERT
-    IGNORE INTO update_execution (team_id, execution_time)
-    VALUES (
-    #{updateExecution.teamId},
-    #{updateExecution.executionTime}
-    );
+    INSERT INTO update_execution (team_id, execution_time)
+    SELECT #{updateExecution.teamId}, #{updateExecution.executionTime}
+    FROM DUAL
+    WHERE NOT EXISTS
+            (SELECT 1
+             FROM update_execution
+             WHERE team_id = #{updateExecution.teamId}
+               AND status = 'PENDING');
   </insert>
 
   <update id="update">

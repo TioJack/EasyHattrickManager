@@ -8,6 +8,7 @@ import easyhattrickmanager.repository.model.UpdateExecution;
 import jakarta.annotation.PostConstruct;
 import java.time.DayOfWeek;
 import java.time.ZonedDateTime;
+import java.util.Random;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -21,6 +22,8 @@ public class UpdateExecutionService {
     private final UpdateExecutionDAO updateExecutionDAO;
     private final TeamDAO teamDAO;
     private final EhmConfiguration ehmConfiguration;
+
+    private Random random = new Random();
 
     public UpdateExecutionService(
         @Qualifier("UpdateExecutionTaskScheduler")
@@ -53,7 +56,7 @@ public class UpdateExecutionService {
             updateExecutionDAO.update(updateExecution);
         } catch (Exception e) {
             updateExecution.setErrorMessage(e.getMessage());
-            if (updateExecution.getRetries() < 3) {
+            if (updateExecution.getRetries() < 7) {
                 updateExecution.setStatus("PENDING");
                 updateExecution.setRetries(updateExecution.getRetries() + 1);
                 updateExecution.setExecutionTime(ZonedDateTime.now().plusHours(updateExecution.getRetries() + 1));
@@ -79,7 +82,7 @@ public class UpdateExecutionService {
 
     private ZonedDateTime getNextUpdateExecution(Team team) {
         var league = updateService.getLeague(team.getLeagueId());
-        return getNextDayOfWeek(league.getTrainingDate()).plusHours(1);
+        return getNextDayOfWeek(league.getTrainingDate()).plusHours(1).plusMinutes(random.nextInt(120));
     }
 
     private ZonedDateTime getNextDayOfWeek(ZonedDateTime inputDate) {
