@@ -2,6 +2,7 @@ package easyhattrickmanager.controller;
 
 import easyhattrickmanager.configuration.AssetsConfiguration;
 import easyhattrickmanager.repository.CountryDAO;
+import easyhattrickmanager.service.UpdateService;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
@@ -10,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @AllArgsConstructor
@@ -19,6 +21,7 @@ public class ImgController {
 
     private final CountryDAO countryDAO;
     private final AssetsConfiguration assetsConfiguration;
+    private final UpdateService updateService;
 
     @GetMapping("flags")
     public ResponseEntity<Void> getFlags() {
@@ -43,5 +46,11 @@ public class ImgController {
         } catch (Exception e) {
             System.err.printf("Error downloadFile %s %s %s%n", fileUrl, destinationPath, e.getMessage());
         }
+    }
+
+    @GetMapping("avatar")
+    public ResponseEntity<Void> getAvatar(@RequestParam("playerId") int playerId) {
+        updateService.getAvatar(playerId);
+        return ResponseEntity.ok().build();
     }
 }

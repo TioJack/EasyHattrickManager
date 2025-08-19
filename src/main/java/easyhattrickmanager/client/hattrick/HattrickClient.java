@@ -13,6 +13,7 @@ import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth10aService;
 import easyhattrickmanager.client.hattrick.model.avatars.Avatars;
 import easyhattrickmanager.client.hattrick.model.managercompendium.ManagerCompendium;
+import easyhattrickmanager.client.hattrick.model.playerdetails.PlayerDetails;
 import easyhattrickmanager.client.hattrick.model.players.Players;
 import easyhattrickmanager.client.hattrick.model.stafflist.Stafflist;
 import easyhattrickmanager.client.hattrick.model.teamdetails.TeamDetails;
@@ -141,6 +142,16 @@ public class HattrickClient {
             String xml = this.getXML(accessToken, "translations&version=1.2&languageId=" + languageId);
             Translations translations = XMLMAPPER.readValue(xml, Translations.class);
             return translations;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public PlayerDetails getPlayerDetails(OAuth1AccessToken accessToken, int playerID) {
+        try {
+            String xml = this.getXML(accessToken, "playerdetails&version=3.1&playerID=" + playerID);
+            PlayerDetails playerDetails = XMLMAPPER.readValue(xml, PlayerDetails.class);
+            return playerDetails;
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e.getMessage());
         }

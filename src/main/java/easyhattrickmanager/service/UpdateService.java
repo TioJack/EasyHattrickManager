@@ -5,6 +5,7 @@ import static java.lang.Integer.parseInt;
 import easyhattrickmanager.client.hattrick.model.avatars.Avatar;
 import easyhattrickmanager.client.hattrick.model.avatars.Avatars;
 import easyhattrickmanager.client.hattrick.model.avatars.Layer;
+import easyhattrickmanager.client.hattrick.model.playerdetails.PlayerDetails;
 import easyhattrickmanager.client.hattrick.model.players.Players;
 import easyhattrickmanager.client.hattrick.model.stafflist.Stafflist;
 import easyhattrickmanager.client.hattrick.model.worlddetails.WorldDetails;
@@ -488,4 +489,23 @@ public class UpdateService {
         }
     }
 
+    public void getAvatar(int playerId) {
+        PlayerDetails playerDetails = hattrickService.getPlayerDetails(playerId);
+        int teamId = playerDetails.getPlayer().getOwningTeam().getTeamId();
+        saveAvatars(hattrickService.getAvatarsTDT(teamId), playerId);
+    }
+
+    private void saveAvatars(Avatars avatars, int playerId) {
+        avatars.getTeam().getPlayers().stream()
+            .filter(playerHT -> playerHT.getPlayerId() == playerId)
+            .forEach(
+                playerHT -> {
+                    if (!Files.exists(Paths.get(assetsConfiguration.getAssetsPath() + "/avatars/" + playerHT.getPlayerId() + ".png"))) {
+                        saveImage(playerHT.getAvatar().getBackgroundImage());
+                        playerHT.getAvatar().getLayers().forEach(layer -> saveImage(layer.getImage()));
+                        saveImage(mountImage(playerHT.getAvatar()), playerHT.getPlayerId());
+                    }
+                }
+            );
+    }
 }

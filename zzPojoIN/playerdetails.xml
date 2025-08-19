@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HattrickData>
+  <FileName>playerdetails.xml</FileName>
+  <Version>3.1</Version>
+  <UserID>4495104</UserID>
+  <FetchedDate>2025-08-19 01:34:01</FetchedDate>
+  <UserSupporterTier>platinum</UserSupporterTier>
+  <IsPlayingMatch>False</IsPlayingMatch>
+  <Player>
+    <PlayerID>433581456</PlayerID>
+    <FirstName>Cristiano</FirstName>
+    <NickName></NickName>
+    <LastName>Buixaderas</LastName>
+    <PlayerNumber>100</PlayerNumber>
+    <Age>41</Age>
+    <AgeDays>102</AgeDays>
+    <NextBirthDay>2025-08-29 00:00:00</NextBirthDay>
+    <ArrivalDate>2024-08-15 17:43:00</ArrivalDate>
+    <PlayerForm>6</PlayerForm>
+    <Cards>0</Cards>
+    <InjuryLevel>0</InjuryLevel>
+    <Statement></Statement>
+    <PlayerLanguage>Español, España</PlayerLanguage>
+    <PlayerLanguageID>6</PlayerLanguageID>
+    <TrainerData/>
+    <OwningTeam>
+      <TeamID>2158543</TeamID>
+      <TeamName>Salduie</TeamName>
+      <LeagueID>36</LeagueID>
+    </OwningTeam>
+    <Salary>3900</Salary>
+    <IsAbroad>False</IsAbroad>
+    <Agreeability>3</Agreeability>
+    <Aggressiveness>1</Aggressiveness>
+    <Honesty>1</Honesty>
+    <Experience>16</Experience>
+    <Loyalty>20</Loyalty>
+    <MotherClubBonus>False</MotherClubBonus>
+    <MotherClub>
+      <TeamID>1333746</TeamID>
+      <TeamName>Com jugam!!!</TeamName>
+    </MotherClub>
+    <Leadership>3</Leadership>
+    <Specialty>2</Specialty>
+    <NativeCountryID>35</NativeCountryID>
+    <NativeLeagueID>36</NativeLeagueID>
+    <NativeLeagueName>España</NativeLeagueName>
+    <TSI>490</TSI>
+    <PlayerSkills>
+      <StaminaSkill>4</StaminaSkill>
+    </PlayerSkills>
+    <Caps>0</Caps>
+    <CapsU20>0</CapsU20>
+    <CareerGoals>103</CareerGoals>
+    <CareerHattricks>3</CareerHattricks>
+    <LeagueGoals>4</LeagueGoals>
+    <CupGoals>1</CupGoals>
+    <FriendliesGoals>0</FriendliesGoals>
+    <MatchesCurrentTeam>24</MatchesCurrentTeam>
+    <GoalsCurrentTeam>5</GoalsCurrentTeam>
+    <AssistsCurrentTeam>1</AssistsCurrentTeam>
+    <CareerAssists>23</CareerAssists>
+    <TransferListed>False</TransferListed>
+    <TransferDetails/>
+  </Player>
+</HattrickData>

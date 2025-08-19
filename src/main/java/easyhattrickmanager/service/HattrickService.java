@@ -4,6 +4,7 @@ import com.github.scribejava.core.model.OAuth1AccessToken;
 import easyhattrickmanager.client.hattrick.HattrickClient;
 import easyhattrickmanager.client.hattrick.model.avatars.Avatars;
 import easyhattrickmanager.client.hattrick.model.managercompendium.ManagerCompendium;
+import easyhattrickmanager.client.hattrick.model.playerdetails.PlayerDetails;
 import easyhattrickmanager.client.hattrick.model.players.Players;
 import easyhattrickmanager.client.hattrick.model.stafflist.Stafflist;
 import easyhattrickmanager.client.hattrick.model.teamdetails.TeamDetails;
@@ -64,6 +65,14 @@ public class HattrickService {
 
     public Translations getTranslations(int languageId) {
         return this.hattrickClient.getTranslations(getAccessToken(DEFAULT_TEAM_ID), languageId);
+    }
+
+    public PlayerDetails getPlayerDetails(int playerId) {
+        return this.hattrickClient.getPlayerDetails(getAccessToken(DEFAULT_TEAM_ID), playerId);
+    }
+
+    public Avatars getAvatarsTDT(int teamId) {
+        return this.hattrickClient.getAvatars(getAccessToken(DEFAULT_TEAM_ID), teamId);
     }
 
 }
