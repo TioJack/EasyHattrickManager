@@ -1,5 +1,5 @@
 .dropdown-toggle i {
-  font-size: 1.5rem; /* Ajusta el tamaño del ícono */
+  font-size: 1.5rem;
 }
 
 .dropdown-menu .dropdown-item {
@@ -16,9 +16,17 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%; /* Asegura que ocupe todo el ancho */
-  z-index: 1030; /* Coloca el header adelante de otros elementos */
-  background-color: white; /* Esto puede cambiarse según el diseño */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Opcional: agrega sombra para diferenciarlo */
+  width: 100%;
+  z-index: 1030;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+.img-cert {
+  background-image: url('/assets/chpp.png');
+  background-position: calc(100% - 15px) calc(100% - 15px);
+  background-repeat: no-repeat;
+  background-size: auto;
+}
+
 

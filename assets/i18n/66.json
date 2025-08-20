@@ -42,6 +42,7 @@
   "ehm.new-config" : "nova configuració",
   "ehm.nick-name" : "sobrenom",
   "ehm.no-account" : "No tens un compte?",
+  "ehm.no-remember-password" : "Si no recordes la teva contrasenya, torna a registrar-te. Les teves dades d'EHM estan vinculades al teu usuari de Hattrick, així que si et registres de nou, recuperaràs totes les dades que ja tenies a l'EHM.",
   "ehm.now-on" : "a partir d'ara, Easy Hattrick Manager s'encarregarà setmanalment de desar l'historial dels teus equips",
   "ehm.only-return" : "tornar sense desar canvis",
   "ehm.password" : "contrasenya",

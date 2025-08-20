@@ -41,6 +41,7 @@
   "ehm.new-config" : "jauna konfigurācija",
   "ehm.nick-name" : "nick name",
   "ehm.no-account" : "nav konta?",
+  "ehm.no-remember-password" : "ja neatceraties paroli, reģistrējieties vēlreiz. jūsu ehm dati ir saistīts ar jūsu hattrick lietotājs, tāpēc, reģistrējoties atkal, jūs atgūt visus datus, kas jums jau bija ehm.",
   "ehm.now-on" : "turpmāk, viegli hattrick vadītājs saglabās savu komandu vēsturi katru nedēļu",
   "ehm.only-return" : "atgriezties, nesaglabājot izmaiņas",
   "ehm.password" : "parole",

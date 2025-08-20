@@ -41,6 +41,7 @@
   "ehm.new-config" : "neue config",
   "ehm.nick-name" : "spitzname",
   "ehm.no-account" : "hat kein konto?",
+  "ehm.no-remember-password" : "wenn sie sich nicht an ihr passwort erinnern, melden sie sich bitte wieder an. ihre ehm-daten sind mit ihrem hattrick-benutzer verbunden, so dass sie sich erneut registrieren, werden sie alle daten, die sie bereits in ehm.",
   "ehm.now-on" : "ab sofort wird easy hattrick manager die geschichte ihrer teams wöchentlich retten",
   "ehm.only-return" : "rückgabe ohne änderungen",
   "ehm.password" : "passwort vergessen",

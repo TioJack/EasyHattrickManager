@@ -41,6 +41,7 @@
   "ehm.new-config" : "nova configuração",
   "ehm.nick-name" : "apelido",
   "ehm.no-account" : "não tens uma conta?",
+  "ehm.no-remember-password" : "se você não se lembrar de sua senha, por favor registre-se novamente. seus dados ehm está ligado ao seu usuário hattrick, então ao registrar novamente, você vai recuperar todos os dados que você já tinha em ehm.",
   "ehm.now-on" : "a partir de agora, o gerente de hattrick vai salvar o histórico das suas equipas semanalmente",
   "ehm.only-return" : "retornar sem salvar as alterações",
   "ehm.password" : "senha",

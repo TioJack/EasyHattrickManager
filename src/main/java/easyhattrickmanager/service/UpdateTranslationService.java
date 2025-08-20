@@ -305,6 +305,10 @@ public class UpdateTranslationService {
         addTranslation_EN_ES_CA("ehm.update-data", "update data", "actualizar datos", "actualitzar dades");
         addTranslation_EN_ES_CA("ehm.update-ok", "update completed successfully!", "¡Actualización completada exitosamente!", "actualització completada correctament!");
         addTranslation_EN_ES_CA("ehm.update-fail", "update failed, please try again.", "la actualización falló, inténtelo nuevamente.", "l'actualització ha fallat, torna-ho a intentar.");
+        addTranslation_EN_ES_CA("ehm.no-remember-password",
+            "If you don't remember your password, please register again. Your EHM data is linked to your Hattrick user, so by registering again, you'll recover all the data you already had in EHM.",
+            "Si no recuerdas tu contraseña, regístrate de nuevo. Tus datos de EHM están vinculados a tu usuario de Hattrick, así que al registrarte de nuevo, recuperarás todos los datos que ya tenías en EHM.",
+            "Si no recordes la teva contrasenya, torna a registrar-te. Les teves dades d'EHM estan vinculades al teu usuari de Hattrick, així que si et registres de nou, recuperaràs totes les dades que ja tenies a l'EHM.");
     }
 
     private void addTranslation_EN_ES_CA(String key, String en, String es, String ca) {

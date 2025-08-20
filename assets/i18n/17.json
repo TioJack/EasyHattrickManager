@@ -41,6 +41,7 @@
   "ehm.new-config" : "새로운 구성",
   "ehm.nick-name" : "nick 이름",
   "ehm.no-account" : "계정이 없나요?",
+  "ehm.no-remember-password" : "비밀번호를 기억하지 않으면 다시 등록하십시오. 당신의 ehm 자료는 당신의 hattrick 사용자에 연결됩니다, 그래서 다시 등록해서, 당신은 ehm에서 이미 가지고 있던 모든 자료를 복구할 것입니다.",
   "ehm.now-on" : "이제부터, 쉬운 hattrick 관리자는 매주 팀의 역사를 절약 할 것입니다",
   "ehm.only-return" : "변경 없이 반환",
   "ehm.password" : "비밀번호",

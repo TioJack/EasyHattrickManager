@@ -41,6 +41,7 @@
   "ehm.new-config" : "uusi konfig",
   "ehm.nick-name" : "nimi",
   "ehm.no-account" : "eikö sinulla ole tiliä?",
+  "ehm.no-remember-password" : "jos et muista salasanaasi, rekisteröi uudelleen. ehm-datasi on linkitetty hattrickin käyttäjääsi, joten rekisteröimällä uudelleen, saat takaisin kaikki tiedot, jotka sinulla oli jo ehmissa.",
   "ehm.now-on" : "tästä lähtien, helppo hattrick manager pelastaa joukkueesi historia viikoittain",
   "ehm.only-return" : "palauttaa tallentamatta muutoksia",
   "ehm.password" : "salasana",

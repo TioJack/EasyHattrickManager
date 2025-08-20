@@ -42,6 +42,7 @@
   "ehm.new-config" : "new config",
   "ehm.nick-name" : "nick name",
   "ehm.no-account" : "Don't have an account?",
+  "ehm.no-remember-password" : "If you don't remember your password, please register again. Your EHM data is linked to your Hattrick user, so by registering again, you'll recover all the data you already had in EHM.",
   "ehm.now-on" : "from now on, Easy Hattrick Manager will save your teams' history on a weekly basis",
   "ehm.only-return" : "return without saving changes",
   "ehm.password" : "password",

@@ -41,6 +41,7 @@
   "ehm.new-config" : "uus seadistus",
   "ehm.nick-name" : "hüüdnimi",
   "ehm.no-account" : "sul pole kontot?",
+  "ehm.no-remember-password" : "kui te ei mäleta oma parooli, palun registreeruge uuesti. teie ehm andmed on seotud teie kübaratriki kasutajaga, nii et uuesti registreerudes saate taastada kõik andmed, mis teil juba ehmis olid.",
   "ehm.now-on" : "nüüdsest päästab lihtne kübaratrikijuht iganädalaselt teie meeskondade ajaloo",
   "ehm.only-return" : "tagastamine muudatuste salvestamiseta",
   "ehm.password" : "parooli",

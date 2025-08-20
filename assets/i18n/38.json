@@ -41,6 +41,7 @@
   "ehm.new-config" : "config baru",
   "ehm.nick-name" : "nama panggilan",
   "ehm.no-account" : "tidak punya rekening?",
+  "ehm.no-remember-password" : "jika anda tidak ingat sandi anda, silakan mendaftar lagi. data ehm anda terkait dengan pengguna deskrick anda, sehingga dengan mendaftar lagi, anda akan memulihkan semua data anda sudah di ehm.",
   "ehm.now-on" : "mulai sekarang, manajer mudah deskrick akan menyelamatkan sejarah tim anda 'secara mingguan",
   "ehm.only-return" : "kembali tanpa menyimpan perubahan",
   "ehm.password" : "sandi",

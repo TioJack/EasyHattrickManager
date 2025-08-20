@@ -41,6 +41,7 @@
   "ehm.new-config" : "konfigurazio berria",
   "ehm.nick-name" : "nick izena",
   "ehm.no-account" : "ez duzu konturik?",
+  "ehm.no-remember-password" : "pasahitza gogoratzen ez baduzu, erregistratu berriro. zure ehm datuak zure hattrick erabiltzailearekin lotuta daude, beraz, berriro erregistratuz, ehm-ean izan dituzun datu guztiak berreskuratuko dituzu.",
   "ehm.now-on" : "hemendik aurrera, hattrick-eko kudeatzaile errazak astero zure taldeen historia salbatuko du",
   "ehm.only-return" : "itzuli aldaketak gorde gabe",
   "ehm.password" : "pasahitza",

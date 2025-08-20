@@ -41,6 +41,7 @@
   "ehm.new-config" : "nový konfigurační",
   "ehm.nick-name" : "přezdívka",
   "ehm.no-account" : "nemáte účet?",
+  "ehm.no-remember-password" : "pokud si nepamatujete heslo, zaregistrujte se znovu. vaše data ehm jsou spojena s vaším uživatelem hattricku, takže tím, že se znovu zaregistrujete, získáte zpět všechna data, která jste již měli v ehm.",
   "ehm.now-on" : "od teď, snadné hattrick manažer ušetří historii vašich týmů na týdenní bázi",
   "ehm.only-return" : "vrátit bez uložení změny",
   "ehm.password" : "heslo",

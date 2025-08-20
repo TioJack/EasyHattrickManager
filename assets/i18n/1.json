@@ -41,6 +41,7 @@
   "ehm.new-config" : "ny konfig",
   "ehm.nick-name" : "nick namn",
   "ehm.no-account" : "har du inget konto?",
+  "ehm.no-remember-password" : "om du inte kommer ihåg ditt lösenord, vänligen registrera dig igen. din ehm-data är kopplad till din hattrickanvändare, så genom att registrera dig igen kommer du att återställa alla data du redan hade i ehm.",
   "ehm.now-on" : "från och med nu kommer lätt hattrick manager spara dina lags historia varje vecka",
   "ehm.only-return" : "retur utan att spara ändringar",
   "ehm.password" : "lösenord",

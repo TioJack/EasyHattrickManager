@@ -41,6 +41,7 @@
   "ehm.new-config" : "nauja konfigūracija",
   "ehm.nick-name" : "slapyvardis",
   "ehm.no-account" : "neturi sąskaitos?",
+  "ehm.no-remember-password" : "jei neprisimenate slaptažodžio, prašome užsiregistruoti iš naujo. jūsų ehm duomenys yra susijęs su savo hattrick vartotojo, todėl registruodamiesi vėl, jūs atgauti visus duomenis, kuriuos jau turėjo ehm.",
   "ehm.now-on" : "nuo šiol, lengvai hattrick vadybininkas bus išsaugoti savo komandų istoriją per savaitę",
   "ehm.only-return" : "grįžti be išsaugojimo pakeitimų",
   "ehm.password" : "slaptažodis",

@@ -3,7 +3,7 @@
     <div class="col-md-4">
       <div class="card shadow">
         <div class="card-header bg-primary text-white text-center">
-          <h3>{{ 'ehm.register' | translate | firstCapitalize }}</h3>
+          <h3>Easy Hattrick Manager</h3>
         </div>
         <div class="card-body">
           <form (ngSubmit)="onRegister()" #registerForm="ngForm">
@@ -70,8 +70,11 @@
       </div>
     </div>
   </div>
-  <div class="mt-3 text-center">
+  <div class="text-center mt-3">
     <small>{{ 'ehm.have-account' | translate | firstCapitalize }}</small>&nbsp;
     <a routerLink="/login" class="text-decoration-none">{{ 'ehm.log-in-here' | translate | firstCapitalize }}</a>
+  </div>
+  <div class="text-center mt-3">
+    <img src="assets/chpp.png" alt="CHPP" class="img-fluid mb-3">
   </div>
 </div>

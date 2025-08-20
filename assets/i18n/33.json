@@ -41,6 +41,7 @@
   "ehm.new-config" : "új konfig",
   "ehm.nick-name" : "nickname",
   "ehm.no-account" : "nincs számlája?",
+  "ehm.no-remember-password" : "ha nem emlékszel a jelszavadra, regisztrálj újra. az ehm adat kapcsolódik a hattrick felhasználó, így a regisztráció újra, akkor vissza az összes adatot már volt ehm.",
   "ehm.now-on" : "mostantól kezdve a könnyű hattrick manager heti rendszerességgel menti meg csapatai történetét",
   "ehm.only-return" : "visszatérés mentés nélkül",
   "ehm.password" : "jelszó",

@@ -41,6 +41,7 @@
   "ehm.new-config" : "yeni yapılandırma",
   "ehm.nick-name" : "nick name",
   "ehm.no-account" : "bir hesabı yok mu?",
+  "ehm.no-remember-password" : "parolanızı hatırlamıyorsanız lütfen tekrar kayıt olun. ehm verileriniz şapkalı kullanıcınızla bağlantılıdır, böylece tekrar kayıt yaparak, zaten ehm'de sahip olduğunuz tüm verileri geri alacaksınız.",
   "ehm.now-on" : "şu andan itibaren, kolay şapkatrick yöneticisi, haftalık olarak takımlarınızın tarihini kurtaracak",
   "ehm.only-return" : "tasarruf etmeden geri dönüş",
   "ehm.password" : "şifre",

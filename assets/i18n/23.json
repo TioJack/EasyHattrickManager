@@ -41,6 +41,7 @@
   "ehm.new-config" : "configurare nouă",
   "ehm.nick-name" : "nume poreclă",
   "ehm.no-account" : "nu ai un cont?",
+  "ehm.no-remember-password" : "dacă nu vă amintiţi parola, vă rugăm să vă înregistraţi din nou. datele dvs. ehm este legat de utilizatorul hattrick, astfel încât prin înregistrarea din nou, veți recupera toate datele pe care le-ați avut deja în ehm.",
   "ehm.now-on" : "de acum înainte, managerul va salva istoria echipelor tale săptămânal",
   "ehm.only-return" : "întoarce fără modificări de economisire",
   "ehm.password" : "parolă",

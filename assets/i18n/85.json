@@ -41,6 +41,7 @@
   "ehm.new-config" : "konfigurim i ri",
   "ehm.nick-name" : "emri i host",
   "ehm.no-account" : "nuk ke llogari?",
+  "ehm.no-remember-password" : "nëse nuk e mbani mend fjalëkalimin tuaj, ju lutem regjistrohuni përsëri. të dhënat tuaja ehm janë të lidhura me përdoruesin tuaj hattrick, kështu që duke regjistruar përsëri, ju do të shëroheni të gjitha të dhënat që keni pasur tashmë në ehm.",
   "ehm.now-on" : "nga tani e tutje, menaxheri i lehtë hatrik do të shpëtojë historinë e ekipeve tuaja në një bazë javore",
   "ehm.only-return" : "ktheu pa ruajtur ndryshimet",
   "ehm.password" : "fjalëkalimi",

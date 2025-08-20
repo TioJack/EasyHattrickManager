@@ -41,6 +41,7 @@
   "ehm.new-config" : "ny konfiguration",
   "ehm.nick-name" : "nicknavn",
   "ehm.no-account" : "har du ingen konto?",
+  "ehm.no-remember-password" : "hvis du ikke kan huske din adgangskode, skal du tilmelde dig igen. dine ehm data er knyttet til din hattrack bruger, så ved at registrere igen, vil du gendanne alle de data, du allerede havde i ehm.",
   "ehm.now-on" : "fra nu af, let hattrack manager vil gemme dine teams historie på en ugentlig basis",
   "ehm.only-return" : "retur uden at gemme ændringer",
   "ehm.password" : "adgangskode",
