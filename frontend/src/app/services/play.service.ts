@@ -49,42 +49,36 @@ export class PlayService {
         let sortedPlayers = filteredPlayers;
         if (sort) {
           sortedPlayers = filteredPlayers.sort((a, b) => {
-            // console.log('before', sort, a, b);
             let valueA;
             let valueB;
             if (sort.criteria === 'name') {
-              valueA = a.firstName + ' ' + a.nickName + ' ' + a.lastName;
-              valueB = b.firstName + ' ' + b.nickName + ' ' + b.lastName;
+              valueA = `${a.firstName || ''} ${a.nickName || ''} ${a.lastName || ''}`.trim();
+              valueB = `${b.firstName || ''} ${b.nickName || ''} ${b.lastName || ''}`.trim();
             } else if (sort.criteria === 'age') {
-              valueA = a.age + (a.ageDays / 111);
-              valueB = b.age + (b.ageDays / 111);
+              valueA = (a.age || 0) + ((a.ageDays || 0) / 111);
+              valueB = (b.age || 0) + ((b.ageDays || 0) / 111);
             } else {
-              valueA = (a as any)[sort.criteria];
-              valueB = (b as any)[sort.criteria];
+              valueA = (a as any)[sort.criteria] !== undefined ? (a as any)[sort.criteria] : null;
+              valueB = (b as any)[sort.criteria] !== undefined ? (b as any)[sort.criteria] : null;
             }
-            // console.log('after', valueA, valueB);
-            if (valueA === null && valueB !== null) {
-              return 1;
+
+            if (valueA == null && valueB != null) return 1;
+            if (valueA != null && valueB == null) return -1;
+            if (valueA == null && valueB == null) {
+              return sort.mode === 'asc' ? a.id - b.id : b.id - a.id;
             }
-            if (valueA !== null && valueB === null) {
-              return -1;
-            }
-            if (valueA === null && valueB === null) {
-              return sort.mode === 'asc' ? (a.id - b.id) : (b.id - a.id);
-            }
+
             if (typeof valueA === 'string' && typeof valueB === 'string') {
               const result = valueA.localeCompare(valueB);
               if (result !== 0) {
                 return sort.mode === 'asc' ? result : -result;
               }
-            } else {
-              if (valueA < valueB) {
-                return sort.mode === 'asc' ? -1 : 1;
-              } else if (valueA > valueB) {
-                return sort.mode === 'asc' ? 1 : -1;
-              }
             }
-            return sort.mode === 'asc' ? (a.id - b.id) : (b.id - a.id);
+
+            if (valueA < valueB) return sort.mode === 'asc' ? -1 : 1;
+            if (valueA > valueB) return sort.mode === 'asc' ? 1 : -1;
+
+            return sort.mode === 'asc' ? a.id - b.id : b.id - a.id;
           });
         }
         this.playersSubject.next(sortedPlayers);

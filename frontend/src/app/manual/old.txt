@@ -1,0 +1,153 @@
+<div class="container-fluid fs-6">
+  <div class="row justify-content-center">
+    <div class="col-12">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white text-center">
+          <h3>Manual del Easy Hattrick Manager</h3>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-12">
+
+              En este manual se explican las funciones principales del Easy Hattrick Manager, en adelante nos referiremos a él por EHM.
+              Una vez registrados y logeados, se llega a la página principal.
+
+              <h3>Descripción de la Pantalla principal</h3>
+              <img id="img01" src="assets/manual/01.png" alt="" class="img-fluid"/>
+              En ella se pueden distinguir 6 partes:
+              (1) Lista de jugadores: Parte fundamental del EHM, en ella se muestra toda la informacion de cada jugador en forma de tarjeta.
+              La información mostrada correspondientes al proyecto seleccionado (6) y al momento temporal seleccionado (5).
+
+
+              (2) Acceso al menu principal.
+              (3) Acceso a la ordenación de jugadores.
+              (4) Acceso al filtrado de jugadores.
+              (5) Selector del momento temporal.
+              (6) Selector de proyecto
+
+              <h3>Descripción del menu principal</h3>
+              <img id="img02" src="assets/manual/02.png" alt="" class="img-fluid"/>
+
+              (7) Nombre del usuario que ha iniciado sesión
+              (8) Selector de Idioma, aquí puedes cambiar el idioma del EHM, dicha selección queda guardada en el EHM, para futuros accesos.
+              Por defecto toma el idioma que tengas configurado en Hattrick en el momento del registro al EHM.
+
+              Respecto a las traducciones, internamente, se dividen en dos grandes grupos.
+
+              a) Textos propios de Hattrick, cuya traducción nos la proporciona Hattrick, eso incluye el nombre de las habilidades de los jugadores, el valor de las mismas, la traducción de las especialidas,... El EHM se encarga de obtenerlas todas y por ello puede ofrecer la traducción a todos los
+              idiomas existentes en Hattrick. y los textos propios del EHM, que se traducen por nosotros.
+              b) Textos propios del EHM, aquí la gestión de las traducciones es más compleja, yo (creador del EHM) tengo como lenguas maternas el español y el catalán, también tengo algunos conocimientos de inglés. Por ello, me encargo de las traducciones de esos tres idiomas. Para el resto de
+              idiomas utilizo la herramienta opensource LibreTranslate (https://github.com/LibreTranslate/LibreTranslate) que se encarga de traducir los textos propios del EHM a partir del texto en ingles. No todos los idiomas que ofrece Hattrick están disponibles en la herramienta, en esos casos,
+              los textos aparecen en ingles.
+              En cualquier caso, ser libres de reportarme cualquier error en las traducciones.
+
+              (9) Selector de moneda, aquí puedes cambiar la moneda que se muestra en el EHM, dicha selección queda guardada en el EHM, para futuros accesos.
+              Por defecto toma la moneda que tengas configurada en Hattrick en el momento del registro al EHM.
+
+              (10) Acceso a la pantalla de Gestion de proyectos
+              (11) Actualizar datos. Esta opción te permite obtener los datos actuales de Hattrick.
+              Es una opción que por norma no hace falta utilizar ya que el EHM, tiene como objetivo facilitar esta labor, por ello, tiene programada la ejecución automática de obtención de los datos de Hattrick.
+              La ejecución automática esta prevista semanalmente, en concreto esta entre 1 y 3 horas después de la hora prevista de actualización semanal del entrenamiento en Hattrick.
+              También dispone de una política de reintentos, en caso de fallos en el proceso.
+              Igualmente, y el motivo principal de disponer de esta opción en el menu, es poder lanzarlo manualmente en caso de que se detecte que los datos no están actualizados.
+              Después de una actualización manual, hay que refrescar el EHM para que los nuevos datos sean mostrados.
+              El EHM solo permite un guardado de datos semanal por equipo, para no tener datos redundantes, y dentro de la semana se toma como referencia el día de la actualización del entrenamiento de ese equipo en Hattrick.
+              (12) Descarga de datos. Esta opción permite descargar un archivo json con todos los datos que el EHM tiene recopilados de tus equipos.
+              Aquí teneís una muestra del mismo:
+              <img id="img03" src="assets/manual/03.png" alt="" class="img-fluid"/>
+              Es un backup de toda vuestra información, así que se recomienda guardar una copia de mismo, asiduamente.
+
+              (13) Cerrar sessión. Opción que permite salir de la sessión actual y volver a la página de inicio de sesión.
+
+              (14) Acceso a este manual.
+
+              (15) Acceso al código fuente del EHM. El vXX final indica la versión desplegada del EHM.
+              (16) Acceso a la página de usuario de hattrick del creador del EHM.
+
+              <h3>Pantalla de Gestión de proyectos.</h3>
+              <img id="img04" src="assets/manual/04.png" alt="" class="img-fluid"/>
+
+              Esta pantalla nos permite gestionar los diferentes proyectos que tenemos en el EHM.
+              Se entiende un proyecto como un perido de tiempo de un equipo.
+              Se trata de una forma de configurar la visualización de los datos.
+              No hay ningún problema en cambiar esta configuración, y jugar con ella, ya que los datos no se ven alterados,
+              repito, es solo una forma de configuración de la vista que queremos tener.
+              Se pueden crear tantos proyectos como necesiteis, y no hay problemas que se solapen temporalmente entre ellos.
+
+              Vamos a describir cada uno de los elementos de la pantalla:
+
+              (17) Listado de projectos.
+              Muestra la configuración actual de los proyectos.
+              Por defecto, en el momento de registrarse en el EHM, se crea un proyecto por cada equipo del usuario registrado,
+              con inicio, la semana del último entrenamiento del equipo, es decir, los datos del equipo en el momento del registro,
+              y sin una semana concreta de fin.
+
+              (18) Nueva configuración.
+              Aquí podemos modificar la configuración de los proyectos. Por defecto carga la configuración actual.
+              Se muestra en forma de tabla, donde cada fila corresponde a un proyecto.
+              Se respeta el orden de los proyectos en la lista a la hora de mostrarlos en el (6) Selector de proyecto.
+
+              (19) Botón para añadir un nuevo proyecto.
+              (20) Nombre del proyecto.
+              (21) Desplegable para seleccionar el equipo al que pertenece el proyecto.
+              (22) Desplegable para selecionar la semana de inicio del proyecto.
+              (23) Checkbox para habilitar o no la semana de fin del proyecto.
+              Si es un proyecto actual, esta opción debe aparecer deshabilitada, de ese modo, el EHM va a mostrar los nuevos datos después de cada actualización semanal.
+              Por lo contrario, si es un proyecto del pasado, ya terminado, esta opcion debe aparecer habilitada para que podamos seleccionar una semana de fin.
+              (24) Desplegable para selecionar la semana de fin del proyecto.
+              (25) Botón para eliminar el proyecto
+              (26) Botón para volver a la página principal del EHM sin guardar la nueva configuración.
+              (27) Botón para guardar la nueva configuración y volver a la página principal del EHM
+
+              <h3>Descripción de la ordenación de jugadores</h3>
+              <img id="img05" src="assets/manual/05.png" alt="" class="img-fluid"/>
+              La ordenación de jugadores permite establecer el orden en que se muestran los jugadores en el (1) listado de jugadores.
+              El EHM se encarga de guardar la configuración de la ordenación por proyecto.
+
+              (28) Exiten dos modos de ordenación, ascendente o descendiente.
+              Ya sea numericamente hablando o alfabeticamente hablando dependiendo del criterio escogido.
+              En caso de haber valores vacios, estos se muestran al final, esto aplica por ejemplo a la ordenación por número de camiseta, si algún jugador no tiene número asigando.
+              Por defecto viene seleccionado el modo ascendente.
+
+              (29) Criterio de ordenación.
+              Permite escoger el criterio por el qual se ordenan los jugadores.
+              Se usa el ID del jugador para desempatar la ordenación en caso de que el valor del criterio escogido sea el mismo para varios jugadores.
+              Por defecto viene seleccionado el ID del jugador.
+
+              <h3>Descripción del filtrado de jugadores</h3>
+              <img id="img06" src="assets/manual/06.png" alt="" class="img-fluid"/>
+              El filtrado de jugadores permite seleccionar los jugadores que se quieren mostrar en el (1) listado de jugadores.
+              El EHM se encarga de guardar la configuración del filtrado por proyecto.
+
+              (30) Existen dos modos de filtrado, el modo incluyente y el modo excluyente.
+              El modo incluyente, sirve para mostar únicamente los jugadores selecionados.
+              Este modo es muy util para proyectos donde nos interesa seguir un grupo reducido de jugadores y despreocuparnos del resto.
+
+              El modo excluyente, sirve para no mostrar los jugadores seleccionados.
+              Este modo es muy util para proyectos donde queremos mostrar todos los jugadores, excepto algunos pocos.
+
+              Por defecto viene seleccionado el modo excluyente.
+
+              (31) Listado de jugadores que van a ser seleccionados, por orden de ID de jugador, aparecen todos los jugadores del proyecto.
+
+              <h3>Descripción del selector del momento temporal</h3>
+              <img id="img07" src="assets/manual/07.png" alt="" class="img-fluid"/>
+              (32) Muestra el momento temporal seleccionado, indica la temporada y semana, por defecto, y cada vez que se selecciona un proyecto se muestra la semana más reciente.
+              (33) Botón para retroceder hasta el inicio de la línea temporal del proyecto.
+              (34) Botón para retroceder una temporda en la linea temporal del proyecto desde el momento seleccionado, o en su defecto, si hay menos de una temporda de datos, hasta el inicio de la linea temporal del proyecto.
+              (35) Botón para retroceder una semana en la linea temporal del proyecto desde el momento seleccionado, se puede llamar a esta misma funcionalidad usando la flecha izquierda del teclado.
+              (36) Botón para avanzar una semana en la linea temporal del proyecto desde el momento seleccionado, se puede llamar a esta misma funcionalidad usando la flecha derecha del teclado.
+              (37) Botón para avanzar una temporda en la linea temporal del proyecto desde el momento seleccionado, o en su defecto, si hay menos de una temporda de datos, hasta el final de la linea temporal del proyecto.
+              (38) Botón para avanzar hasta el final, es decir, el moemnto más reciente, de la línea temporal del proyecto.
+
+              <h3> Descripción del Selector de proyecto</h3>
+              <img id="img08" src="assets/manual/08.png" alt="" class="img-fluid"/>
+              (39) Por defecto se carga el primer proyecto de la lista de proyectos y al hacerlo, el selector del momento temporal se situa en el momento más reciente, a su vez se cargan las configuraciones guardadas para el filtro y ordenación de jugadores.
+              (40) Al clickar sobre el combo, aparece la lista de proyectos existente, manteniendo el orden de los mismos definido en la (10) gestión de proyectos.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
