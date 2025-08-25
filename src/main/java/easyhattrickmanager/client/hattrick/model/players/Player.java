@@ -113,13 +113,13 @@ public class Player {
     private int caps;
 
     @JacksonXmlProperty(localName = "CapsU20")
-    private int capsU20;
+    private int capsU21;
 
     @JacksonXmlProperty(localName = "Cards")
     private int cards;
 
     @JacksonXmlProperty(localName = "InjuryLevel")
-    private float injuryLevel;
+    private int injuryLevel;
 
     @JacksonXmlProperty(localName = "StaminaSkill")
     private int staminaSkill;

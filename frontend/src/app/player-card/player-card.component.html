@@ -9,6 +9,11 @@
           {{ player.lastName }}
         </span>
       </a>
+      <img *ngIf="player.motherClubBonus" src="assets/status/motherClubBonus.png" alt="" class="icon"/>
+      <img *ngIf="player.injuryLevel == 0" src="assets/injury/0.png" alt="" class="icon"/>
+      <img *ngIf="player.injuryLevel > 0" src="assets/injury/1.png" alt="" title="{{ player.injuryLevel ==  999 ? '∞' : player.injuryLevel }}" class="icon"/>
+      <img *ngIf="player.cards > 0" src="assets/cards/{{ player.cards }}.png" alt="" class="icon"/>
+      <img *ngIf="player.transferListed" src="assets/status/onSale.png" alt="" class="icon"/>
     </div>
     <div class="col-3 text-end">
       <img src="assets/flags/{{ player.countryId }}.png" alt="" class="shadow-2"/>

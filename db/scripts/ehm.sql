@@ -103,6 +103,45 @@ CREATE TABLE IF NOT EXISTS `player_data` (
     PRIMARY KEY (`id`, `season_week`, `team_id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+ALTER TABLE `player_data`
+    ADD COLUMN `arrival_date` DATETIME NULL AFTER `age_days`,
+    ADD COLUMN `owner_notes` VARCHAR(500) NULL AFTER `arrival_date`,
+    ADD COLUMN `statement` VARCHAR(255) NULL AFTER `player_form`,
+    ADD COLUMN `abroad` BOOLEAN NOT NULL DEFAULT 0 AFTER `salary`,
+    ADD COLUMN `league_goals` INT NOT NULL DEFAULT 0 AFTER `abroad`,
+    ADD COLUMN `cup_goals` INT NOT NULL DEFAULT 0 AFTER `league_goals`,
+    ADD COLUMN `friendlies_goals` INT NOT NULL DEFAULT 0 AFTER `cup_goals`,
+    ADD COLUMN `career_goals` INT NOT NULL DEFAULT 0 AFTER `friendlies_goals`,
+    ADD COLUMN `career_hattricks` INT NOT NULL DEFAULT 0 AFTER `career_goals`,
+    ADD COLUMN `matches_current_team` INT NOT NULL DEFAULT 0 AFTER `career_hattricks`,
+    ADD COLUMN `goals_current_team` INT NOT NULL DEFAULT 0 AFTER `matches_current_team`,
+    ADD COLUMN `assists_current_team` INT NOT NULL DEFAULT 0 AFTER `goals_current_team`,
+    ADD COLUMN `career_assists` INT NOT NULL DEFAULT 0 AFTER `assists_current_team`,
+    ADD COLUMN `transfer_listed` BOOLEAN NOT NULL DEFAULT 0 AFTER `career_assists`,
+    ADD COLUMN `national_team_id` INT NOT NULL DEFAULT 0 AFTER `transfer_listed`,
+    ADD COLUMN `caps` INT NOT NULL DEFAULT 0 AFTER `national_team_id`,
+    ADD COLUMN `caps_u21` INT NOT NULL DEFAULT 0 AFTER `caps`,
+    ADD COLUMN `cards` INT NOT NULL DEFAULT 0 AFTER `caps_u21`,
+    ADD COLUMN `player_category_id` INT NOT NULL DEFAULT 0 AFTER `htms28`;
+
+ALTER TABLE `player_data`
+    ALTER COLUMN `abroad` DROP DEFAULT,
+    ALTER COLUMN `league_goals` DROP DEFAULT,
+    ALTER COLUMN `cup_goals` DROP DEFAULT,
+    ALTER COLUMN `friendlies_goals` DROP DEFAULT,
+    ALTER COLUMN `career_goals` DROP DEFAULT,
+    ALTER COLUMN `career_hattricks` DROP DEFAULT,
+    ALTER COLUMN `matches_current_team` DROP DEFAULT,
+    ALTER COLUMN `goals_current_team` DROP DEFAULT,
+    ALTER COLUMN `assists_current_team` DROP DEFAULT,
+    ALTER COLUMN `career_assists` DROP DEFAULT,
+    ALTER COLUMN `transfer_listed` DROP DEFAULT,
+    ALTER COLUMN `national_team_id` DROP DEFAULT,
+    ALTER COLUMN `caps` DROP DEFAULT,
+    ALTER COLUMN `caps_u21` DROP DEFAULT,
+    ALTER COLUMN `cards` DROP DEFAULT,
+    ALTER COLUMN `player_category_id` DROP DEFAULT;
+
 CREATE TABLE IF NOT EXISTS `training` (
     season_week VARCHAR(7) NOT NULL,
     date DATETIME NOT NULL,

@@ -29,8 +29,10 @@ export class ManualComponent implements AfterViewInit, OnDestroy {
           imageIds.forEach((imageId: string) => {
             const image = this.el.nativeElement.querySelector(`#${imageId}`);
             const newWidth = image.naturalWidth * reductionPercentage;
-            image.style.width = `${newWidth}px`;
-            image.style.height = 'auto';
+            if (newWidth > 0) {
+              image.style.width = `${newWidth}px`;
+              image.style.height = 'auto';
+            }
           });
         }
       };

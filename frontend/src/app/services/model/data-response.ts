@@ -89,12 +89,15 @@ export interface PlayerInfo {
   age: number;
   ageDays: number;
   tsi: number;
+  arrivalDate: string;
   playerForm: number;
   experience: number;
   loyalty: number;
   motherClubBonus: boolean;
   leadership: number;
   salary: number;
+  transferListed: boolean;
+  cards: number;
   injuryLevel: number;
   staminaSkill: number;
   keeperSkill: number;
@@ -104,8 +107,10 @@ export interface PlayerInfo {
   wingerSkill: number;
   defenderSkill: number;
   setPiecesSkill: number;
+
   htms: number;
   htms28: number;
+  playerCategoryId: number;
 }
 
 export interface UserConfig {

@@ -178,7 +178,7 @@ public class UpdateTranslationService {
     private final Map<String, String> cache = new HashMap<>();
 
     public void updateTranslationsEHM() {
-        translationDAO.deleteEHMTranslations();
+        //translationDAO.deleteEHMTranslations();
         uploadDefaultTranslations();
         Map<Integer, Map<String, String>> translations = translationDAO.getAllTranslations().stream().collect(groupingBy(Translation::getLanguageId, toMap(Translation::getKey, Translation::getValue)));
         Map<String, String> defaultTranslations = translations.get(DEFAULT_LANGUAGE_ID);
@@ -438,7 +438,11 @@ public class UpdateTranslationService {
             "you can create as many projects as you need, and it's fine if they overlap in time.",
             "se pueden crear tantos proyectos como necesitéis, y no hay problemas en que se solapen temporalmente entre ellos.",
             "es poden crear tants projectes com necessiteu, i no hi ha problemes que se solapin temporalment entre ells.");
-        addTranslation_EN_ES_CA("ehm.manual-1680", "current list of configured projects.", "listado actual de proyectos configurados.", "llistat actual de projectes configurats.");
+        addTranslation_EN_ES_CA("ehm.manual-1680", "current list of configured projects", "listado actual de proyectos configurados", "llistat actual de projectes configurats");
+        addTranslation_EN_ES_CA("ehm.manual-1681",
+            "upon registering, a project is created for each team, starting that same week and with no end date.",
+            "al registrarse, se crea un proyecto por cada equipo, con inicio esa misma semana y sin fecha de fin.",
+            "en registrar-se, es crea un projecte per a cada equip, amb inici aquella mateixa setmana i sense data de fi.");
         addTranslation_EN_ES_CA("ehm.manual-1690", "area for the new configuration", "área para la nueva configuración", "àrea per a la nova configuració");
         addTranslation_EN_ES_CA("ehm.manual-1700",
             "here you can modify the project configuration. By default it loads the current configuration.",

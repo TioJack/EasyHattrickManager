@@ -1,5 +1,6 @@
 package easyhattrickmanager.service.model.dataresponse;
 
+import java.time.ZonedDateTime;
 import lombok.Builder;
 import lombok.Data;
 
@@ -19,14 +20,32 @@ public class PlayerInfo {
     Integer playerNumber;
     int age;
     int ageDays;
+    ZonedDateTime arrivalDate;
+    //String ownerNotes;
     int TSI;
     int playerForm;
+    //String statement;
     int experience;
     int loyalty;
     boolean motherClubBonus;
     int leadership;
     int salary;
-    float injuryLevel;
+    //boolean abroad;
+    //int leagueGoals;
+    //int cupGoals;
+    //int friendliesGoals;
+    //int careerGoals;
+    //int careerHattricks;
+    //int matchesCurrentTeam;
+    //int goalsCurrentTeam;
+    //int assistsCurrentTeam;
+    //int careerAssists;
+    boolean transferListed;
+    //int nationalTeamId;
+    //int caps;
+    //int capsU21;
+    int cards;
+    int injuryLevel;
     int staminaSkill;
     int keeperSkill;
     int playmakerSkill;
@@ -37,4 +56,5 @@ public class PlayerInfo {
     int setPiecesSkill;
     int htms;
     int htms28;
+    int playerCategoryId;
 }

@@ -13,13 +13,31 @@
       player_number,
       age,
       age_days,
+      arrival_date,
+      owner_notes,
       TSI,
       player_form,
+      statement,
       experience,
       loyalty,
       mother_club_bonus,
       leadership,
       salary,
+      abroad,
+      league_goals,
+      cup_goals,
+      friendlies_goals,
+      career_goals,
+      career_hattricks,
+      matches_current_team,
+      goals_current_team,
+      assists_current_team,
+      career_assists,
+      transfer_listed,
+      national_team_id,
+      caps,
+      caps_u21,
+      cards,
       injury_level,
       stamina_skill,
       keeper_skill,
@@ -30,7 +48,8 @@
       defender_skill,
       set_pieces_skill,
       htms,
-      htms28
+      htms28,
+      player_category_id
     )
     VALUES (
     #{player.id},
@@ -41,13 +60,31 @@
     #{player.playerNumber},
     #{player.age},
     #{player.ageDays},
+    #{player.arrivalDate},
+    #{player.ownerNotes},
     #{player.TSI},
     #{player.playerForm},
+    #{player.statement},
     #{player.experience},
     #{player.loyalty},
     #{player.motherClubBonus},
     #{player.leadership},
     #{player.salary},
+    #{player.abroad},
+    #{player.leagueGoals},
+    #{player.cupGoals},
+    #{player.friendliesGoals},
+    #{player.careerGoals},
+    #{player.careerHattricks},
+    #{player.matchesCurrentTeam},
+    #{player.goalsCurrentTeam},
+    #{player.assistsCurrentTeam},
+    #{player.careerAssists},
+    #{player.transferListed},
+    #{player.nationalTeamId},
+    #{player.caps},
+    #{player.capsU21},
+    #{player.cards},
     #{player.injuryLevel},
     #{player.staminaSkill},
     #{player.keeperSkill},
@@ -58,13 +95,14 @@
     #{player.defenderSkill},
     #{player.setPiecesSkill},
     #{player.htms},
-    #{player.htms28}
+    #{player.htms28},
+    #{player.playerCategoryId}
     );
   </insert>
 
   <select id="get" resultType="easyhattrickmanager.repository.model.PlayerData">
     SELECT id,
-           season_week, date, team_id, nickName, player_number, age, age_days, TSI, player_form, experience, loyalty, mother_club_bonus, leadership, salary, injury_level, stamina_skill, keeper_skill, playmaker_skill, scorer_skill, passing_skill, winger_skill, defender_skill, set_pieces_skill, htms, htms28
+           season_week, date, team_id, nickName, player_number, age, age_days, arrival_date, owner_notes, TSI, player_form, statement, experience, loyalty, mother_club_bonus, leadership, salary, abroad, league_goals, cup_goals, friendlies_goals, career_goals, career_hattricks, matches_current_team, goals_current_team, assists_current_team, career_assists, transfer_listed, national_team_id, caps, caps_u21, cards, injury_level, stamina_skill, keeper_skill, playmaker_skill, scorer_skill, passing_skill, winger_skill, defender_skill, set_pieces_skill, htms, htms28, player_category_id
     FROM player_data
     WHERE team_id = #{teamId}
     ORDER BY season_week;

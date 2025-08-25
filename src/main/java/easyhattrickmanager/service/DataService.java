@@ -96,7 +96,21 @@ public class DataService {
         Map<String, TrainingInfo> trainings = trainingDAO.get(teamId).stream().collect(Collectors.toMap(Training::getSeasonWeek, trainingInfoMapper::toInfo));
         Map<String, StaffInfo> staffs = staffDAO.get(teamId).stream().collect(Collectors.toMap(Staff::getSeasonWeek, staffInfoMapper::toInfo));
         Map<Integer, Player> playersBaseInfo = playerDAO.get(teamId).stream().collect(Collectors.toMap(Player::getId, player -> player));
-        Map<String, List<PlayerInfo>> players = playerDataDAO.get(teamId).stream().collect(Collectors.groupingBy(PlayerData::getSeasonWeek, Collectors.mapping(playerData -> playerInfoMapper.toInfo(playersBaseInfo.get(playerData.getId()), playerData), Collectors.toList())));
+
+        List<PlayerData> playerData1 = playerDataDAO.get(teamId).stream().filter(playerData -> playerData.getSeasonWeek().startsWith("S092")).toList();
+
+        Map<String, List<PlayerInfo>> players = playerDataDAO
+            .get(teamId)
+            .stream()
+            .collect(
+                Collectors.groupingBy(
+                    PlayerData::getSeasonWeek,
+                    Collectors.mapping(playerData ->
+                            playerInfoMapper.toInfo(
+                                playersBaseInfo.get(
+                                    playerData.getId()),
+                                playerData),
+                        Collectors.toList())));
 
         List<String> seasonWeeks = trainings.keySet().stream().toList();
         return seasonWeeks.stream().map(seasonWeek ->
@@ -112,13 +126,7 @@ public class DataService {
 
     private UserConfig getUserConfig(int userId) {
         try {
-            UserConfig userConfig = new ObjectMapper().readValue(userConfigDAO.get(userId), UserConfig.class);
-//            userConfig.setProjects(List.of(
-//                ProjectInfo.builder().name("Com jugam!!! 5.0").teamId(1333746).iniSeason(77).iniWeek(8).build(),
-//                ProjectInfo.builder().name("Gentleman").teamId(2351860).iniSeason(1).iniWeek(2).build(),
-//                ProjectInfo.builder().name("Com jugam!!! 4.0").teamId(1333746).iniSeason(53).iniWeek(13).endSeason(73).endWeek(15).build()
-//            ));
-            return userConfig;
+            return new ObjectMapper().readValue(userConfigDAO.get(userId), UserConfig.class);
         } catch (Exception e) {
             System.err.printf("Error getUserConfig %s. %s%n", userId, e.getMessage());
             return null;
