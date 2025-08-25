@@ -1,44 +1,56 @@
-<h6 class="fw-bold">{{ 'ehm.player-filtering' | translate | firstCapitalize }}</h6>
-<div class="mb-3">
-  <div class="form-check">
-    <input
-      class="form-check-input"
-      type="radio"
-      name="filterMode"
-      id="inclusiveMode"
-      value="inclusive"
-      [checked]="filter.mode == 'inclusive'"
-      (change)="onFilterModeChange('inclusive')">
-    <label class="form-check-label text-nowrap" for="inclusiveMode">
-      {{ 'ehm.inclusive-mode' | translate | firstCapitalize }} <i class="bi bi-info-circle ms-2 fs-6" title="{{ 'ehm.inclusive-mode-help' | translate | firstCapitalize }}"></i>
-    </label>
+<div (click)="$event.stopPropagation()">
+  <h6 class="fw-bold">{{ 'ehm.player-filtering' | translate | firstCapitalize }}</h6>
+  <div class="mb-3">
+    <div class="form-check">
+      <input
+        class="form-check-input"
+        type="radio"
+        name="filterMode"
+        id="inclusiveMode"
+        value="inclusive"
+        [checked]="filter.mode == 'inclusive'"
+        (change)="onFilterModeChange('inclusive')">
+      <label class="form-check-label text-nowrap" for="inclusiveMode">
+        {{ 'ehm.inclusive-mode' | translate | firstCapitalize }} <i class="bi bi-info-circle ms-2 fs-6" title="{{ 'ehm.inclusive-mode-help' | translate | firstCapitalize }}"></i>
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input"
+             type="radio"
+             name="filterMode"
+             id="exclusiveMode"
+             value="exclusive"
+             [checked]="filter.mode == 'exclusive'"
+             (change)="onFilterModeChange('exclusive')">
+      <label class="form-check-label text-nowrap" for="exclusiveMode">
+        {{ 'ehm.exclusive-mode' | translate | firstCapitalize }} <i class="bi bi-info-circle ms-2 fs-6" title="{{ 'ehm.exclusive-mode-help' | translate | firstCapitalize }}"></i>
+      </label>
+    </div>
   </div>
-  <div class="form-check">
-    <input class="form-check-input"
-           type="radio"
-           name="filterMode"
-           id="exclusiveMode"
-           value="exclusive"
-           [checked]="filter.mode == 'exclusive'"
-           (change)="onFilterModeChange('exclusive')">
-    <label class="form-check-label text-nowrap" for="exclusiveMode">
-      {{ 'ehm.exclusive-mode' | translate | firstCapitalize }} <i class="bi bi-info-circle ms-2 fs-6" title="{{ 'ehm.exclusive-mode-help' | translate | firstCapitalize }}"></i>
-    </label>
-  </div>
-</div>
-<h6 class="fw-bold">{{ 'ehm.list-players' | translate | firstCapitalize }}</h6>
-<div class="player-list-filter-container">
-  <div *ngFor="let player of players; let i = index;" class="form-check text-nowrap"
-       [class.bg-light]="i % 2 === 0"
-       [class.bg-gray-dark]="i % 2 !== 0">
-    <input class="form-check-input" type="checkbox" [id]="'player-' + player.id" [value]="player.id"
-           [checked]="filter.playerIds.includes(player.id)"
-           (change)="onPlayerChange(player, $event)">
-    <label class="form-check-label" [for]="'player-' + player.id">
-      {{ player.firstName }}
-      <ng-content *ngIf="player.nickName">'{{ player.nickName }}'</ng-content>
-      {{ player.lastName }}
-      ({{ player.id }})
-    </label>
+  <h6 class="fw-bold">{{ 'ehm.list-players' | translate | firstCapitalize }}
+    <button type="button" class="btn btn-link link-success p-0 ms-2 text-decoration-none" (click)="$event.stopPropagation(); selectAll()" title="{{ 'ehm.select-all' | translate }}">
+      <i class="bi bi-check-all"></i>
+    </button>
+    <button type="button" class="btn btn-link link-success p-0 ms-2 text-decoration-none" (click)="$event.stopPropagation(); deselectAll()" title="{{ 'ehm.deselect-all' | translate }}">
+      <i class="bi bi-x-square"></i>
+    </button>
+    <button type="button" class="btn btn-link link-success p-0 ms-2 text-decoration-none" (click)="$event.stopPropagation(); invertSelection()" title="{{ 'ehm.invert-selection' | translate }}">
+      <i class="bi bi-arrow-left-right"></i>
+    </button>
+  </h6>
+  <div class="player-list-filter-container">
+    <div *ngFor="let player of players; let i = index;" class="form-check text-nowrap"
+         [class.bg-light]="i % 2 === 0"
+         [class.bg-gray-dark]="i % 2 !== 0">
+      <input class="form-check-input" type="checkbox" [id]="'player-' + player.id" [value]="player.id"
+             [checked]="filter.playerIds.includes(player.id)"
+             (change)="onPlayerChange(player, $event)">
+      <label class="form-check-label" [for]="'player-' + player.id">
+        {{ player.firstName }}
+        <ng-content *ngIf="player.nickName">'{{ player.nickName }}'</ng-content>
+        {{ player.lastName }}
+        ({{ player.id }})
+      </label>
+    </div>
   </div>
 </div>

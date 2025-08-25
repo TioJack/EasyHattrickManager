@@ -609,6 +609,9 @@ public class UpdateTranslationService {
             "al hacer click sobre el combo, aparece la lista de proyectos existente,",
             "en fer clic sobre el combo, apareix la llista de projectes existent,");
         addTranslation_EN_ES_CA("ehm.manual-2340", "keeping their order as defined in the", "manteniendo el orden de los mismos definido en la", "mantenint l'ordre dels mateixos definit a la");
+        addTranslation_EN_ES_CA("ehm.select-all", "select all", "seleccionar todos", "seleccionar tots");
+        addTranslation_EN_ES_CA("ehm.deselect-all", "deselect all", "deseleccionar todos", "deseleccionar tots");
+        addTranslation_EN_ES_CA("ehm.invert-selection", "invert selection", "invertir selección", "invertir selecció");
     }
 
     private void addTranslation_EN_ES_CA(String key, String en, String es, String ca) {

@@ -75,21 +75,51 @@ export class PlayerFilterComponent implements OnInit {
         this.filter.playerIds.splice(playerIndex, 1);
       }
     }
-    const currentConfig = this.userConfigService.getUserConfig();
-    if (currentConfig) {
-      const updatedConfig = {...currentConfig};
-      const activeProject = updatedConfig.projects.find(
-        (project) => project.name === this.projectName
-      );
-      if (activeProject) {
-        if (!activeProject.filter) {
-          activeProject.filter = {mode: this.filter.mode, playerIds: []};
-        }
-        activeProject.filter.playerIds = [...this.filter.playerIds];
+    this.persistFilter();
+  }
+
+  selectAll(): void {
+    const allIds = (this.players ?? []).map(p => p.id);
+    this.filter.playerIds = [...allIds];
+    this.persistFilter();
+  }
+
+  deselectAll(): void {
+    this.filter.playerIds = [];
+    this.persistFilter();
+  }
+
+  invertSelection(): void {
+    const all = new Set((this.players ?? []).map(p => p.id));
+    const selected = new Set(this.filter.playerIds);
+    const inverted: number[] = [];
+    all.forEach(id => {
+      if (!selected.has(id)) {
+        inverted.push(id);
       }
-      this.userConfigService.setAndSaveUserConfig(updatedConfig);
-      this.playService.update();
+    });
+    this.filter.playerIds = inverted;
+    this.persistFilter();
+  }
+
+  private persistFilter(): void {
+    const currentConfig = this.userConfigService.getUserConfig();
+    if (!currentConfig) {
+      return;
     }
+    const updatedConfig = {...currentConfig};
+    const activeProject = updatedConfig.projects.find(
+      (project) => project.name === this.projectName
+    );
+    if (activeProject) {
+      if (!activeProject.filter) {
+        activeProject.filter = {mode: this.filter.mode, playerIds: []};
+      }
+      activeProject.filter.playerIds = [...this.filter.playerIds];
+      activeProject.filter.mode = this.filter.mode ?? 'exclusive';
+    }
+    this.userConfigService.setAndSaveUserConfig(updatedConfig);
+    this.playService.update();
   }
 
 }
