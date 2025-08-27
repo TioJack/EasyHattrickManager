@@ -1,0 +1,50 @@
+<div *ngIf="playerStats && playerStats.total && playerStats.average && userConfig" class="card container h-100 w-100 fs-90">
+  <div class="table-responsive p-1">
+    <table class="table table-sm align-middle">
+      <thead>
+      <tr>
+        <th scope="col"></th>
+        <th scope="col">{{ 'ehm.totals' | translate | firstCapitalize }}</th>
+        <th scope="col">{{ 'ehm.averages' | translate | firstCapitalize }}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <th scope="row">{{ 'ehm.players' | translate | firstCapitalize }}</th>
+        <td>{{ playerStats.total.players }}</td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <th scope="row">TSI</th>
+        <td>{{ playerStats.total.tsi }}</td>
+        <td>{{ Math.trunc(playerStats.average.tsi || 0) }}</td>
+      </tr>
+      <tr>
+        <th scope="row">{{ 'ehm.wage' | translate | firstCapitalize }}</th>
+        <td>{{ playerStats.total.wage | salary:userConfig.currency }}</td>
+        <td>{{ playerStats.average.wage | salary:userConfig.currency }}</td>
+      </tr>
+      <tr>
+        <th scope="row">{{ 'ehm.age' | translate | firstCapitalize }}</th>
+        <td>-</td>
+        <td>{{ numberToYearsDays(playerStats.average.age).years }}{{ 'ehm.years' | translate | firstLetter }} {{ numberToYearsDays(playerStats.average.age).days }}{{ 'ehm.days' | translate | firstLetter }}</td>
+      </tr>
+      <tr>
+        <th scope="row">{{ 'ht.skill-form' | translate }}</th>
+        <td>-</td>
+        <td>{{ playerStats.average.form | skillLevelDecimals }}</td>
+      </tr>
+      <tr>
+        <th scope="row">{{ 'ht.skill-stamina' | translate }}</th>
+        <td>-</td>
+        <td>{{ playerStats.average.stamina | skillLevelDecimals }}</td>
+      </tr>
+      <tr>
+        <th scope="row">{{ 'ht.skill-experience' | translate }}</th>
+        <td>-</td>
+        <td>{{ playerStats.average.experience | skillLevelDecimals }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

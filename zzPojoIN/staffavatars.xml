@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HattrickData>
+  <FileName>staffavatars.xml</FileName>
+  <Version>1.1</Version>
+  <UserID>4495104</UserID>
+  <FetchedDate>2025-08-26 08:32:44</FetchedDate>
+  <Trainer>
+    <TrainerId>446606376</TrainerId>
+    <Avatar>
+      <BackgroundImage>/Img/Avatar/backgrounds/card1.png</BackgroundImage>
+      <Layer x="9" y="10">
+        <Image>/Img/Avatar/backgrounds/bg_blue.png</Image>
+      </Layer>
+      <Layer x="9" y="10">
+        <Image>/Img/Avatar/bodies/f1man5a.png</Image>
+      </Layer>
+      <Layer x="9" y="10">
+        <Image>/Img/Avatar/faces/f1e.png</Image>
+      </Layer>
+      <Layer x="26" y="22">
+        <Image>/Img/Avatar/eyes/e23c.png</Image>
+      </Layer>
+      <Layer x="32" y="72">
+        <Image>/Img/Avatar/mouths/m39c.png</Image>
+      </Layer>
+      <Layer x="19" y="62">
+        <Image>/Img/Avatar/goatees/g2.png</Image>
+      </Layer>
+      <Layer x="20" y="35">
+        <Image>/Img/Avatar/noses/n25.png</Image>
+      </Layer>
+      <Layer x="9" y="10">
+        <Image>/Img/Avatar/hair/f1h8h.png</Image>
+      </Layer>
+      <Layer x="83" y="130">
+        <Image>/Img/Avatar/numbers/99.png</Image>
+      </Layer>
+    </Avatar>
+  </Trainer>
+  <StaffMembers>
+    <Staff>
+      <StaffId>2424963</StaffId>
+      <Avatar>
+        <BackgroundImage>/Img/Avatar/backgrounds/card1.png</BackgroundImage>
+        <Layer x="9" y="10">
+          <Image>/Img/Avatar/backgrounds/bg_blue.png</Image>
+        </Layer>
+        <Layer x="9" y="10">
+          <Image>/Img/Avatar/bodies/f7man5a.png</Image>
+        </Layer>
+        <Layer x="9" y="10">
+          <Image>/Img/Avatar/faces/f7d.png</Image>
+        </Layer>
+        <Layer x="26" y="6">
+          <Image>/Img/Avatar/eyes/e36c.png</Image>
+        </Layer>
+        <Layer x="30" y="41">
+          <Image>/Img/Avatar/mouths/m40c.png</Image>
+        </Layer>
+        <Layer x="17" y="14">
+          <Image>/Img/Avatar/noses/n40.png</Image>
+        </Layer>
+        <Layer x="9" y="10">
+          <Image>/Img/Avatar/hair/f7h6h.png</Image>
+        </Layer>
+      </Avatar>
+    </Staff>
+    <Staff>
+      <StaffId>2477961</StaffId>
+      <Avatar>
+        <BackgroundImage>/Img/Avatar/backgrounds/card1.png</BackgroundImage>
+        <Layer x="9" y="10">
+          <Image>/Img/Avatar/backgrounds/bg_blue.png</Image>
+        </Layer>
+        <Layer x="9" y="10">
+          <Image>/Img/Avatar/bodies/f8man5a.png</Image>
+        </Layer>
+        <Layer x="9" y="10">
+          <Image>/Img/Avatar/faces/f8a.png</Image>
+        </Layer>
+        <Layer x="23" y="13">
+          <Image>/Img/Avatar/eyes/e14c.png</Image>
+        </Layer>
+        <Layer x="30" y="61">
+          <Image>/Img/Avatar/mouths/m9c.png</Image>
+        </Layer>
+        <Layer x="19" y="52">
+          <Image>/Img/Avatar/goatees/g2.png</Image>
+        </Layer>
+        <Layer x="18" y="34">
+          <Image>/Img/Avatar/noses/n14.png</Image>
+        </Layer>
+        <Layer x="9" y="10">
+          <Image>/Img/Avatar/hair/f8h4b.png</Image>
+        </Layer>
+      </Avatar>
+    </Staff>
+    <Staff>
+      <StaffId>1502758</StaffId>
+      <Avatar>
+        <BackgroundImage>/Img/Avatar/backgrounds/card1.png</BackgroundImage>
+        <Layer x="9" y="10">
+          <Image>/Img/Avatar/backgrounds/bg_blue.png</Image>
+        </Layer>
+        <Layer x="9" y="10">
+          <Image>/Img/Avatar/bodies/f8man1a.png</Image>
+        </Layer>
+        <Layer x="9" y="10">
+          <Image>/Img/Avatar/faces/f8a.png</Image>
+        </Layer>
+        <Layer x="24" y="19">
+          <Image>/Img/Avatar/eyes/e8a.png</Image>
+        </Layer>
+        <Layer x="30" y="64">
+          <Image>/Img/Avatar/mouths/m4a.png</Image>
+        </Layer>
+        <Layer x="22" y="22">
+          <Image>/Img/Avatar/noses/n6.png</Image>
+        </Layer>
+        <Layer x="9" y="10">
+          <Image>/Img/Avatar/hair/f8h13c.png</Image>
+        </Layer>
+      </Avatar>
+    </Staff>
+    <Staff>
+      <StaffId>1996283</StaffId>
+      <Avatar>
+        <BackgroundImage>/Img/Avatar/backgrounds/card1.png</BackgroundImage>
+        <Layer x="9" y="10">
+          <Image>/Img/Avatar/backgrounds/bg_blue.png</Image>
+        </Layer>
+        <Layer x="9" y="10">
+          <Image>/Img/Avatar/bodies/f3man1a.png</Image>
+        </Layer>
+        <Layer x="9" y="10">
+          <Image>/Img/Avatar/faces/f3a.png</Image>
+        </Layer>
+        <Layer x="24" y="15">
+          <Image>/Img/Avatar/eyes/e29b.png</Image>
+        </Layer>
+        <Layer x="31" y="63">
+          <Image>/Img/Avatar/mouths/m34b.png</Image>
+        </Layer>
+        <Layer x="18" y="20">
+          <Image>/Img/Avatar/noses/n29.png</Image>
+        </Layer>
+        <Layer x="9" y="10">
+          <Image>/Img/Avatar/hair/f3h5c.png</Image>
+        </Layer>
+      </Avatar>
+    </Staff>
+  </StaffMembers>
+</HattrickData>

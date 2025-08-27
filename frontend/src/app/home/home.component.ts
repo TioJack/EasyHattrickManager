@@ -3,14 +3,14 @@ import {NgIf} from '@angular/common';
 import {DataResponse} from '../services/model/data-response';
 import {DataService} from '../services/data.service';
 import {HeaderComponent} from '../header/header.component';
-import {PlayerListComponent} from '../player-list/player-list.component';
+import {MainComponent} from '../main/main.component';
 import {TranslatePipe} from '@ngx-translate/core';
 import {FirstCapitalizePipe} from '../pipes/first-capitalize.pipe';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [NgIf, HeaderComponent, PlayerListComponent, TranslatePipe, FirstCapitalizePipe],
+  imports: [NgIf, HeaderComponent, MainComponent, TranslatePipe, FirstCapitalizePipe],
   templateUrl: './home.component.html'
 })
 export class HomeComponent implements OnInit {

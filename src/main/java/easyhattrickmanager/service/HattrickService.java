@@ -6,6 +6,7 @@ import easyhattrickmanager.client.hattrick.model.avatars.Avatars;
 import easyhattrickmanager.client.hattrick.model.managercompendium.ManagerCompendium;
 import easyhattrickmanager.client.hattrick.model.playerdetails.PlayerDetails;
 import easyhattrickmanager.client.hattrick.model.players.Players;
+import easyhattrickmanager.client.hattrick.model.staffavatars.StaffAvatars;
 import easyhattrickmanager.client.hattrick.model.stafflist.Stafflist;
 import easyhattrickmanager.client.hattrick.model.teamdetails.TeamDetails;
 import easyhattrickmanager.client.hattrick.model.training.Training;
@@ -61,6 +62,10 @@ public class HattrickService {
 
     public Avatars getAvatars(int teamId) {
         return this.hattrickClient.getAvatars(getAccessToken(teamId), teamId);
+    }
+
+    public StaffAvatars getStaffAvatars(int teamId) {
+        return this.hattrickClient.getStaffAvatars(getAccessToken(teamId), teamId);
     }
 
     public Translations getTranslations(int languageId) {

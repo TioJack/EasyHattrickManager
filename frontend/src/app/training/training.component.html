@@ -1,0 +1,23 @@
+<div *ngIf="training && trainingStats" class="card container h-100 w-100">
+  <div class="py-1">
+    <div class="row text-center g-0">
+      <div class="col">
+        <span class="small text-muted">{{ 'ehm.week' | translate | firstCapitalize }} {{ trainingStats.weeks }}: </span>
+        <span class="fw-semibold" [style.color]="trainingTypeColor(training.trainingType)">
+          {{ 'ht.training-type-' + training.trainingType | translate | firstCapitalize }}
+        </span>
+      </div>
+      <div class="col">
+        <span class="small text-muted">{{ 'ehm.intensity' | translate | firstCapitalize }}: </span>
+        <span>{{ training.trainingLevel }}%</span>
+      </div>
+      <div class="col">
+        <span class="small text-muted">{{ 'ht.skill-stamina' | translate | firstCapitalize }}: </span>
+        <span>{{ training.staminaTrainingPart }}%</span>
+      </div>
+    </div>
+  </div>
+  <div class="h-100 w-100">
+    <canvas #trainingChart></canvas>
+  </div>
+</div>

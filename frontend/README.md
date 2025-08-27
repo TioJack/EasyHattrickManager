@@ -12,3 +12,7 @@ ng generate component PlayerFilter --standalone --skip-tests --style=none
 ng generate component PlayerSort --standalone --skip-tests --style=none
 ng generate component Alert --standalone --skip-tests --style=none
 ng generate component Manual --standalone --skip-tests --style=none
+ng generate component Staff --standalone --skip-tests --style=none
+ng generate component StaffLevel --standalone --skip-tests --style=none
+ng generate component Training --standalone --skip-tests --style=none
+ng generate component PlayerStats --standalone --skip-tests --style=none

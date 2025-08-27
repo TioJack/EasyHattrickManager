@@ -1,21 +1,25 @@
 import {Component, OnInit} from '@angular/core';
 import {PlayService} from '../services/play.service';
 import {PlayerInfo} from '../services/model/data-response';
-import {NgClass, NgForOf, NgIf} from '@angular/common';
+import {NgForOf} from '@angular/common';
 import {PlayerCardComponent} from '../player-card/player-card.component';
+import {StaffComponent} from '../staff/staff.component';
+import {TrainingComponent} from '../training/training.component';
+import {PlayerStatsComponent} from '../player-stats/player-stats.component';
 
 @Component({
-  selector: 'app-player-list',
+  selector: 'app-main',
   standalone: true,
   imports: [
-    NgIf,
     NgForOf,
     PlayerCardComponent,
-    NgClass
+    StaffComponent,
+    TrainingComponent,
+    PlayerStatsComponent
   ],
-  templateUrl: './player-list.component.html'
+  templateUrl: './main.component.html'
 })
-export class PlayerListComponent implements OnInit {
+export class MainComponent implements OnInit {
   players: PlayerInfo[] = [];
 
   constructor(private playService: PlayService) {

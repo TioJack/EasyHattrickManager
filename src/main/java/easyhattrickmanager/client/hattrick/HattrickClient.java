@@ -15,6 +15,7 @@ import easyhattrickmanager.client.hattrick.model.avatars.Avatars;
 import easyhattrickmanager.client.hattrick.model.managercompendium.ManagerCompendium;
 import easyhattrickmanager.client.hattrick.model.playerdetails.PlayerDetails;
 import easyhattrickmanager.client.hattrick.model.players.Players;
+import easyhattrickmanager.client.hattrick.model.staffavatars.StaffAvatars;
 import easyhattrickmanager.client.hattrick.model.stafflist.Stafflist;
 import easyhattrickmanager.client.hattrick.model.teamdetails.TeamDetails;
 import easyhattrickmanager.client.hattrick.model.training.Training;
@@ -132,6 +133,16 @@ public class HattrickClient {
             String xml = this.getXML(accessToken, "avatars&version=1.1&actionType=players&teamId=" + teamId);
             Avatars avatars = XMLMAPPER.readValue(xml, Avatars.class);
             return avatars;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public StaffAvatars getStaffAvatars(OAuth1AccessToken accessToken, int teamId) {
+        try {
+            String xml = this.getXML(accessToken, "staffavatars&version=1.1&teamId=" + teamId);
+            StaffAvatars staffAvatars = XMLMAPPER.readValue(xml, StaffAvatars.class);
+            return staffAvatars;
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e.getMessage());
         }

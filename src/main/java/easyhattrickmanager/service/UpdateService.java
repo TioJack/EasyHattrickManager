@@ -7,6 +7,7 @@ import easyhattrickmanager.client.hattrick.model.avatars.Avatars;
 import easyhattrickmanager.client.hattrick.model.avatars.Layer;
 import easyhattrickmanager.client.hattrick.model.playerdetails.PlayerDetails;
 import easyhattrickmanager.client.hattrick.model.players.Players;
+import easyhattrickmanager.client.hattrick.model.staffavatars.StaffAvatars;
 import easyhattrickmanager.client.hattrick.model.stafflist.Stafflist;
 import easyhattrickmanager.client.hattrick.model.worlddetails.WorldDetails;
 import easyhattrickmanager.configuration.AssetsConfiguration;
@@ -83,6 +84,7 @@ public class UpdateService {
         trainingDAO.insert(getTraining(hattrickService.getTraining(teamId), seasonWeek));
         staffDAO.insert(getStaff(teamId, hattrickService.getStaff(teamId), seasonWeek));
         saveAvatars(hattrickService.getAvatars(teamId));
+        saveStaffAvatars(hattrickService.getStaffAvatars(teamId));
     }
 
     public int getActualWeek(int teamId) {
@@ -434,15 +436,20 @@ public class UpdateService {
     }
 
     private void saveAvatars(Avatars avatars) {
-        avatars.getTeam().getPlayers().forEach(
-            playerHT -> {
-                if (!Files.exists(Paths.get(assetsConfiguration.getAssetsPath() + "/avatars/" + playerHT.getPlayerId() + ".png"))) {
-                    saveImage(playerHT.getAvatar().getBackgroundImage());
-                    playerHT.getAvatar().getLayers().forEach(layer -> saveImage(layer.getImage()));
-                    saveImage(mountImage(playerHT.getAvatar()), playerHT.getPlayerId());
-                }
-            }
-        );
+        avatars.getTeam().getPlayers().forEach(playerHT -> saveAvatar(playerHT.getAvatar(), playerHT.getPlayerId()));
+    }
+
+    private void saveStaffAvatars(StaffAvatars staffAvatars) {
+        saveAvatar(staffAvatars.getTrainer().getAvatar(), staffAvatars.getTrainer().getTrainerId());
+        staffAvatars.getStaffs().forEach(staffHT -> saveAvatar(staffHT.getAvatar(), staffHT.getStaffId()));
+    }
+
+    private void saveAvatar(Avatar avatar, int id) {
+        if (!Files.exists(Paths.get(assetsConfiguration.getAssetsPath() + "/avatars/" + id + ".png"))) {
+            saveImage(avatar.getBackgroundImage());
+            avatar.getLayers().forEach(layer -> saveImage(layer.getImage()));
+            saveImage(mountImage(avatar), id);
+        }
     }
 
     private BufferedImage mountImage(Avatar avatar) {

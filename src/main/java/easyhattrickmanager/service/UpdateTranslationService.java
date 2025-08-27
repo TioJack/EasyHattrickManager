@@ -612,6 +612,26 @@ public class UpdateTranslationService {
         addTranslation_EN_ES_CA("ehm.select-all", "select all", "seleccionar todos", "seleccionar tots");
         addTranslation_EN_ES_CA("ehm.deselect-all", "deselect all", "deseleccionar todos", "deseleccionar tots");
         addTranslation_EN_ES_CA("ehm.invert-selection", "invert selection", "invertir selección", "invertir selecció");
+        addTranslation_EN_ES_CA("ehm.level", "level", "nivel", "nivell");
+        addTranslation_EN_ES_CA("ehm.staff-type-0", "coach", "entrenador", "entrenador");
+        addTranslation_EN_ES_CA("ehm.staff-type-1", "assistant coach", "entrenador asistente", "entrenador assistent");
+        addTranslation_EN_ES_CA("ehm.staff-type-2", "medic", "doctor", "metge");
+        addTranslation_EN_ES_CA("ehm.staff-type-3", "spokesperson", "portavoz", "portaveu");
+        addTranslation_EN_ES_CA("ehm.staff-type-4", "sports psychologist", "psicólogo deportivo", "psicòleg esportiu");
+        addTranslation_EN_ES_CA("ehm.staff-type-5", "form coach", "preparador físico", "assistent personal dels jugadors");
+        addTranslation_EN_ES_CA("ehm.staff-type-6", "financial director", "director financiero", "director financer");
+        addTranslation_EN_ES_CA("ehm.staff-type-7", "tactical assistant", "asistente táctico", "assistent tàctic");
+        addTranslation_EN_ES_CA("ehm.trainer-type-0", "defensive", "defensivo", "defensiu");
+        addTranslation_EN_ES_CA("ehm.trainer-type-1", "offensive", "ofensivo", "ofensiu");
+        addTranslation_EN_ES_CA("ehm.trainer-type-2", "neutral", "neutro", "neutre");
+        addTranslation_EN_ES_CA("ehm.intensity", "intensity", "intensidad ", "intensitat");
+        addTranslation_EN_ES_CA("ehm.totals", "totals", "totales", "totals");
+        addTranslation_EN_ES_CA("ehm.averages", "averages", "medias", "mitges");
+        addTranslation_EN_ES_CA("ehm.players", "players", "jugadores", "jugadors");
+        addTranslation_EN_ES_CA("ehm.very-low", "very low", "muy bajo", "molt baix");
+        addTranslation_EN_ES_CA("ehm.low", "low", "bajo", "baix");
+        addTranslation_EN_ES_CA("ehm.high", "high", "alto", "alt");
+        addTranslation_EN_ES_CA("ehm.very-high", "very high", "muy alto", "molt alt");
     }
 
     private void addTranslation_EN_ES_CA(String key, String en, String es, String ca) {

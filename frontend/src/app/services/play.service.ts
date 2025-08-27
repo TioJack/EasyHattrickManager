@@ -1,6 +1,8 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
-import {PlayerInfo, Project, TeamExtendedInfo} from './model/data-response';
+import {PlayerInfo, Project, StaffInfo, TeamExtendedInfo, TrainingInfo} from './model/data-response';
+import {TrainingStats} from './model/training-stats';
+import {PlayerStats} from './model/player-stats';
 
 @Injectable({
   providedIn: 'root'
@@ -11,12 +13,21 @@ export class PlayService {
   private selectedSeasonSubject = new BehaviorSubject<number | null>(null);
   private selectedWeekSubject = new BehaviorSubject<number | null>(null);
   private playersSubject = new BehaviorSubject<PlayerInfo[]>([]);
+  private staffSubject = new BehaviorSubject<StaffInfo | null>(null);
+  private trainingSubject = new BehaviorSubject<TrainingInfo | null>(null);
+  private trainingStatsSubject = new BehaviorSubject<TrainingStats | null>(null);
+  private playerStatsSubject = new BehaviorSubject<PlayerStats | null>(null);
 
   selectedProject$ = this.selectedProjectSubject.asObservable();
   selectedTeam$ = this.selectedTeamSubject.asObservable();
   selectedSeason$ = this.selectedSeasonSubject.asObservable();
   selectedWeek$ = this.selectedWeekSubject.asObservable();
   players$ = this.playersSubject.asObservable();
+  staff$ = this.staffSubject.asObservable();
+  training$ = this.trainingSubject.asObservable();
+  trainingStats$ = this.trainingStatsSubject.asObservable();
+  playerStats$ = this.playerStatsSubject.asObservable();
+
 
   selectProject(project: Project): void {
     this.selectedProjectSubject.next(project);
@@ -82,8 +93,16 @@ export class PlayService {
           });
         }
         this.playersSubject.next(sortedPlayers);
+        this.staffSubject.next(matchingWeek.staff);
+        this.trainingSubject.next(matchingWeek.training);
+        this.trainingStatsSubject.next(this.computeTrainingStats(team, this.selectedProjectSubject.value, season, week));
+        this.playerStatsSubject.next(this.computePlayerStats(sortedPlayers));
       } else {
         this.playersSubject.next([]);
+        this.staffSubject.next(null);
+        this.trainingSubject.next(null);
+        this.trainingStatsSubject.next(null);
+        this.playerStatsSubject.next(null);
       }
     }
   }
@@ -92,6 +111,8 @@ export class PlayService {
     this.selectedSeasonSubject.next(null);
     this.selectedWeekSubject.next(null);
     this.playersSubject.next([]);
+    this.staffSubject.next(null);
+    this.playerStatsSubject.next(null);
   }
 
   clearAll(): void {
@@ -221,6 +242,108 @@ export class PlayService {
     if (currentSeason && currentWeek) {
       this.selectSeasonAndWeek(currentSeason, currentWeek);
     }
+  }
+
+  private computeTrainingStats(
+    team: TeamExtendedInfo,
+    project: Project | null,
+    toSeason: number,
+    toWeek: number
+  ): TrainingStats {
+    const start = project
+      ? {season: project.iniSeason, week: project.iniWeek}
+      : this.getFirstSeasonAndWeekFromTeam(team);
+
+    const endLimit = project?.endSeason && project?.endWeek
+      ? {season: project.endSeason, week: project.endWeek}
+      : this.getLastSeasonAndWeekFromTeam(team);
+
+    const end = this.minSeasonWeek({season: toSeason, week: toWeek}, endLimit);
+
+    const inRange = team.weeklyData.filter(w =>
+      this.isBetweenInclusive({season: w.season, week: w.week}, start, end)
+    );
+
+    const weeks = inRange.length;
+
+    const trainingCounts: Record<number, number> = {};
+    for (const w of inRange) {
+      const type = w.training?.trainingType ?? -1;
+      trainingCounts[type] = (trainingCounts[type] ?? 0) + 1;
+    }
+
+    return {weeks, trainings: trainingCounts};
+  }
+
+  private getFirstSeasonAndWeekFromTeam(team: TeamExtendedInfo): { season: number, week: number } {
+    const first = team.weeklyData[0];
+    return {season: first.season, week: first.week};
+  }
+
+  private getLastSeasonAndWeekFromTeam(team: TeamExtendedInfo): { season: number, week: number } {
+    const last = team.weeklyData[team.weeklyData.length - 1];
+    return {season: last.season, week: last.week};
+  }
+
+  private isBetweenInclusive(
+    x: { season: number; week: number },
+    a: { season: number; week: number },
+    b: { season: number; week: number }
+  ): boolean {
+    return this.compareSeasonWeek(a, x) <= 0 && this.compareSeasonWeek(x, b) <= 0;
+  }
+
+  private minSeasonWeek(
+    a: { season: number; week: number },
+    b: { season: number; week: number }
+  ): { season: number; week: number } {
+    return this.compareSeasonWeek(a, b) <= 0 ? a : b;
+  }
+
+  private compareSeasonWeek(
+    x: { season: number; week: number },
+    y: { season: number; week: number }
+  ): number {
+    if (x.season !== y.season) return x.season - y.season;
+    return x.week - y.week;
+  }
+
+  private computePlayerStats(players: PlayerInfo[]): PlayerStats {
+    const count = players.length;
+
+    let sumTSI = 0;
+    let sumWage = 0;
+    let sumAge = 0;
+    let sumForm = 0;
+    let sumStamina = 0;
+    let sumExperience = 0;
+
+    for (const player of players) {
+      sumTSI += player.tsi ?? 0;
+      sumWage += player.salary ?? 0;
+      const ageYears = (player.age ?? 0) + ((player.ageDays ?? 0) / 111);
+      sumAge += ageYears;
+      sumForm += player.playerForm ?? 0;
+      sumStamina += player.staminaSkill ?? 0;
+      sumExperience += player.experience ?? 0;
+    }
+
+    const total = {
+      players: count,
+      tsi: sumTSI,
+      wage: sumWage
+    };
+
+    const average = {
+      tsi: count ? sumTSI / count : 0,
+      wage: count ? sumWage / count : 0,
+      age: count ? sumAge / count : 0,
+      form: count ? sumForm / count : 0,
+      stamina: count ? sumStamina / count : 0,
+      experience: count ? sumExperience / count : 0
+    };
+
+    return {total, average};
   }
 
 }
