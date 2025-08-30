@@ -1,5 +1,8 @@
 package easyhattrickmanager.service;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toMap;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import easyhattrickmanager.controller.model.DataResponse;
 import easyhattrickmanager.repository.CountryDAO;
@@ -7,8 +10,9 @@ import easyhattrickmanager.repository.LanguageDAO;
 import easyhattrickmanager.repository.LeagueDAO;
 import easyhattrickmanager.repository.PlayerDAO;
 import easyhattrickmanager.repository.PlayerDataDAO;
-import easyhattrickmanager.repository.StaffDAO;
+import easyhattrickmanager.repository.StaffMemberDAO;
 import easyhattrickmanager.repository.TeamDAO;
+import easyhattrickmanager.repository.TrainerDAO;
 import easyhattrickmanager.repository.TrainingDAO;
 import easyhattrickmanager.repository.UserConfigDAO;
 import easyhattrickmanager.repository.UserDAO;
@@ -16,7 +20,8 @@ import easyhattrickmanager.repository.model.Country;
 import easyhattrickmanager.repository.model.League;
 import easyhattrickmanager.repository.model.Player;
 import easyhattrickmanager.repository.model.PlayerData;
-import easyhattrickmanager.repository.model.Staff;
+import easyhattrickmanager.repository.model.StaffMember;
+import easyhattrickmanager.repository.model.Trainer;
 import easyhattrickmanager.repository.model.Training;
 import easyhattrickmanager.repository.model.User;
 import easyhattrickmanager.service.model.dataresponse.CurrencyInfo;
@@ -52,7 +57,8 @@ public class DataService {
     private final TeamDAO teamDAO;
     private final LeagueDAO leagueDAO;
     private final TrainingDAO trainingDAO;
-    private final StaffDAO staffDAO;
+    private final TrainerDAO trainerDAO;
+    private final StaffMemberDAO staffMemberDAO;
     private final PlayerDAO playerDAO;
     private final PlayerDataDAO playerDataDAO;
     private final LanguageDAO languageDAO;
@@ -93,24 +99,25 @@ public class DataService {
     }
 
     private List<WeeklyInfo> getWeeklyData(int teamId, int seasonOffset) {
-        Map<String, TrainingInfo> trainings = trainingDAO.get(teamId).stream().collect(Collectors.toMap(Training::getSeasonWeek, trainingInfoMapper::toInfo));
-        Map<String, StaffInfo> staffs = staffDAO.get(teamId).stream().collect(Collectors.toMap(Staff::getSeasonWeek, staffInfoMapper::toInfo));
-        Map<Integer, Player> playersBaseInfo = playerDAO.get(teamId).stream().collect(Collectors.toMap(Player::getId, player -> player));
-
-        List<PlayerData> playerData1 = playerDataDAO.get(teamId).stream().filter(playerData -> playerData.getSeasonWeek().startsWith("S092")).toList();
-
+        Map<String, TrainingInfo> trainings = trainingDAO.get(teamId).stream().collect(toMap(Training::getSeasonWeek, trainingInfoMapper::toInfo));
+        Map<String, Trainer> trainersByWeek = trainerDAO.get(teamId).stream().collect(toMap(Trainer::getSeasonWeek, t -> t, (a, b) -> b));
+        Map<String, List<StaffMember>> staffMembersByWeek = staffMemberDAO.get(teamId).stream().collect(groupingBy(StaffMember::getSeasonWeek));
+        Map<String, StaffInfo> staffs = trainings.keySet().stream().collect(toMap(
+            seasonWeek -> seasonWeek,
+            seasonWeek -> staffInfoMapper.toInfo(trainersByWeek.get(seasonWeek), staffMembersByWeek.getOrDefault(seasonWeek, List.of()))
+        ));
+        Map<Integer, Player> playersBaseInfo = playerDAO.get(teamId).stream().collect(toMap(Player::getId, player -> player));
         Map<String, List<PlayerInfo>> players = playerDataDAO
             .get(teamId)
             .stream()
-            .collect(
-                Collectors.groupingBy(
-                    PlayerData::getSeasonWeek,
-                    Collectors.mapping(playerData ->
-                            playerInfoMapper.toInfo(
-                                playersBaseInfo.get(
-                                    playerData.getId()),
-                                playerData),
-                        Collectors.toList())));
+            .collect(groupingBy(
+                PlayerData::getSeasonWeek,
+                Collectors.mapping(playerData ->
+                        playerInfoMapper.toInfo(
+                            playersBaseInfo.get(
+                                playerData.getId()),
+                            playerData),
+                    Collectors.toList())));
 
         List<String> seasonWeeks = trainings.keySet().stream().toList();
         return seasonWeeks.stream().map(seasonWeek ->

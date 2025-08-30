@@ -47,7 +47,7 @@
         </tr>
         <tr>
           <td class="text-end pe-1 text-nowrap">TSI</td>
-          <td class="text-start text-nowrap" colspan="2">{{ player.tsi }}</td>
+          <td class="text-start text-nowrap" colspan="2">{{ player.tsi | numberSeparator }}</td>
           <td class="text-end pe-1 text-nowrap">{{ 'ht.skill-defender' | translate }}</td>
           <td>
             <app-skill [skill]="player.defenderSkill" [max]="20"></app-skill>

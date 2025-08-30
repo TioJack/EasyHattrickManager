@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="easyhattrickmanager.repository.StaffMemberDAO">
+
+  <insert id="insert">
+    INSERT
+    IGNORE INTO staff_member (
+      season_week,
+      team_id,
+      id,
+      name,
+      type,
+      level,
+      hof_player_id,
+      start_date,
+      cost
+    )
+    VALUES (
+    #{staffMember.seasonWeek},
+    #{staffMember.teamId},
+    #{staffMember.id},
+    #{staffMember.name},
+    #{staffMember.type},
+    #{staffMember.level},
+    #{staffMember.hofPlayerId},
+    #{staffMember.startDate},
+    #{staffMember.cost}
+    );
+  </insert>
+
+  <select id="get" resultType="easyhattrickmanager.repository.model.StaffMember">
+    SELECT season_week,
+           team_id,
+           id,
+           name,
+           type,
+           level,
+           hof_player_id,
+           start_date,
+           cost
+    FROM staff_member
+    WHERE team_id = #{teamId}
+    ORDER BY season_week, start_date, id;
+  </select>
+
+</mapper>

@@ -8,11 +8,12 @@ import {TranslatePipe} from '@ngx-translate/core';
 import {FirstLetterPipe} from '../pipes/first-letter.pipe';
 import {SpecialtyComponent} from '../specialty/specialty.component';
 import {FirstCapitalizePipe} from '../pipes/first-capitalize.pipe';
+import {NumberSeparatorPipe} from '../pipes/number-separator.pipe';
 
 @Component({
   selector: 'app-player-card',
   standalone: true,
-  imports: [NgIf, SalaryPipe, SkillComponent, TranslatePipe, FirstLetterPipe, SpecialtyComponent, LowerCasePipe, FirstCapitalizePipe],
+  imports: [NgIf, SalaryPipe, SkillComponent, TranslatePipe, FirstLetterPipe, SpecialtyComponent, LowerCasePipe, FirstCapitalizePipe, NumberSeparatorPipe],
   templateUrl: './player-card.component.html',
   styleUrls: ['./player-card.component.scss']
 })

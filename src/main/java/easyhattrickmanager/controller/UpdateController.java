@@ -18,7 +18,13 @@ public class UpdateController {
     private final UpdateTranslationService updateTranslationService;
 
     @GetMapping
-    public ResponseEntity<Void> update(@RequestParam("teamId") int teamId) {
+    public ResponseEntity<Void> update() {
+        updateService.update();
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/team")
+    public ResponseEntity<Void> updateTeam(@RequestParam("id") int teamId) {
         updateService.update(teamId);
         return ResponseEntity.ok().build();
     }

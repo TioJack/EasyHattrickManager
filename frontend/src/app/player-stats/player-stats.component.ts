@@ -9,6 +9,7 @@ import {UserConfig} from '../services/model/data-response';
 import {UserConfigService} from '../services/user-config.service';
 import {FirstLetterPipe} from '../pipes/first-letter.pipe';
 import {SkillLevelPipe} from '../pipes/skill-level-decimals.pipe';
+import {NumberSeparatorPipe} from '../pipes/number-separator.pipe';
 
 @Component({
   selector: 'app-player-stats',
@@ -18,7 +19,8 @@ import {SkillLevelPipe} from '../pipes/skill-level-decimals.pipe';
     FirstCapitalizePipe,
     SalaryPipe,
     FirstLetterPipe,
-    SkillLevelPipe
+    SkillLevelPipe,
+    NumberSeparatorPipe
   ],
   templateUrl: './player-stats.component.html'
 })

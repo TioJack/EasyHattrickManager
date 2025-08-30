@@ -16,8 +16,8 @@
       </tr>
       <tr>
         <th scope="row">TSI</th>
-        <td>{{ playerStats.total.tsi }}</td>
-        <td>{{ Math.trunc(playerStats.average.tsi || 0) }}</td>
+        <td>{{ playerStats.total.tsi | numberSeparator }}</td>
+        <td>{{ Math.trunc(playerStats.average.tsi || 0) | numberSeparator }}</td>
       </tr>
       <tr>
         <th scope="row">{{ 'ehm.wage' | translate | firstCapitalize }}</th>

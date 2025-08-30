@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {StaffInfo} from '../services/model/data-response';
 import {PlayService} from '../services/play.service';
-import {LowerCasePipe, NgIf} from '@angular/common';
+import {LowerCasePipe, NgForOf, NgIf} from '@angular/common';
 import {StaffLevelComponent} from '../staff-level/staff-level.component';
 import {TranslatePipe} from '@ngx-translate/core';
 
@@ -11,7 +11,8 @@ import {TranslatePipe} from '@ngx-translate/core';
     NgIf,
     StaffLevelComponent,
     TranslatePipe,
-    LowerCasePipe
+    LowerCasePipe,
+    NgForOf
   ],
   templateUrl: './staff.component.html',
   styleUrls: ['./staff.component.scss']

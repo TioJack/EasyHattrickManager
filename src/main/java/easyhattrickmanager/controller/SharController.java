@@ -78,14 +78,51 @@ public class SharController {
                 int staminaTrainingPart = (int) training.get("StaminaTrainingPart");
                 String seasonWeek = String.format("S%03dW%02d", season, week);
                 ZonedDateTime zdt = updateService.convertFromSeasonWeek(seasonWeek);
-                result.add(String.format("INSERT IGNORE INTO training (season_week, `date`, team_id, training_type, training_level, stamina_training_part) VALUES('%s', '%s', %d, %d, %d, %d);",
-                    seasonWeek,
-                    zdt.plusDays(4).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + " 02:00:00",
-                    teamId,
-                    trainingType,
-                    trainingLevel,
-                    staminaTrainingPart
-                ));
+//                result.add(String.format("INSERT IGNORE INTO training (season_week, `date`, team_id, training_type, training_level, stamina_training_part) VALUES('%s', '%s', %d, %d, %d, %d);",
+//                    seasonWeek,
+//                    zdt.plusDays(4).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + " 02:00:00",
+//                    teamId,
+//                    trainingType,
+//                    trainingLevel,
+//                    staminaTrainingPart
+//                ));
+                Map<String, Object> staffList = (Map<String, Object>) entry.get("StaffList");
+                if (staffList != null) {
+                    Map<String, Object> trainer = (Map<String, Object>) staffList.get("Trainer");
+                    if (trainer != null) {
+                        int trainerId = ((Number) trainer.get("TrainerId")).intValue();
+                        String trainerName = (String) trainer.get("Name");
+                        int trainerType = ((Number) trainer.get("TrainerType")).intValue();
+                        int trainerLeadership = ((Number) trainer.getOrDefault("Leadership", 0)).intValue();
+                        int trainerSkillLevel = ((Number) trainer.getOrDefault("TrainerSkillLevel", 0)).intValue();
+                        int trainerStatus = ((Number) trainer.getOrDefault("TrainerStatus", 0)).intValue(); // por si no viene en JSON
+
+                        List<Map<String, Object>> staffMembers = (List<Map<String, Object>>) staffList.get("StaffMembers");
+                        Map<String, Object> s1 = (staffMembers != null && staffMembers.size() >= 1) ? staffMembers.get(0) : null;
+                        Map<String, Object> s2 = (staffMembers != null && staffMembers.size() >= 2) ? staffMembers.get(1) : null;
+                        Map<String, Object> s3 = (staffMembers != null && staffMembers.size() >= 3) ? staffMembers.get(2) : null;
+                        Map<String, Object> s4 = (staffMembers != null && staffMembers.size() >= 4) ? staffMembers.get(3) : null;
+
+                        result.add(String.format(
+                            "INSERT IGNORE INTO staff (" +
+                                "season_week, `date`, team_id, " +
+                                "trainer_id, trainer_name, trainer_type, trainer_leadership, trainer_skill_level, trainer_status, " +
+                                "staff1_id, staff1_name, staff1_type, staff1_level, staff1_hof_player_id, " +
+                                "staff2_id, staff2_name, staff2_type, staff2_level, staff2_hof_player_id, " +
+                                "staff3_id, staff3_name, staff3_type, staff3_level, staff3_hof_player_id, " +
+                                "staff4_id, staff4_name, staff4_type, staff4_level, staff4_hof_player_id" +
+                                ") VALUES ('%s', '%s', %d, %d, %s, %d, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);",
+                            seasonWeek,
+                            zdt.plusDays(4).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + " 02:00:00",
+                            teamId,
+                            trainerId, toSqlStr(trainerName), trainerType, trainerLeadership, trainerSkillLevel, trainerStatus,
+                            toSqlInt(getSafe(s1, "StaffId")), toSqlStr(getSafeStr(s1, "Name")), toSqlInt(getSafe(s1, "StaffType")), toSqlInt(getSafe(s1, "StaffLevel")), toSqlInt(getSafe(s1, "HofPlayerId")),
+                            toSqlInt(getSafe(s2, "StaffId")), toSqlStr(getSafeStr(s2, "Name")), toSqlInt(getSafe(s2, "StaffType")), toSqlInt(getSafe(s2, "StaffLevel")), toSqlInt(getSafe(s2, "HofPlayerId")),
+                            toSqlInt(getSafe(s3, "StaffId")), toSqlStr(getSafeStr(s3, "Name")), toSqlInt(getSafe(s3, "StaffType")), toSqlInt(getSafe(s3, "StaffLevel")), toSqlInt(getSafe(s3, "HofPlayerId")),
+                            toSqlInt(getSafe(s4, "StaffId")), toSqlStr(getSafeStr(s4, "Name")), toSqlInt(getSafe(s4, "StaffType")), toSqlInt(getSafe(s4, "StaffLevel")), toSqlInt(getSafe(s4, "HofPlayerId"))
+                        ));
+                    }
+                }
                 List<Map<String, Object>> playerDataList = (List<Map<String, Object>>) entry.get("PlayerData");
                 playerDataList.forEach(player -> {
                     int id = (int) player.get("PlayerID");
@@ -108,34 +145,34 @@ public class SharController {
                     int defenderSkill = (int) player.get("DefenderSkill");
                     int setPiecesSkill = (int) player.get("SetPiecesSkill");
                     HTMS htms = updateService.calculateHTMS(age, ageDays, keeperSkill, defenderSkill, playmakerSkill, wingerSkill, passingSkill, scorerSkill, setPiecesSkill);
-                    result.add(String.format(
-                        "INSERT IGNORE INTO player_data (id, season_week, `date`, team_id, nickName, player_number, age, age_days, TSI, player_form, experience, loyalty, mother_club_bonus, leadership, salary, injury_level, stamina_skill, keeper_skill, playmaker_skill, scorer_skill, passing_skill, winger_skill, defender_skill, set_pieces_skill, htms, htms28) VALUES (%d,'%s','%s',%d,'', %d, %d, %d, %d,%d,%d,%d, %d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d);",
-                        id,
-                        seasonWeek,
-                        zdt.plusDays(4).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + " 02:00:00",
-                        teamId,
-                        playerNumber,
-                        age,
-                        ageDays,
-                        tsi,
-                        playerForm,
-                        experience,
-                        loyalty,
-                        getMotherClubBonus(players, id),
-                        leadership,
-                        salary,
-                        injuryLevel,
-                        staminaSkill,
-                        keeperSkill,
-                        playmakerSkill,
-                        scorerSkill,
-                        passingSkill,
-                        wingerSkill,
-                        defenderSkill,
-                        setPiecesSkill,
-                        htms.getHtms(),
-                        htms.getHtms28()
-                    ));
+//                    result.add(String.format(
+//                        "INSERT IGNORE INTO player_data (id, season_week, `date`, team_id, nickName, player_number, age, age_days, TSI, player_form, experience, loyalty, mother_club_bonus, leadership, salary, injury_level, stamina_skill, keeper_skill, playmaker_skill, scorer_skill, passing_skill, winger_skill, defender_skill, set_pieces_skill, htms, htms28) VALUES (%d,'%s','%s',%d,'', %d, %d, %d, %d,%d,%d,%d, %d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d);",
+//                        id,
+//                        seasonWeek,
+//                        zdt.plusDays(4).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + " 02:00:00",
+//                        teamId,
+//                        playerNumber,
+//                        age,
+//                        ageDays,
+//                        tsi,
+//                        playerForm,
+//                        experience,
+//                        loyalty,
+//                        getMotherClubBonus(players, id),
+//                        leadership,
+//                        salary,
+//                        injuryLevel,
+//                        staminaSkill,
+//                        keeperSkill,
+//                        playmakerSkill,
+//                        scorerSkill,
+//                        passingSkill,
+//                        wingerSkill,
+//                        defenderSkill,
+//                        setPiecesSkill,
+//                        htms.getHtms(),
+//                        htms.getHtms28()
+//                    ));
                 });
             });
             saveToFile(String.join("\n", result), teamId + "_data.sql");
@@ -168,6 +205,33 @@ public class SharController {
         } catch (IOException e) {
             System.err.println("Error saveToFile: " + e.getMessage());
         }
+    }
+
+    private static Object getSafe(Map<String, Object> map, String key) {
+        if (map == null) {
+            return null;
+        }
+        Object v = map.get(key);
+        return v;
+    }
+
+    private static String getSafeStr(Map<String, Object> map, String key) {
+        Object v = getSafe(map, key);
+        return v == null ? null : String.valueOf(v);
+    }
+
+    private static String toSqlInt(Object v) {
+        if (v == null) {
+            return "NULL";
+        }
+        return String.valueOf(((Number) v).intValue());
+    }
+
+    private static String toSqlStr(String v) {
+        if (v == null) {
+            return "NULL";
+        }
+        return "'" + v.replace("'", "''") + "'";
     }
 
 }

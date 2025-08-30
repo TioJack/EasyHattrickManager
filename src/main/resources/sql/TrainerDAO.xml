@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="easyhattrickmanager.repository.TrainerDAO">
+
+  <insert id="insert">
+    INSERT
+    IGNORE INTO trainer (
+      season_week,
+      team_id,
+      id,
+      name,
+      type,
+      leadership,
+      skill_level,
+      status,
+      start_date,
+      cost
+    )
+    VALUES (
+    #{trainer.seasonWeek},
+    #{trainer.teamId},
+    #{trainer.id},
+    #{trainer.name},
+    #{trainer.type},
+    #{trainer.leadership},
+    #{trainer.skillLevel},
+    #{trainer.status},
+    #{trainer.startDate},
+    #{trainer.cost}
+    );
+  </insert>
+
+  <select id="get" resultType="easyhattrickmanager.repository.model.Trainer">
+    SELECT season_week,
+           team_id,
+           id,
+           name,
+           type,
+           leadership,
+           skill_level,
+           status,
+           start_date,
+           cost
+    FROM trainer
+    WHERE team_id = #{teamId}
+    ORDER BY season_week;
+  </select>
+
+</mapper>

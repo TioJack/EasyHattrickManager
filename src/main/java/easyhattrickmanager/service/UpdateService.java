@@ -8,6 +8,7 @@ import easyhattrickmanager.client.hattrick.model.avatars.Layer;
 import easyhattrickmanager.client.hattrick.model.playerdetails.PlayerDetails;
 import easyhattrickmanager.client.hattrick.model.players.Players;
 import easyhattrickmanager.client.hattrick.model.staffavatars.StaffAvatars;
+import easyhattrickmanager.client.hattrick.model.stafflist.Staff;
 import easyhattrickmanager.client.hattrick.model.stafflist.Stafflist;
 import easyhattrickmanager.client.hattrick.model.worlddetails.WorldDetails;
 import easyhattrickmanager.configuration.AssetsConfiguration;
@@ -15,16 +16,18 @@ import easyhattrickmanager.repository.CountryDAO;
 import easyhattrickmanager.repository.LeagueDAO;
 import easyhattrickmanager.repository.PlayerDAO;
 import easyhattrickmanager.repository.PlayerDataDAO;
-import easyhattrickmanager.repository.StaffDAO;
+import easyhattrickmanager.repository.StaffMemberDAO;
 import easyhattrickmanager.repository.TeamDAO;
+import easyhattrickmanager.repository.TrainerDAO;
 import easyhattrickmanager.repository.TrainingDAO;
 import easyhattrickmanager.repository.UserDAO;
 import easyhattrickmanager.repository.model.Country;
 import easyhattrickmanager.repository.model.League;
 import easyhattrickmanager.repository.model.Player;
 import easyhattrickmanager.repository.model.PlayerData;
-import easyhattrickmanager.repository.model.Staff;
+import easyhattrickmanager.repository.model.StaffMember;
 import easyhattrickmanager.repository.model.Team;
+import easyhattrickmanager.repository.model.Trainer;
 import easyhattrickmanager.repository.model.Training;
 import easyhattrickmanager.repository.model.User;
 import easyhattrickmanager.service.model.HTMS;
@@ -42,7 +45,6 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import javax.imageio.ImageIO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -57,12 +59,24 @@ public class UpdateService {
     private final PlayerDAO playerDAO;
     private final PlayerDataDAO playerDataDAO;
     private final TrainingDAO trainingDAO;
-    private final StaffDAO staffDAO;
+    private final TrainerDAO trainerDAO;
+    private final StaffMemberDAO staffMemberDAO;
     private final TeamDAO teamDAO;
     private final UserDAO userDAO;
     private final AssetsConfiguration assetsConfiguration;
 
     private List<String> images = new ArrayList<>();
+
+    public void update() {
+        teamDAO.getActiveTeams().forEach(team -> {
+            try {
+                update(team.getId());
+            } catch (Exception e) {
+                System.err.printf("Error update team %s%n", team.getId());
+            }
+        });
+
+    }
 
     public void update(String username) {
         User user = userDAO.get(username);
@@ -82,7 +96,9 @@ public class UpdateService {
                 }
             });
         trainingDAO.insert(getTraining(hattrickService.getTraining(teamId), seasonWeek));
-        staffDAO.insert(getStaff(teamId, hattrickService.getStaff(teamId), seasonWeek));
+        Stafflist staff = hattrickService.getStaff(teamId);
+        trainerDAO.insert(getTrainer(teamId, staff.getStaffList().getTrainer(), seasonWeek));
+        staff.getStaffList().getStaffs().forEach(staffHT -> staffMemberDAO.insert(getStaffMember(teamId, staffHT, seasonWeek)));
         saveAvatars(hattrickService.getAvatars(teamId));
         saveStaffAvatars(hattrickService.getStaffAvatars(teamId));
     }
@@ -373,42 +389,32 @@ public class UpdateService {
             .build();
     }
 
-    private Staff getStaff(int teamId, Stafflist stafflist, String seasonWeek) {
-        var staffs = stafflist.getStaffList().getStaffs();
-        var staff1 = Optional.ofNullable(staffs.size() > 0 ? staffs.get(0) : null);
-        var staff2 = Optional.ofNullable(staffs.size() > 1 ? staffs.get(1) : null);
-        var staff3 = Optional.ofNullable(staffs.size() > 2 ? staffs.get(2) : null);
-        var staff4 = Optional.ofNullable(staffs.size() > 3 ? staffs.get(3) : null);
-        return Staff.builder()
+    private Trainer getTrainer(int teamId, easyhattrickmanager.client.hattrick.model.stafflist.Trainer trainerHT, String seasonWeek) {
+        return Trainer.builder()
             .seasonWeek(seasonWeek)
-            .date(ZonedDateTime.now())
             .teamId(teamId)
-            .trainerId(stafflist.getStaffList().getTrainer().getTrainerId())
-            .trainerName(stafflist.getStaffList().getTrainer().getName())
-            .trainerType(stafflist.getStaffList().getTrainer().getTrainerType())
-            .trainerLeadership(stafflist.getStaffList().getTrainer().getLeadership())
-            .trainerSkillLevel(stafflist.getStaffList().getTrainer().getTrainerSkillLevel())
-            .trainerStatus(stafflist.getStaffList().getTrainer().getTrainerStatus())
-            .staff1Id(staff1.map(staff -> staff.getStaffId()).orElse(null))
-            .staff1Name(staff1.map(staff -> staff.getName()).orElse(null))
-            .staff1Type(staff1.map(staff -> staff.getStaffType()).orElse(null))
-            .staff1Level(staff1.map(staff -> staff.getStaffLevel()).orElse(null))
-            .staff1HofPlayerId(staff1.map(staff -> staff.getHofPlayerId()).orElse(null))
-            .staff2Id(staff2.map(staff -> staff.getStaffId()).orElse(null))
-            .staff2Name(staff2.map(staff -> staff.getName()).orElse(null))
-            .staff2Type(staff2.map(staff -> staff.getStaffType()).orElse(null))
-            .staff2Level(staff2.map(staff -> staff.getStaffLevel()).orElse(null))
-            .staff2HofPlayerId(staff2.map(staff -> staff.getHofPlayerId()).orElse(null))
-            .staff3Id(staff3.map(staff -> staff.getStaffId()).orElse(null))
-            .staff3Name(staff3.map(staff -> staff.getName()).orElse(null))
-            .staff3Type(staff3.map(staff -> staff.getStaffType()).orElse(null))
-            .staff3Level(staff3.map(staff -> staff.getStaffLevel()).orElse(null))
-            .staff3HofPlayerId(staff3.map(staff -> staff.getHofPlayerId()).orElse(null))
-            .staff4Id(staff4.map(staff -> staff.getStaffId()).orElse(null))
-            .staff4Name(staff4.map(staff -> staff.getName()).orElse(null))
-            .staff4Type(staff4.map(staff -> staff.getStaffType()).orElse(null))
-            .staff4Level(staff4.map(staff -> staff.getStaffLevel()).orElse(null))
-            .staff4HofPlayerId(staff4.map(staff -> staff.getHofPlayerId()).orElse(null))
+            .id(trainerHT.getTrainerId())
+            .name(trainerHT.getName())
+            .type(trainerHT.getTrainerType())
+            .leadership(trainerHT.getLeadership())
+            .skillLevel(trainerHT.getTrainerSkillLevel())
+            .status(trainerHT.getTrainerStatus())
+            .startDate(trainerHT.getContractDate())
+            .cost(trainerHT.getCost())
+            .build();
+    }
+
+    private StaffMember getStaffMember(int teamId, Staff staffHT, String seasonWeek) {
+        return StaffMember.builder()
+            .seasonWeek(seasonWeek)
+            .teamId(teamId)
+            .id(staffHT.getStaffId())
+            .name(staffHT.getName())
+            .type(staffHT.getStaffType())
+            .level(staffHT.getStaffLevel())
+            .hofPlayerId(staffHT.getHofPlayerId())
+            .startDate(staffHT.getHiredDate())
+            .cost(staffHT.getCost())
             .build();
     }
 

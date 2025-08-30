@@ -43,36 +43,29 @@ export interface TrainingInfo {
 }
 
 export interface StaffInfo {
-  trainerId: number;
-  trainerName: string;
-  trainerType: number;
-  trainerLeadership: number;
-  trainerSkillLevel: number;
-  trainerStatus: number;
+  trainer: TrainerInfo;
+  staffMembers: StaffMemberInfo[];
+}
 
-  staff1Id?: number;
-  staff1Name?: string;
-  staff1Type?: number;
-  staff1Level?: number;
-  staff1HofPlayerId?: number;
+export interface TrainerInfo {
+  id: number;
+  name: string;
+  type: number;
+  leadership: number;
+  skillLevel: number;
+  status: number;
+  startDate: string;
+  cost: number;
+}
 
-  staff2Id?: number;
-  staff2Name?: string;
-  staff2Type?: number;
-  staff2Level?: number;
-  staff2HofPlayerId?: number;
-
-  staff3Id?: number;
-  staff3Name?: string;
-  staff3Type?: number;
-  staff3Level?: number;
-  staff3HofPlayerId?: number;
-
-  staff4Id?: number;
-  staff4Name?: string;
-  staff4Type?: number;
-  staff4Level?: number;
-  staff4HofPlayerId?: number;
+export interface StaffMemberInfo {
+  id: number;
+  name: string;
+  type: number;
+  level: number;
+  hofPlayerId: number;
+  startDate: string;
+  cost: number;
 }
 
 export interface PlayerInfo {

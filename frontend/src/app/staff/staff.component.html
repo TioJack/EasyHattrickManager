@@ -1,96 +1,48 @@
 <div *ngIf="staff" class="card container h-100 w-100">
   <div class="row pt-2">
-    <div class="col w-100">
+    <div class="w-100">
       <table class="w-100">
         <tr>
           <td>
-            <img [src]="'assets/avatars/' + staff.trainerId + '.png'" (error)="onImageError($event)" alt="" class="shadow-6"/>
+            <img *ngIf="staff.trainer.id" [src]="'assets/avatars/' + staff.trainer.id + '.png'" (error)="onImageError($event)" alt="" class="shadow-6"/>
           </td>
-          <td>
-            <img [src]="'assets/avatars/' + staff.staff1Id + '.png'" (error)="onImageError($event)" alt="" class="shadow-6"/>
-          </td>
-          <td>
-            <img [src]="'assets/avatars/' + staff.staff2Id + '.png'" (error)="onImageError($event)" alt="" class="shadow-6"/>
-          </td>
-          <td>
-            <img [src]="'assets/avatars/' + staff.staff3Id + '.png'" (error)="onImageError($event)" alt="" class="shadow-6"/>
-          </td>
-          <td>
-            <img [src]="'assets/avatars/' + staff.staff4Id + '.png'" (error)="onImageError($event)" alt="" class="shadow-6"/>
+          <td *ngFor="let staffMember of staff.staffMembers">
+            <img *ngIf="staffMember.id" [src]="'assets/avatars/' + staffMember.id + '.png'" (error)="onImageError($event)" alt="" class="shadow-6"/>
           </td>
         </tr>
         <tr>
           <td>
-            <app-staff-level [type]="1" [level]="staff.trainerSkillLevel"></app-staff-level>
+            <app-staff-level [type]="1" [level]="staff.trainer.skillLevel"></app-staff-level>
           </td>
-          <td>
-            <app-staff-level *ngIf="staff.staff1Type && staff.staff1Level" [type]="staff.staff1Type" [level]="staff.staff1Level"></app-staff-level>
-          </td>
-          <td>
-            <app-staff-level *ngIf="staff.staff2Type && staff.staff2Level" [type]="staff.staff2Type" [level]="staff.staff2Level"></app-staff-level>
-          </td>
-          <td>
-            <app-staff-level *ngIf="staff.staff3Type && staff.staff3Level" [type]="staff.staff3Type" [level]="staff.staff3Level"></app-staff-level>
-          </td>
-          <td>
-            <app-staff-level *ngIf="staff.staff4Type && staff.staff4Level" [type]="staff.staff4Type" [level]="staff.staff4Level"></app-staff-level>
+          <td *ngFor="let staffMember of staff.staffMembers">
+            <app-staff-level [type]="staffMember.type" [level]="staffMember.level"></app-staff-level>
           </td>
         </tr>
         <tr>
           <td>
-            <a *ngIf="staff.trainerId" target="_blank" href="http://hattrick.org/goto.ashx?path=/Club/Specialists/Trainer.aspx?teamId={{ teamId }}&trainerId={{ staff.trainerId }}">
-              {{ staff.trainerName }}
+            <a *ngIf="staff.trainer.id" target="_blank" href="http://hattrick.org/goto.ashx?path=/Club/Specialists/Trainer.aspx?teamId={{ teamId }}&trainerId={{ staff.trainer.id }}">
+              {{ staff.trainer.name }}
             </a>
           </td>
-          <td>
-            <a *ngIf="staff.staff1Id" target="_blank" href="http://hattrick.org/goto.ashx?path=/Club/Specialists/Specialist.aspx?teamId={{ teamId }}&specialistId={{ staff.staff1Id }}">
-              {{ staff.staff1Name }}
-            </a>
-          </td>
-          <td>
-            <a *ngIf="staff.staff2Id" target="_blank" href="http://hattrick.org/goto.ashx?path=/Club/Specialists/Specialist.aspx?teamId={{ teamId }}&specialistId={{ staff.staff2Id }}">
-              {{ staff.staff2Name }}
-            </a>
-          </td>
-          <td>
-            <a *ngIf="staff.staff3Id" target="_blank" href="http://hattrick.org/goto.ashx?path=/Club/Specialists/Specialist.aspx?teamId={{ teamId }}&specialistId={{ staff.staff3Id }}">
-              {{ staff.staff3Name }}
-            </a>
-          </td>
-          <td>
-            <a *ngIf="staff.staff4Id" target="_blank" href="http://hattrick.org/goto.ashx?path=/Club/Specialists/Specialist.aspx?teamId={{ teamId }}&specialistId={{ staff.staff4Id }}">
-              {{ staff.staff4Name }}
+          <td *ngFor="let staffMember of staff.staffMembers">
+            <a *ngIf="staffMember.id" target="_blank" href="http://hattrick.org/goto.ashx?path=/Club/Specialists/Specialist.aspx?teamId={{ teamId }}&specialistId={{ staffMember.id }}">
+              {{ staffMember.name }}
             </a>
           </td>
         </tr>
         <tr>
           <td>
             <span class="staff-type text-nowrap">
-              {{ 'ehm.staff-type-0' | translate }} {{ 'ehm.trainer-type-' + staff.trainerType | translate }}
+              {{ 'ehm.staff-type-0' | translate }} {{ 'ehm.trainer-type-' + staff.trainer.type | translate }}
             </span>
             <br/>
-            <span class="staff-type text-nowrap">
-              {{ 'ht.skill-leadership' | translate | lowercase }} {{ 'ht.skill-level-' + staff.trainerLeadership | translate }} ({{ staff.trainerLeadership }})
+            <span class="staff-type">
+              {{ 'ht.skill-leadership' | translate | lowercase }} {{ 'ht.skill-level-' + staff.trainer.leadership | translate }} ({{ staff.trainer.leadership }})
             </span>
           </td>
-          <td>
-            <span *ngIf="staff.staff1Type" class="staff-type">
-              {{ 'ehm.staff-type-' + staff.staff1Type | translate }}
-            </span>
-          </td>
-          <td>
-            <span *ngIf="staff.staff2Type" class="staff-type">
-              {{ 'ehm.staff-type-' + staff.staff2Type | translate }}
-            </span>
-          </td>
-          <td>
-            <span *ngIf="staff.staff3Type" class="staff-type">
-              {{ 'ehm.staff-type-' + staff.staff3Type | translate }}
-            </span>
-          </td>
-          <td>
-            <span *ngIf="staff.staff4Type" class="staff-type">
-              {{ 'ehm.staff-type-' + staff.staff4Type | translate }}
+          <td *ngFor="let staffMember of staff.staffMembers">
+            <span *ngIf="staffMember.type" class="staff-type">
+              {{ 'ehm.staff-type-' + staffMember.type | translate }}
             </span>
           </td>
         </tr>

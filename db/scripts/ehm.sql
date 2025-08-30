@@ -132,37 +132,31 @@ CREATE TABLE IF NOT EXISTS `training` (
     PRIMARY KEY (`season_week`, `team_id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `staff` (
+CREATE TABLE IF NOT EXISTS `trainer` (
     season_week VARCHAR(7) NOT NULL,
-    date DATETIME NOT NULL,
     team_id INT NOT NULL,
-    trainer_id INT NOT NULL,
-    trainer_name VARCHAR(255) NOT NULL,
-    trainer_type INT NOT NULL,
-    trainer_leadership INT NOT NULL,
-    trainer_skill_level INT NOT NULL,
-    trainer_status INT NOT NULL,
-    staff1_id INT,
-    staff1_name VARCHAR(255),
-    staff1_type INT,
-    staff1_level INT,
-    staff1_hof_player_id INT,
-    staff2_id INT,
-    staff2_name VARCHAR(255),
-    staff2_type INT,
-    staff2_level INT,
-    staff2_hof_player_id INT,
-    staff3_id INT,
-    staff3_name VARCHAR(255),
-    staff3_type INT,
-    staff3_level INT,
-    staff3_hof_player_id INT,
-    staff4_id INT,
-    staff4_name VARCHAR(255),
-    staff4_type INT,
-    staff4_level INT,
-    staff4_hof_player_id INT,
+    id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    type INT NOT NULL,
+    leadership INT NOT NULL,
+    skill_level INT NOT NULL,
+    status INT NOT NULL,
+    start_date DATETIME NOT NULL,
+    cost INT NOT NULL,
     PRIMARY KEY (`season_week`, `team_id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `staff_member` (
+    season_week VARCHAR(7) NOT NULL,
+    team_id INT NOT NULL,
+    id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    type INT NOT NULL,
+    level INT NOT NULL,
+    hof_player_id INT NOT NULL,
+    start_date DATETIME NOT NULL,
+    cost INT NOT NULL,
+    PRIMARY KEY (`season_week`, `team_id`, `id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `league` (
