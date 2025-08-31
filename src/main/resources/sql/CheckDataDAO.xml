@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="easyhattrickmanager.repository.CheckDataDAO">
+
+  <select id="checkTraining" resultType="java.lang.Boolean">
+    SELECT NOT EXISTS (SELECT 1
+                       FROM training t
+                              JOIN team tm ON tm.id = t.team_id
+                              JOIN user u ON u.id = tm.user_id
+                       WHERE u.active
+                         AND NOT tm.bot
+                       GROUP BY t.team_id
+                       HAVING SUM(t.season_week = #{seasonWeek}) = 0) AS no_result;
+  </select>
+
+  <select id="checkPlayerData" resultType="java.lang.Boolean">
+    SELECT NOT EXISTS (SELECT 1
+                       FROM player_data pd
+                              JOIN team tm ON tm.id = pd.team_id
+                              JOIN user u ON u.id = tm.user_id
+                       WHERE u.active
+                         AND NOT tm.bot
+                       GROUP BY pd.team_id
+                       HAVING SUM(pd.season_week = #{seasonWeek}) = 0) AS no_result;
+  </select>
+
+  <select id="checkTrainer" resultType="java.lang.Boolean">
+    SELECT NOT EXISTS (SELECT 1
+                       FROM trainer t
+                              JOIN team tm ON tm.id = t.team_id
+                              JOIN user u ON u.id = tm.user_id
+                       WHERE u.active
+                         AND NOT tm.bot
+                       GROUP BY t.team_id
+                       HAVING SUM(t.season_week = #{seasonWeek}) = 0) AS no_result;
+  </select>
+
+  <select id="checkStartProjects" resultType="java.lang.Boolean">
+    SELECT NOT EXISTS (SELECT 1
+                       FROM (SELECT DISTINCT S1.user_id
+                             FROM (SELECT uc.user_id,
+                                          CAST(JSON_UNQUOTE(JSON_EXTRACT(uc.config, CONCAT('$.projects[', n.n, '].teamId'))) AS UNSIGNED)    AS team_id,
+                                          CAST(JSON_UNQUOTE(JSON_EXTRACT(uc.config, CONCAT('$.projects[', n.n, '].iniSeason'))) AS UNSIGNED) AS iniSeason,
+                                          CAST(JSON_UNQUOTE(JSON_EXTRACT(uc.config, CONCAT('$.projects[', n.n, '].iniWeek'))) AS UNSIGNED)   AS iniWeek
+                                   FROM user_config uc
+                                          JOIN (SELECT ones.i + tens.i * 10 AS n
+                                                FROM (SELECT 0 i
+                                                      UNION ALL
+                                                      SELECT 1
+                                                      UNION ALL
+                                                      SELECT 2
+                                                      UNION ALL
+                                                      SELECT 3
+                                                      UNION ALL
+                                                      SELECT 4
+                                                      UNION ALL
+                                                      SELECT 5
+                                                      UNION ALL
+                                                      SELECT 6
+                                                      UNION ALL
+                                                      SELECT 7
+                                                      UNION ALL
+                                                      SELECT 8
+                                                      UNION ALL
+                                                      SELECT 9) AS ones
+                                                       CROSS JOIN
+                                                     (SELECT 0 i
+                                                      UNION ALL
+                                                      SELECT 1
+                                                      UNION ALL
+                                                      SELECT 2
+                                                      UNION ALL
+                                                      SELECT 3
+                                                      UNION ALL
+                                                      SELECT 4
+                                                      UNION ALL
+                                                      SELECT 5
+                                                      UNION ALL
+                                                      SELECT 6
+                                                      UNION ALL
+                                                      SELECT 7
+                                                      UNION ALL
+                                                      SELECT 8
+                                                      UNION ALL
+                                                      SELECT 9) AS tens) AS n
+                                               ON n.n &lt; JSON_LENGTH(JSON_EXTRACT(uc.config, '$.projects'))) AS S1
+                                    JOIN team t ON t.id = S1.team_id AND t.user_id = S1.user_id
+                                    JOIN league l ON l.id = t.league_id
+                             WHERE NOT EXISTS (SELECT 1
+                                               FROM training tr
+                                               WHERE tr.team_id = S1.team_id
+                                                 AND tr.season_week = CONCAT(
+                                                 'S', LPAD(S1.iniSeason - CAST(l.seasonOffset AS SIGNED), 3, '0'),
+                                                 'W', LPAD(S1.iniWeek, 2, '0')
+                                                                      )) LIMIT 1) AS any_row) AS no_results;
+  </select>
+
+</mapper>

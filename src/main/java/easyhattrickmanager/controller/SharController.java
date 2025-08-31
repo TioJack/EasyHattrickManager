@@ -1,10 +1,12 @@
 package easyhattrickmanager.controller;
 
+import static easyhattrickmanager.utils.HTMSUtils.calculateHTMS;
+import static easyhattrickmanager.utils.SeasonWeekUtils.convertFromSeasonWeek;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import easyhattrickmanager.repository.CountryDAO;
 import easyhattrickmanager.repository.model.LeagueCountry;
-import easyhattrickmanager.service.UpdateService;
 import easyhattrickmanager.service.model.HTMS;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,7 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("shar")
 public class SharController {
 
-    private final UpdateService updateService;
     private final CountryDAO countryDAO;
 
     @GetMapping()
@@ -77,7 +78,7 @@ public class SharController {
                 int trainingType = (int) training.get("TrainingType");
                 int staminaTrainingPart = (int) training.get("StaminaTrainingPart");
                 String seasonWeek = String.format("S%03dW%02d", season, week);
-                ZonedDateTime zdt = updateService.convertFromSeasonWeek(seasonWeek);
+                ZonedDateTime zdt = convertFromSeasonWeek(seasonWeek);
 //                result.add(String.format("INSERT IGNORE INTO training (season_week, `date`, team_id, training_type, training_level, stamina_training_part) VALUES('%s', '%s', %d, %d, %d, %d);",
 //                    seasonWeek,
 //                    zdt.plusDays(4).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + " 02:00:00",
@@ -144,7 +145,7 @@ public class SharController {
                     int wingerSkill = (int) player.get("WingerSkill");
                     int defenderSkill = (int) player.get("DefenderSkill");
                     int setPiecesSkill = (int) player.get("SetPiecesSkill");
-                    HTMS htms = updateService.calculateHTMS(age, ageDays, keeperSkill, defenderSkill, playmakerSkill, wingerSkill, passingSkill, scorerSkill, setPiecesSkill);
+                    HTMS htms = calculateHTMS(age, ageDays, keeperSkill, defenderSkill, playmakerSkill, wingerSkill, passingSkill, scorerSkill, setPiecesSkill);
 //                    result.add(String.format(
 //                        "INSERT IGNORE INTO player_data (id, season_week, `date`, team_id, nickName, player_number, age, age_days, TSI, player_form, experience, loyalty, mother_club_bonus, leadership, salary, injury_level, stamina_skill, keeper_skill, playmaker_skill, scorer_skill, passing_skill, winger_skill, defender_skill, set_pieces_skill, htms, htms28) VALUES (%d,'%s','%s',%d,'', %d, %d, %d, %d,%d,%d,%d, %d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d);",
 //                        id,

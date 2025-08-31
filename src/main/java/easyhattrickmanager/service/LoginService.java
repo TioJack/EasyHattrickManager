@@ -67,12 +67,14 @@ public class LoginService {
     public void addHistory(String username, String ipAddress, String userAgent) {
         Optional<UserEhm> userEhm = userEhmDAO.get(username);
         userEhm.ifPresent(user -> {
-                UserEhmHistory userEhmHistory = UserEhmHistory.builder()
-                    .userEhmId(user.getId())
-                    .ipAddress(ipAddress)
-                    .userAgent(userAgent)
-                    .build();
-                userEhmHistoryDAO.insert(userEhmHistory);
+                if (user.getId() > 0) {
+                    UserEhmHistory userEhmHistory = UserEhmHistory.builder()
+                        .userEhmId(user.getId())
+                        .ipAddress(ipAddress)
+                        .userAgent(userAgent)
+                        .build();
+                    userEhmHistoryDAO.insert(userEhmHistory);
+                }
             }
         );
     }

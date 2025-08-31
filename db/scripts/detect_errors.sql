@@ -48,10 +48,9 @@ HAVING SUM(t.season_week = 'S091W16') > 0
 
 SELECT DISTINCT S1.user_id
 FROM (SELECT uc.user_id,
-             JSON_UNQUOTE(JSON_EXTRACT(uc.config, CONCAT('$.projects[', n.n, '].name')))                      AS project_name,
-             CAST(JSON_UNQUOTE(JSON_EXTRACT(uc.config, CONCAT('$.projects[', n.n, '].teamId'))) AS SIGNED)    AS team_id,
-             CAST(JSON_UNQUOTE(JSON_EXTRACT(uc.config, CONCAT('$.projects[', n.n, '].iniWeek'))) AS SIGNED)   AS iniWeek,
-             CAST(JSON_UNQUOTE(JSON_EXTRACT(uc.config, CONCAT('$.projects[', n.n, '].iniSeason'))) AS SIGNED) AS iniSeason
+             CAST(JSON_UNQUOTE(JSON_EXTRACT(uc.config, CONCAT('$.projects[', n.n, '].teamId'))) AS UNSIGNED)    AS team_id,
+             CAST(JSON_UNQUOTE(JSON_EXTRACT(uc.config, CONCAT('$.projects[', n.n, '].iniSeason'))) AS UNSIGNED) AS iniSeason,
+             CAST(JSON_UNQUOTE(JSON_EXTRACT(uc.config, CONCAT('$.projects[', n.n, '].iniWeek'))) AS UNSIGNED)   AS iniWeek
       FROM user_config uc
                JOIN (SELECT ones.i + tens.i * 10 AS n
                      FROM (SELECT 0 i
@@ -93,14 +92,13 @@ FROM (SELECT uc.user_id,
                            SELECT 8
                            UNION ALL
                            SELECT 9) AS tens) AS n
-      WHERE n.n < JSON_LENGTH(JSON_EXTRACT(uc.config, '$.projects'))) AS S1
-         JOIN team t
-              ON t.id = S1.team_id
-                  AND t.user_id = S1.user_id
-         JOIN league l
-              ON l.id = t.league_id
-         LEFT JOIN training tr
-                   ON tr.team_id = S1.team_id
-                       AND CAST(SUBSTRING(tr.season_week, 3, 2) AS SIGNED) = (S1.iniSeason - CAST(l.seasonOffset AS SIGNED))
-                       AND CAST(SUBSTRING(tr.season_week, 6, 2) AS SIGNED) = CAST(S1.iniWeek AS SIGNED)
-WHERE tr.season_week IS NULL;
+                    ON n.n < JSON_LENGTH(JSON_EXTRACT(uc.config, '$.projects'))) AS S1
+         JOIN team t ON t.id = S1.team_id AND t.user_id = S1.user_id
+         JOIN league l ON l.id = t.league_id
+WHERE NOT EXISTS (SELECT 1
+                  FROM training tr
+                  WHERE tr.team_id = S1.team_id
+                    AND tr.season_week = CONCAT(
+                          'S', LPAD(S1.iniSeason - CAST(l.seasonOffset AS SIGNED), 3, '0'),
+                          'W', LPAD(S1.iniWeek, 2, '0')
+                                         ));

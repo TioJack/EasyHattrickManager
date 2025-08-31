@@ -1,10 +1,10 @@
 package easyhattrickmanager.controller;
 
+import static easyhattrickmanager.utils.FileUtils.downloadFile;
+
 import easyhattrickmanager.configuration.AssetsConfiguration;
 import easyhattrickmanager.repository.CountryDAO;
 import easyhattrickmanager.service.UpdateService;
-import java.io.InputStream;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import lombok.AllArgsConstructor;
@@ -36,15 +36,6 @@ public class ImgController {
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
-        }
-    }
-
-    private void downloadFile(String fileUrl, String destinationPath) {
-        try (InputStream in = new URL(fileUrl).openStream()) {
-            Files.createDirectories(Paths.get(destinationPath).getParent());
-            Files.copy(in, Paths.get(destinationPath));
-        } catch (Exception e) {
-            System.err.printf("Error downloadFile %s %s %s%n", fileUrl, destinationPath, e.getMessage());
         }
     }
 

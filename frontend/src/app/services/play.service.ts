@@ -93,7 +93,6 @@ export class PlayService {
           });
         }
         this.playersSubject.next(sortedPlayers);
-        console.log('FFFF', matchingWeek.staff);
         this.staffSubject.next(matchingWeek.staff);
         this.trainingSubject.next(matchingWeek.training);
         this.trainingStatsSubject.next(this.computeTrainingStats(team, this.selectedProjectSubject.value, season, week));
