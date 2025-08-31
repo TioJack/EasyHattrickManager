@@ -13,7 +13,7 @@
 
   <groupId>tiojack</groupId>
   <artifactId>easyhattrickmanager</artifactId>
-  <version>24</version>
+  <version>25</version>
   <packaging>jar</packaging>
 
   <name>EasyHattrickManager</name>

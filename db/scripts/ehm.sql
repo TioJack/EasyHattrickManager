@@ -76,7 +76,6 @@ CREATE TABLE IF NOT EXISTS `player` (
 CREATE TABLE IF NOT EXISTS `player_data` (
     id INT,
     season_week VARCHAR(7) NOT NULL,
-    date DATETIME NOT NULL,
     team_id INT NOT NULL,
     nickName VARCHAR(255) NULL,
     player_number INT,
@@ -124,7 +123,6 @@ CREATE TABLE IF NOT EXISTS `player_data` (
 
 CREATE TABLE IF NOT EXISTS `training` (
     season_week VARCHAR(7) NOT NULL,
-    date DATETIME NOT NULL,
     team_id INT NOT NULL,
     training_type INT NOT NULL,
     training_level INT NOT NULL,

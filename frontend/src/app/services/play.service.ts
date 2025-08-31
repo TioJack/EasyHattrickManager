@@ -93,6 +93,7 @@ export class PlayService {
           });
         }
         this.playersSubject.next(sortedPlayers);
+        console.log('FFFF', matchingWeek.staff);
         this.staffSubject.next(matchingWeek.staff);
         this.trainingSubject.next(matchingWeek.training);
         this.trainingStatsSubject.next(this.computeTrainingStats(team, this.selectedProjectSubject.value, season, week));
@@ -131,7 +132,7 @@ export class PlayService {
     const project = this.selectedProjectSubject.value;
     const currentSeason = this.selectedSeasonSubject.value;
     const currentWeek = this.selectedWeekSubject.value;
-    if (project && currentSeason && currentWeek) {
+    if (project != null && currentSeason != null && currentWeek != null) {
       let nextSeason = currentSeason - 1;
       let nextWeek = currentWeek;
       if (nextSeason == project.iniSeason) {
@@ -151,7 +152,7 @@ export class PlayService {
     const project = this.selectedProjectSubject.value;
     const currentSeason = this.selectedSeasonSubject.value;
     const currentWeek = this.selectedWeekSubject.value;
-    if (project && currentSeason && currentWeek) {
+    if (project != null && currentSeason != null && currentWeek != null) {
       let nextSeason = currentSeason;
       let nextWeek = currentWeek - 1;
       if (nextWeek == 0) {
@@ -196,7 +197,7 @@ export class PlayService {
     const lastWeek = this.getLastSeasonAndWeek();
     const currentSeason = this.selectedSeasonSubject.value;
     const currentWeek = this.selectedWeekSubject.value;
-    if (currentSeason && currentWeek) {
+    if (currentSeason != null && currentWeek != null) {
       let nextSeason = currentSeason + 1;
       let nextWeek = currentWeek;
       if (nextSeason == lastWeek.season) {
@@ -216,7 +217,7 @@ export class PlayService {
     const lastWeek = this.getLastSeasonAndWeek();
     const currentSeason = this.selectedSeasonSubject.value;
     const currentWeek = this.selectedWeekSubject.value;
-    if (currentSeason && currentWeek) {
+    if (currentSeason != null && currentWeek != null) {
       let nextSeason = currentSeason;
       let nextWeek = currentWeek + 1;
       if (nextWeek == 17) {

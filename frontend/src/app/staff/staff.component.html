@@ -1,4 +1,4 @@
-<div *ngIf="staff" class="card container h-100 w-100">
+<div *ngIf="staff && staff.trainer" class="card container h-100 w-100">
   <div class="row pt-2">
     <div class="w-100">
       <table class="w-100">
@@ -50,3 +50,4 @@
     </div>
   </div>
 </div>
+<div *ngIf="staff == null || staff.trainer == null" class="card container h-100 w-100"></div>

@@ -10,7 +10,6 @@ public class PlayerData {
 
     int id;
     String seasonWeek;
-    ZonedDateTime date;
     int teamId;
     String nickName;
     Integer playerNumber;

@@ -63,10 +63,10 @@ public class SharController {
                 int honesty = (int) player.get("Honesty");
                 int specialty = (int) player.get("SpecialtyID");
                 int countryId = (int) player.get("CountryID");
-                result.add(String.format(
-                    "INSERT IGNORE INTO player (id, first_name, last_name, agreeability, aggressiveness, honesty, specialty, country_id) VALUES (%d, '%s', '%s', %d, %d, %d, %d, %d);",
-                    id, firstName, lastName, agreeability, aggressiveness, honesty, specialty, getCountryIdByLeagueId(l2c, countryId)
-                ));
+//                result.add(String.format(
+//                    "INSERT IGNORE INTO player (id, first_name, last_name, agreeability, aggressiveness, honesty, specialty, country_id) VALUES (%d, '%s', '%s', %d, %d, %d, %d, %d);",
+//                    id, firstName, lastName, agreeability, aggressiveness, honesty, specialty, getCountryIdByLeagueId(l2c, countryId)
+//                ));
             });
             List<Map<String, Object>> weeklyData = (List<Map<String, Object>>) jsonData.get("WeeklyData");
             weeklyData.forEach(entry -> {

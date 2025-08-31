@@ -182,7 +182,6 @@ public class UpdateService {
         return PlayerData.builder()
             .id(playerHT.getPlayerId())
             .seasonWeek(seasonWeek)
-            .date(ZonedDateTime.now())
             .teamId(teamId)
             .nickName(playerHT.getNickName())
             .playerNumber(playerHT.getPlayerNumber() < 100 ? playerHT.getPlayerNumber() : null)
@@ -381,7 +380,6 @@ public class UpdateService {
     private Training getTraining(easyhattrickmanager.client.hattrick.model.training.Training training, String seasonWeek) {
         return Training.builder()
             .seasonWeek(seasonWeek)
-            .date(ZonedDateTime.now())
             .teamId(training.getTeam().getTeamId())
             .trainingType(training.getTeam().getLastTrainingTrainingType())
             .trainingLevel(training.getTeam().getLastTrainingTrainingLevel())

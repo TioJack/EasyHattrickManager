@@ -6,7 +6,6 @@
     INSERT
     IGNORE INTO training (
     season_week,
-    date,
     team_id,
     training_type,
     training_level,
@@ -14,7 +13,6 @@
     )
     VALUES (
     #{training.seasonWeek},
-    #{training.date},
     #{training.teamId},
     #{training.trainingType},
     #{training.trainingLevel},
@@ -23,7 +21,7 @@
   </insert>
 
   <select id="get" resultType="easyhattrickmanager.repository.model.Training">
-    SELECT season_week, date, team_id, training_type, training_level, stamina_training_part
+    SELECT season_week, team_id, training_type, training_level, stamina_training_part
     FROM training
     WHERE team_id = #{teamId}
     ORDER BY season_week;
