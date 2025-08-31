@@ -11,4 +11,6 @@ public interface PlayerDataDAO {
     void insert(@Param("player") PlayerData player);
 
     List<PlayerData> get(@Param("teamId") int teamId);
+
+    void updateHTMS(@Param("player") PlayerData player);
 }

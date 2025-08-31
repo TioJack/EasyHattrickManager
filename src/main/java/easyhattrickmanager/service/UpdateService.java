@@ -45,6 +45,7 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.imageio.ImageIO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -537,5 +538,35 @@ public class UpdateService {
                     }
                 }
             );
+    }
+
+    public void updateHTMS() {
+        String seasonWeek = "S092W01";
+        List<Integer> teamIds = List.of(44976, 116432, 308702, 436939, 636036, 652555, 714238, 896476, 2055732, 2067277, 2131425, 2153225, 2351664, 2462933);
+        teamIds.forEach(teamId -> {
+            List<PlayerData> playersData = playerDataDAO.get(teamId);
+            playersData.stream()
+                .filter(playerData -> Objects.equals(playerData.getSeasonWeek(), seasonWeek))
+                .forEach(playerData -> {
+                    HTMS newHTMS = calculateHTMS(playerData);
+                    playerData.setHtms(newHTMS.getHtms());
+                    playerData.setHtms28(newHTMS.getHtms28());
+                    playerDataDAO.updateHTMS(playerData);
+                });
+        });
+    }
+
+    private HTMS calculateHTMS(PlayerData playerData) {
+        return calculateHTMS(
+            playerData.getAge(),
+            playerData.getAgeDays(),
+            playerData.getKeeperSkill(),
+            playerData.getDefenderSkill(),
+            playerData.getPlaymakerSkill(),
+            playerData.getWingerSkill(),
+            playerData.getPassingSkill(),
+            playerData.getScorerSkill(),
+            playerData.getSetPiecesSkill()
+        );
     }
 }

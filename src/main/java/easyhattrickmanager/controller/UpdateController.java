@@ -53,4 +53,10 @@ public class UpdateController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/htms")
+    public ResponseEntity<Void> updateHTMS() {
+        updateService.updateHTMS();
+        return ResponseEntity.ok().build();
+    }
+
 }

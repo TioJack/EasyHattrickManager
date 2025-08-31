@@ -148,4 +148,13 @@
     ORDER BY season_week;
   </select>
 
+  <update id="updateHTMS">
+    UPDATE player_data
+    SET htms   = #{player.htms},
+        htms28 = #{player.htms28}
+    WHERE id = #{player.id}
+      AND season_week = #{player.seasonWeek}
+      AND team_id = #{player.teamId};
+  </update>
+
 </mapper>
