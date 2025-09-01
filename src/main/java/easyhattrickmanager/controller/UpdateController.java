@@ -59,4 +59,16 @@ public class UpdateController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/extendStaff")
+    public ResponseEntity<Void> extendStaff(@RequestParam("teamId") int teamId) {
+        updateService.extendStaff(teamId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/userConfig")
+    public ResponseEntity<Void> updateUserConfig() {
+        updateService.updateUserConfig();
+        return ResponseEntity.ok().build();
+    }
+
 }

@@ -2,8 +2,12 @@ package easyhattrickmanager.service;
 
 import static easyhattrickmanager.utils.FileUtils.downloadFile;
 import static easyhattrickmanager.utils.HTMSUtils.calculateHTMS;
+import static easyhattrickmanager.utils.SeasonWeekUtils.convertFromSeasonWeek;
 import static easyhattrickmanager.utils.SeasonWeekUtils.convertToSeasonWeek;
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.groupingBy;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import easyhattrickmanager.client.hattrick.model.avatars.Avatar;
 import easyhattrickmanager.client.hattrick.model.avatars.Avatars;
 import easyhattrickmanager.client.hattrick.model.avatars.Layer;
@@ -22,6 +26,7 @@ import easyhattrickmanager.repository.StaffMemberDAO;
 import easyhattrickmanager.repository.TeamDAO;
 import easyhattrickmanager.repository.TrainerDAO;
 import easyhattrickmanager.repository.TrainingDAO;
+import easyhattrickmanager.repository.UserConfigDAO;
 import easyhattrickmanager.repository.UserDAO;
 import easyhattrickmanager.repository.model.Country;
 import easyhattrickmanager.repository.model.League;
@@ -33,6 +38,7 @@ import easyhattrickmanager.repository.model.Trainer;
 import easyhattrickmanager.repository.model.Training;
 import easyhattrickmanager.repository.model.User;
 import easyhattrickmanager.service.model.HTMS;
+import easyhattrickmanager.service.model.dataresponse.UserConfig;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -44,6 +50,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import javax.imageio.ImageIO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -63,6 +70,7 @@ public class UpdateService {
     private final TeamDAO teamDAO;
     private final UserDAO userDAO;
     private final AssetsConfiguration assetsConfiguration;
+    private final UserConfigDAO userConfigDAO;
 
     private List<String> images = new ArrayList<>();
 
@@ -393,6 +401,72 @@ public class UpdateService {
                     playerDataDAO.updateHTMS(playerData);
                 });
         });
+    }
+
+    public void extendStaff(int teamId) {
+        int adjustmentDays = getAdjustmentDays(teamId);
+        List<PlayerData> playerData = playerDataDAO.get(teamId);
+
+        List<Trainer> trainers = trainerDAO.get(teamId);
+        List<Trainer> oldestPerTrainerId = trainers.stream()
+            .collect(groupingBy(Trainer::getId))
+            .values().stream()
+            .map(list -> list.stream()
+                .min(comparing(Trainer::getStartDate))
+                .orElse(null))
+            .filter(java.util.Objects::nonNull)
+            .toList();
+        oldestPerTrainerId.forEach(trainer -> {
+            ZonedDateTime cursor = convertFromSeasonWeek(trainer.getSeasonWeek()).plusDays(adjustmentDays);
+            while (cursor.isAfter(trainer.getStartDate())) {
+                String seasonWeek = convertToSeasonWeek(cursor);
+                trainer.setSeasonWeek(seasonWeek);
+                trainer.setLeadership(getLeadership(playerData, trainer, seasonWeek));
+                trainerDAO.insert(trainer);
+                cursor = cursor.minusWeeks(1);
+            }
+        });
+        List<StaffMember> staffMembers = staffMemberDAO.get(teamId);
+        List<StaffMember> oldestPerStaffId = staffMembers.stream()
+            .collect(groupingBy(StaffMember::getId))
+            .values().stream()
+            .map(list -> list.stream()
+                .min(comparing(StaffMember::getStartDate))
+                .orElse(null))
+            .filter(java.util.Objects::nonNull)
+            .toList();
+        oldestPerStaffId.forEach(staffMember -> {
+            ZonedDateTime cursor = convertFromSeasonWeek(staffMember.getSeasonWeek()).plusDays(adjustmentDays);
+            while (cursor.isAfter(staffMember.getStartDate())) {
+                staffMember.setSeasonWeek(convertToSeasonWeek(cursor));
+                staffMemberDAO.insert(staffMember);
+                cursor = cursor.minusWeeks(1);
+            }
+        });
+    }
+
+    private int getLeadership(List<PlayerData> playerData, Trainer trainer, String seasonWeek) {
+        Optional<PlayerData> found = playerData.stream()
+            .filter(pd -> (Objects.equals(pd.getSeasonWeek(), seasonWeek)) && (pd.getId() == trainer.getId()))
+            .findFirst();
+        return found.map(PlayerData::getLeadership).orElseGet(trainer::getLeadership);
+    }
+
+    public void updateUserConfig() {
+        List<Country> countries = countryDAO.getAllCountries();
+        userDAO.getAllUsers()
+            .forEach(user -> {
+                try {
+                    UserConfig userConfig = new ObjectMapper().readValue(userConfigDAO.get(user.getId()), UserConfig.class);
+                    if (userConfig.getDateFormat() == null) {
+                        Country country = countries.stream().filter(cntry -> cntry.getId() == user.getCountryId()).findFirst().orElseThrow();
+                        userConfig.setDateFormat(country.getDateFormat().replace('D', 'd').replace('Y', 'y'));
+                        userConfigDAO.update(user.getId(), new ObjectMapper().writeValueAsString(userConfig));
+                    }
+                } catch (Exception e) {
+                    System.err.printf("Error updateUserConfig %s. %s%n", user.getId(), e.getMessage());
+                }
+            });
     }
 
 }

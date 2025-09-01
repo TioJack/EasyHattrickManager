@@ -46,4 +46,10 @@ public class SeasonWeekUtils {
         ZonedDateTime startOfRequestedWeek = startOfRequestedSeason.plusWeeks(week - 1);
         return startOfRequestedWeek;
     }
+
+    public static ZonedDateTime seasonWeekTrainingDate(String seasonWeek, ZonedDateTime trainingDate) {
+        ZonedDateTime startOfRequestedWeek = convertFromSeasonWeek(seasonWeek);
+        int offsetDays = trainingDate.getDayOfWeek().getValue() - startOfRequestedWeek.getDayOfWeek().getValue();
+        return startOfRequestedWeek.plusDays(offsetDays);
+    }
 }

@@ -10,12 +10,14 @@ import easyhattrickmanager.client.hattrick.model.worldlanguages.WorldLanguages;
 import easyhattrickmanager.controller.model.SaveResponse;
 import easyhattrickmanager.controller.model.TokenRequest;
 import easyhattrickmanager.controller.model.UserRequest;
+import easyhattrickmanager.repository.CountryDAO;
 import easyhattrickmanager.repository.LanguageDAO;
 import easyhattrickmanager.repository.TeamDAO;
 import easyhattrickmanager.repository.UserConfigDAO;
 import easyhattrickmanager.repository.UserDAO;
 import easyhattrickmanager.repository.UserEhmDAO;
 import easyhattrickmanager.repository.UserEhmHistoryDAO;
+import easyhattrickmanager.repository.model.Country;
 import easyhattrickmanager.repository.model.Language;
 import easyhattrickmanager.repository.model.Team;
 import easyhattrickmanager.repository.model.User;
@@ -54,6 +56,7 @@ public class LoginService {
     private final UpdateService updateService;
     private final UpdateExecutionService updateExecutionService;
     private final UserConfigDAO userConfigDAO;
+    private final CountryDAO countryDAO;
 
     public boolean existUserEhm(String username) {
         return userEhmDAO.get(username).isPresent();
@@ -208,12 +211,18 @@ public class LoginService {
                     .currencyCode(managerCompendium.getManager().getCurrency().getCurrencyName())
                     .currencyRate(new BigDecimal(managerCompendium.getManager().getCurrency().getCurrencyRate().replace(",", ".")))
                     .build())
+                .dateFormat(getDateFormat(managerCompendium.getManager().getCountry().getCountryId()))
                 .projects(createProjects(managerCompendium.getManager().getTeams()))
                 .build();
             userConfigDAO.insert(managerCompendium.getManager().getUserId(), new ObjectMapper().writeValueAsString(userConfig));
         } catch (Exception e) {
             System.err.printf("Error saveUserConfig %s%n", e.getMessage());
         }
+    }
+
+    private String getDateFormat(int countryId) {
+        Optional<Country> country = countryDAO.get(countryId);
+        return country.map(value -> value.getDateFormat().replace('D', 'd').replace('Y', 'y')).orElse("dd-MM-yyyy");
     }
 
     private List<ProjectInfo> createProjects(List<easyhattrickmanager.client.hattrick.model.managercompendium.Team> teams) {

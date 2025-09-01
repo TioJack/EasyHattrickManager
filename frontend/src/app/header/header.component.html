@@ -25,10 +25,15 @@
     <button class="btn btn-outline-secondary" (click)="playService.onPreviousWeek()" title="-1 {{ 'ehm.week' | translate }}">
       <i class="bi bi-chevron-left"></i>
     </button>
-    <span class="fw-bold mx-3">
-      {{ 'ehm.season' | translate }} {{ (playService.selectedSeason$ | async) }}
-      {{ 'ehm.week' | translate }} {{ (playService.selectedWeek$ | async) }}
-    </span>
+    <div class="d-flex flex-column align-items-center mx-3">
+      <span class="fw-bold">
+        {{ 'ehm.season' | translate }} {{ (playService.selectedSeason$ | async) }}
+        {{ 'ehm.week' | translate }} {{ (playService.selectedWeek$ | async) }}
+      </span>
+      <small class="text-muted">
+        {{ (playService.date$ | async) | date:(dateFormat ?? 'dd-MM-yyyy') }}
+      </small>
+    </div>
     <button class="btn btn-outline-secondary" (click)="playService.onNextWeek()" title="+1 {{ 'ehm.week' | translate }}">
       <i class="bi bi-chevron-right"></i>
     </button>
@@ -60,7 +65,7 @@
       </div>
     </div>
 
-    <div class="dropdown">
+    <div class="dropdown" (click)="$event.stopPropagation()">
       <button class="btn btn-primary" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
         <i class="bi bi-list"></i>
       </button>
@@ -73,13 +78,22 @@
         <li>
           <button class="dropdown-item">
             <i class="bi bi-translate me-2"></i>
-            <app-language [languages]="dataResponse.languages"></app-language>
+            <app-language></app-language>
           </button>
         </li>
         <li>
           <button class="dropdown-item">
             <i class="bi bi-currency-exchange me-2"></i>
-            <app-currency [currencies]="dataResponse.currencies"></app-currency>
+            <app-currency></app-currency>
+          </button>
+        </li>
+        <li>
+          <button class="dropdown-item">
+            <i class="bi bi-calendar-date-fill me-2"></i>
+            <app-date-format></app-date-format>
+            <a target="_blank" class="text-decoration-none" href="https://www.w3.org/TR/NOTE-datetime">
+              <i class="bi bi-info-circle ms-2 fs-6"></i>
+            </a>
           </button>
         </li>
         <li>

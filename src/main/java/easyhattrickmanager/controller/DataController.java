@@ -3,7 +3,10 @@ package easyhattrickmanager.controller;
 import easyhattrickmanager.controller.model.DataResponse;
 import easyhattrickmanager.service.DataService;
 import easyhattrickmanager.service.UpdateService;
+import easyhattrickmanager.service.model.dataresponse.CurrencyInfo;
+import easyhattrickmanager.service.model.dataresponse.LanguageInfo;
 import easyhattrickmanager.service.model.dataresponse.UserConfig;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,6 +29,18 @@ public class DataController {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         DataResponse dataResponse = dataService.getData(username);
         return ResponseEntity.ok(dataResponse);
+    }
+
+    @GetMapping("/languages")
+    public ResponseEntity<List<LanguageInfo>> getLanguages() {
+        List<LanguageInfo> languages = dataService.getLanguages();
+        return ResponseEntity.ok(languages);
+    }
+
+    @GetMapping("currencies")
+    public ResponseEntity<List<CurrencyInfo>> getCurrencies() {
+        List<CurrencyInfo> currencies = dataService.getCurrencies();
+        return ResponseEntity.ok(currencies);
     }
 
     @PostMapping("/user-config")

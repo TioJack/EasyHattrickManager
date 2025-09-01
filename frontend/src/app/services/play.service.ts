@@ -13,6 +13,7 @@ export class PlayService {
   private selectedSeasonSubject = new BehaviorSubject<number | null>(null);
   private selectedWeekSubject = new BehaviorSubject<number | null>(null);
   private playersSubject = new BehaviorSubject<PlayerInfo[]>([]);
+  private dateSubject = new BehaviorSubject<string | null>(null);
   private staffSubject = new BehaviorSubject<StaffInfo | null>(null);
   private trainingSubject = new BehaviorSubject<TrainingInfo | null>(null);
   private trainingStatsSubject = new BehaviorSubject<TrainingStats | null>(null);
@@ -23,6 +24,7 @@ export class PlayService {
   selectedSeason$ = this.selectedSeasonSubject.asObservable();
   selectedWeek$ = this.selectedWeekSubject.asObservable();
   players$ = this.playersSubject.asObservable();
+  date$ = this.dateSubject.asObservable();
   staff$ = this.staffSubject.asObservable();
   training$ = this.trainingSubject.asObservable();
   trainingStats$ = this.trainingStatsSubject.asObservable();
@@ -93,12 +95,14 @@ export class PlayService {
           });
         }
         this.playersSubject.next(sortedPlayers);
+        this.dateSubject.next(matchingWeek.date);
         this.staffSubject.next(matchingWeek.staff);
         this.trainingSubject.next(matchingWeek.training);
         this.trainingStatsSubject.next(this.computeTrainingStats(team, this.selectedProjectSubject.value, season, week));
         this.playerStatsSubject.next(this.computePlayerStats(sortedPlayers));
       } else {
         this.playersSubject.next([]);
+        this.dateSubject.next(null);
         this.staffSubject.next(null);
         this.trainingSubject.next(null);
         this.trainingStatsSubject.next(null);

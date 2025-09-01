@@ -1,7 +1,7 @@
 import {Component, HostListener, Input, OnInit, ViewChild} from '@angular/core';
 import {AuthService} from '../services/auth.service';
 import {PlayerInfo, Project, TeamExtendedInfo, WeeklyInfo} from '../services/model/data-response';
-import {AsyncPipe, NgForOf} from '@angular/common';
+import {AsyncPipe, DatePipe, NgForOf} from '@angular/common';
 import {PlayService} from '../services/play.service';
 import {UserConfigService} from '../services/user-config.service';
 import {TranslatePipe} from '@ngx-translate/core';
@@ -13,11 +13,12 @@ import {PlayerFilterComponent} from '../player-filter/player-filter.component';
 import {PlayerSortComponent} from '../player-sort/player-sort.component';
 import {DataService} from '../services/data.service';
 import {AlertComponent} from '../alert/alert.component';
+import {DateFormatComponent} from '../date-format/date-format.component';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [NgForOf, TranslatePipe, LanguageComponent, CurrencyComponent, FirstCapitalizePipe, AsyncPipe, RouterLink, PlayerFilterComponent, PlayerSortComponent, AlertComponent],
+  imports: [NgForOf, TranslatePipe, LanguageComponent, CurrencyComponent, FirstCapitalizePipe, AsyncPipe, RouterLink, PlayerFilterComponent, PlayerSortComponent, AlertComponent, DatePipe, DateFormatComponent],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
@@ -26,6 +27,7 @@ export class HeaderComponent implements OnInit {
   @Input() dataResponse: any;
   selectedProject: Project | null = null;
   selectedTeam: TeamExtendedInfo | null = null;
+  dateFormat: string | null = null;
 
   constructor(
     private authService: AuthService,
@@ -42,6 +44,11 @@ export class HeaderComponent implements OnInit {
     if (this.dataResponse.userConfig.projects.length > 0) {
       this.selectProject(this.dataResponse.userConfig.projects[0]);
     }
+    this.userConfigService.userConfig$.subscribe(config => {
+      if (config && config.dateFormat != null) {
+        this.dateFormat = config.dateFormat;
+      }
+    });
   }
 
   logout(): void {

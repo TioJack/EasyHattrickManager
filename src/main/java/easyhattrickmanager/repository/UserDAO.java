@@ -1,6 +1,7 @@
 package easyhattrickmanager.repository;
 
 import easyhattrickmanager.repository.model.User;
+import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -14,4 +15,6 @@ public interface UserDAO {
     User get(@Param("username") String username);
 
     User getByTeamId(@Param("teamId") int teamId);
+
+    List<User> getAllUsers();
 }

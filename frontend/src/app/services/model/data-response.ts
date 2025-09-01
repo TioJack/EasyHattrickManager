@@ -3,8 +3,6 @@ export interface DataResponse {
   user: User;
   teams: TeamExtendedInfo[];
   userConfig: UserConfig;
-  languages: Language[];
-  currencies: Currency[];
 }
 
 export interface User {
@@ -31,6 +29,7 @@ export interface LeagueInfo {
 export interface WeeklyInfo {
   season: number;
   week: number;
+  date: string;
   training: TrainingInfo;
   staff: StaffInfo;
   players: PlayerInfo[];
@@ -100,7 +99,6 @@ export interface PlayerInfo {
   wingerSkill: number;
   defenderSkill: number;
   setPiecesSkill: number;
-
   htms: number;
   htms28: number;
   playerCategoryId: number;
@@ -109,6 +107,7 @@ export interface PlayerInfo {
 export interface UserConfig {
   languageId: number;
   currency: Currency;
+  dateFormat: string;
   projects: Project[];
 }
 

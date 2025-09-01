@@ -1,5 +1,5 @@
 app:
-  version: 25
+  version: 26
 
 server:
   port: 1998
@@ -26,6 +26,10 @@ spring:
           auth: true
           starttls:
             enable: true
+  cache:
+    type: caffeine
+    caffeine:
+      spec: expireAfterWrite=7d
 
 mybatis:
   mapper-locations: classpath:sql/*.xml

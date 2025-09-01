@@ -1,7 +1,5 @@
 package easyhattrickmanager.controller.model;
 
-import easyhattrickmanager.service.model.dataresponse.CurrencyInfo;
-import easyhattrickmanager.service.model.dataresponse.LanguageInfo;
 import easyhattrickmanager.service.model.dataresponse.TeamExtendedInfo;
 import easyhattrickmanager.service.model.dataresponse.UserConfig;
 import easyhattrickmanager.service.model.dataresponse.UserInfo;
@@ -17,6 +15,4 @@ public class DataResponse {
     UserInfo user;
     List<TeamExtendedInfo> teams;
     UserConfig userConfig;
-    List<LanguageInfo> languages;
-    List<CurrencyInfo> currencies;
 }

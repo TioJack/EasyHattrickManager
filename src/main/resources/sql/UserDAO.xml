@@ -66,4 +66,17 @@
       AND t.id = #{teamId};
   </select>
 
+  <select id="getAllUsers" resultType="easyhattrickmanager.repository.model.User">
+    SELECT u.id,
+           u.name,
+           u.language_id,
+           u.country_id,
+           u.currency,
+           u.activation_date,
+           u.token,
+           u.token_secret,
+           u.active
+    FROM user u;
+  </select>
+
 </mapper>

@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {DataResponse, UserConfig} from './model/data-response';
+import {Currency, DataResponse, Language, UserConfig} from './model/data-response';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +14,14 @@ export class DataService {
 
   gatData(): Observable<DataResponse> {
     return this.http.get<DataResponse>(this.apiUrl);
+  }
+
+  getLanguages(): Observable<Language[]> {
+    return this.http.get<Language[]>(`${this.apiUrl}/languages`);
+  }
+
+  getCurrencies(): Observable<Currency[]> {
+    return this.http.get<Currency[]>(`${this.apiUrl}/currencies`);
   }
 
   saveUserConfig(config: UserConfig): Observable<void> {

@@ -1,9 +1,10 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {NgForOf} from '@angular/common';
 import {Language} from '../services/model/data-response';
 import {UserConfigService} from '../services/user-config.service';
 import {TranslateService} from '@ngx-translate/core';
+import {DataService} from '../services/data.service';
 
 @Component({
   selector: 'app-language',
@@ -12,10 +13,11 @@ import {TranslateService} from '@ngx-translate/core';
   templateUrl: './language.component.html'
 })
 export class LanguageComponent implements OnInit {
-  @Input() languages: Language[] = [];
+  languages: Language[] = [];
   selectedLanguageId: number | null = null;
 
   constructor(
+    private dataService: DataService,
     private userConfigService: UserConfigService,
     private translateService: TranslateService) {
   }
@@ -25,6 +27,11 @@ export class LanguageComponent implements OnInit {
       if (config && config.languageId != null) {
         this.selectedLanguageId = config.languageId;
         this.translateService.use(this.selectedLanguageId.toString());
+      }
+    });
+    this.dataService.getLanguages().subscribe({
+      next: (languages: Language[]) => {
+        this.languages = languages;
       }
     });
   }

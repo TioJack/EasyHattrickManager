@@ -5,6 +5,7 @@ import {NgForOf} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {firstValueFrom} from 'rxjs';
+import {DataService} from '../services/data.service';
 
 @Component({
   selector: 'app-currency',
@@ -22,6 +23,7 @@ export class CurrencyComponent implements OnInit {
   selectedLanguageId: number | null = null;
 
   constructor(
+    private dataService: DataService,
     private userConfigService: UserConfigService,
     private translateService: TranslateService) {
   }
@@ -33,6 +35,11 @@ export class CurrencyComponent implements OnInit {
       }
       if (config && config.languageId != null) {
         this.selectedLanguageId = config.languageId;
+      }
+    });
+    this.dataService.getCurrencies().subscribe({
+      next: (currencies: Currency[]) => {
+        this.currencies = currencies;
       }
     });
     this.translateService.onLangChange.subscribe(event => {

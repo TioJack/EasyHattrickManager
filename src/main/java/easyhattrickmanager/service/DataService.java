@@ -1,5 +1,6 @@
 package easyhattrickmanager.service;
 
+import static easyhattrickmanager.utils.SeasonWeekUtils.seasonWeekTrainingDate;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 
@@ -25,6 +26,7 @@ import easyhattrickmanager.repository.model.Trainer;
 import easyhattrickmanager.repository.model.Training;
 import easyhattrickmanager.repository.model.User;
 import easyhattrickmanager.service.model.dataresponse.CurrencyInfo;
+import easyhattrickmanager.service.model.dataresponse.LanguageInfo;
 import easyhattrickmanager.service.model.dataresponse.PlayerInfo;
 import easyhattrickmanager.service.model.dataresponse.StaffInfo;
 import easyhattrickmanager.service.model.dataresponse.TeamExtendedInfo;
@@ -39,12 +41,14 @@ import easyhattrickmanager.service.model.dataresponse.mapper.TrainingInfoMapper;
 import easyhattrickmanager.service.model.dataresponse.mapper.UserInfoMapper;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -81,8 +85,6 @@ public class DataService {
             .user(userInfoMapper.toInfo(user))
             .teams(getTeams(user.getId()))
             .userConfig(getUserConfig(user.getId()))
-            .languages(languageInfoMapper.toInfo(languageDAO.getAllLanguages()))
-            .currencies(getCurrencies())
             .build();
     }
 
@@ -91,14 +93,14 @@ public class DataService {
         teams.forEach(team -> {
             League league = leagueDAO.get(team.getLeague().getId()).orElseThrow();
             team.getLeague().setName(league.getName());
-            team.setWeeklyData(getWeeklyData(team.getTeam().getId(), league.getSeasonOffset()));
+            team.setWeeklyData(getWeeklyData(team.getTeam().getId(), league.getSeasonOffset(), league.getTrainingDate()));
         });
         return teams.stream()
             .sorted(Comparator.comparing(team -> team.getTeam().getFoundedDate()))
             .toList();
     }
 
-    private List<WeeklyInfo> getWeeklyData(int teamId, int seasonOffset) {
+    private List<WeeklyInfo> getWeeklyData(int teamId, int seasonOffset, ZonedDateTime trainingDate) {
         Map<String, TrainingInfo> trainings = trainingDAO.get(teamId).stream().collect(toMap(Training::getSeasonWeek, trainingInfoMapper::toInfo));
         Map<String, Trainer> trainersByWeek = trainerDAO.get(teamId).stream().collect(toMap(Trainer::getSeasonWeek, t -> t, (a, b) -> b));
         Map<String, List<StaffMember>> staffMembersByWeek = staffMemberDAO.get(teamId).stream().collect(groupingBy(StaffMember::getSeasonWeek));
@@ -124,6 +126,7 @@ public class DataService {
             WeeklyInfo.builder()
                 .season(Integer.parseInt(seasonWeek.substring(1, 4)) + seasonOffset)
                 .week(Integer.parseInt(seasonWeek.substring(5, 7)))
+                .date(seasonWeekTrainingDate(seasonWeek, trainingDate))
                 .training(trainings.get(seasonWeek))
                 .staff(staffs.get(seasonWeek))
                 .players(players.get(seasonWeek))
@@ -140,7 +143,13 @@ public class DataService {
         }
     }
 
-    private List<CurrencyInfo> getCurrencies() {
+    @Cacheable(value = "LANGUAGES", unless = "#result.isEmpty()")
+    public List<LanguageInfo> getLanguages() {
+        return languageInfoMapper.toInfo(languageDAO.getAllLanguages());
+    }
+
+    @Cacheable(value = "CURRENCIES", unless = "#result.isEmpty()")
+    public List<CurrencyInfo> getCurrencies() {
         List<Country> countries = countryDAO.getAllCountries();
         Country baseCountry = countries.stream().filter(country -> country.getId() == BASE_CURRENCY_COUNTRY_ID).findFirst().orElseThrow();
         return countries.stream()
@@ -167,6 +176,5 @@ public class DataService {
             System.err.printf("Error saveUserConfig %s %s. %s%n", username, userConfig, e.getMessage());
         }
     }
-
 
 }
