@@ -44,4 +44,10 @@ public class ImgController {
         updateService.getAvatar(playerId);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("avatars")
+    public ResponseEntity<Void> getAvatars(@RequestParam("teamId") int teamId) {
+        updateService.getAvatars(teamId);
+        return ResponseEntity.ok().build();
+    }
 }

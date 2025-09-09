@@ -24,6 +24,12 @@
       active = #{user.active};
   </insert>
 
+  <update id="updateActive">
+    UPDATE user
+    SET active = #{active}
+    WHERE id = #{id};
+  </update>
+
   <insert id="link">
     INSERT
     IGNORE INTO user_ehm_user (user_ehm_id, user_id)

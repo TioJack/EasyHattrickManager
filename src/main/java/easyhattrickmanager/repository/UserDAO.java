@@ -10,6 +10,8 @@ public interface UserDAO {
 
     void insert(@Param("user") User user);
 
+    void updateActive(@Param("id") int id, @Param("active") boolean active);
+
     void link(@Param("userEhmId") int userEhmId, @Param("userId") int userId);
 
     User get(@Param("username") String username);

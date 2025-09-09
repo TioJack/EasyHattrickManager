@@ -3,6 +3,7 @@ package easyhattrickmanager.service;
 import easyhattrickmanager.configuration.EhmConfiguration;
 import easyhattrickmanager.repository.TeamDAO;
 import easyhattrickmanager.repository.UpdateExecutionDAO;
+import easyhattrickmanager.repository.UserDAO;
 import easyhattrickmanager.repository.model.Team;
 import easyhattrickmanager.repository.model.UpdateExecution;
 import jakarta.annotation.PostConstruct;
@@ -21,6 +22,7 @@ public class UpdateExecutionService {
     private final UpdateService updateService;
     private final UpdateExecutionDAO updateExecutionDAO;
     private final TeamDAO teamDAO;
+    private final UserDAO userDAO;
     private final EhmConfiguration ehmConfiguration;
 
     private Random random = new Random();
@@ -31,11 +33,13 @@ public class UpdateExecutionService {
         UpdateService updateService,
         UpdateExecutionDAO updateExecutionDAO,
         TeamDAO teamDAO,
+        UserDAO userDAO,
         EhmConfiguration ehmConfiguration) {
         this.taskScheduler = taskScheduler;
         this.updateService = updateService;
         this.updateExecutionDAO = updateExecutionDAO;
         this.teamDAO = teamDAO;
+        this.userDAO = userDAO;
         this.ehmConfiguration = ehmConfiguration;
     }
 
@@ -57,6 +61,9 @@ public class UpdateExecutionService {
         } catch (Exception e) {
             updateExecution.setErrorMessage(e.getMessage());
             if (updateExecution.getRetries() < 7) {
+                if (updateExecution.getRetries() == 2 && "HTTP Response Code: 401".equals(e.getMessage())) {
+                    userDAO.updateActive(userDAO.getByTeamId(updateExecution.getTeamId()).getId(), false);
+                }
                 updateExecution.setStatus("PENDING");
                 updateExecution.setRetries(updateExecution.getRetries() + 1);
                 updateExecution.setExecutionTime(ZonedDateTime.now().plusHours(updateExecution.getRetries() + 1));

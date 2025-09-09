@@ -2,10 +2,7 @@ package easyhattrickmanager.service;
 
 import static easyhattrickmanager.utils.FileUtils.downloadFile;
 import static easyhattrickmanager.utils.HTMSUtils.calculateHTMS;
-import static easyhattrickmanager.utils.SeasonWeekUtils.convertFromSeasonWeek;
 import static easyhattrickmanager.utils.SeasonWeekUtils.convertToSeasonWeek;
-import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.groupingBy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import easyhattrickmanager.client.hattrick.model.avatars.Avatar;
@@ -39,18 +36,17 @@ import easyhattrickmanager.repository.model.Training;
 import easyhattrickmanager.repository.model.User;
 import easyhattrickmanager.service.model.HTMS;
 import easyhattrickmanager.service.model.dataresponse.UserConfig;
+import easyhattrickmanager.utils.SeasonWeekUtils;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.DayOfWeek;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import javax.imageio.ImageIO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -142,22 +138,7 @@ public class UpdateService {
     private int getAdjustmentDays(int teamId) {
         Team team = teamDAO.get(teamId);
         League league = getLeague(team.getLeagueId());
-        return getAdjustmentDays(league.getTrainingDate());
-    }
-
-    private int getAdjustmentDays(ZonedDateTime inputDate) {
-        DayOfWeek targetDay = inputDate.getDayOfWeek();
-        ZonedDateTime now = ZonedDateTime.now();
-        ZonedDateTime adjustedNow = now
-            .withHour(inputDate.getHour())
-            .withMinute(inputDate.getMinute())
-            .withSecond(inputDate.getSecond())
-            .withNano(inputDate.getNano());
-        int daysToSubtract = now.getDayOfWeek().getValue() - targetDay.getValue();
-        if (daysToSubtract < 0 || (daysToSubtract == 0 && now.isBefore(adjustedNow))) {
-            daysToSubtract += 7;
-        }
-        return -1 * daysToSubtract;
+        return SeasonWeekUtils.getAdjustmentDays(league.getTrainingDate(), ZonedDateTime.now());
     }
 
     private Player getPlayer(easyhattrickmanager.client.hattrick.model.players.Player playerHT) {
@@ -367,10 +348,21 @@ public class UpdateService {
         }
     }
 
+    public void getAvatars(int teamId) {
+        playerDAO.get(teamId).stream()
+            .map(Player::getId)
+            .distinct()
+            .forEach(this::getAvatar);
+    }
+
     public void getAvatar(int playerId) {
-        PlayerDetails playerDetails = hattrickService.getPlayerDetails(playerId);
-        int teamId = playerDetails.getPlayer().getOwningTeam().getTeamId();
-        saveAvatars(hattrickService.getAvatarsTDT(teamId), playerId);
+        try {
+            PlayerDetails playerDetails = hattrickService.getPlayerDetails(playerId);
+            int teamId = playerDetails.getPlayer().getOwningTeam().getTeamId();
+            saveAvatars(hattrickService.getAvatarsTDT(teamId), playerId);
+        } catch (Exception e) {
+            System.err.printf("Error getAvatar %d. %s%n", playerId, e.getMessage());
+        }
     }
 
     private void saveAvatars(Avatars avatars, int playerId) {
@@ -401,55 +393,6 @@ public class UpdateService {
                     playerDataDAO.updateHTMS(playerData);
                 });
         });
-    }
-
-    public void extendStaff(int teamId) {
-        int adjustmentDays = getAdjustmentDays(teamId);
-        List<PlayerData> playerData = playerDataDAO.get(teamId);
-
-        List<Trainer> trainers = trainerDAO.get(teamId);
-        List<Trainer> oldestPerTrainerId = trainers.stream()
-            .collect(groupingBy(Trainer::getId))
-            .values().stream()
-            .map(list -> list.stream()
-                .min(comparing(Trainer::getStartDate))
-                .orElse(null))
-            .filter(java.util.Objects::nonNull)
-            .toList();
-        oldestPerTrainerId.forEach(trainer -> {
-            ZonedDateTime cursor = convertFromSeasonWeek(trainer.getSeasonWeek()).plusDays(adjustmentDays);
-            while (cursor.isAfter(trainer.getStartDate())) {
-                String seasonWeek = convertToSeasonWeek(cursor);
-                trainer.setSeasonWeek(seasonWeek);
-                trainer.setLeadership(getLeadership(playerData, trainer, seasonWeek));
-                trainerDAO.insert(trainer);
-                cursor = cursor.minusWeeks(1);
-            }
-        });
-        List<StaffMember> staffMembers = staffMemberDAO.get(teamId);
-        List<StaffMember> oldestPerStaffId = staffMembers.stream()
-            .collect(groupingBy(StaffMember::getId))
-            .values().stream()
-            .map(list -> list.stream()
-                .min(comparing(StaffMember::getStartDate))
-                .orElse(null))
-            .filter(java.util.Objects::nonNull)
-            .toList();
-        oldestPerStaffId.forEach(staffMember -> {
-            ZonedDateTime cursor = convertFromSeasonWeek(staffMember.getSeasonWeek()).plusDays(adjustmentDays);
-            while (cursor.isAfter(staffMember.getStartDate())) {
-                staffMember.setSeasonWeek(convertToSeasonWeek(cursor));
-                staffMemberDAO.insert(staffMember);
-                cursor = cursor.minusWeeks(1);
-            }
-        });
-    }
-
-    private int getLeadership(List<PlayerData> playerData, Trainer trainer, String seasonWeek) {
-        Optional<PlayerData> found = playerData.stream()
-            .filter(pd -> (Objects.equals(pd.getSeasonWeek(), seasonWeek)) && (pd.getId() == trainer.getId()))
-            .findFirst();
-        return found.map(PlayerData::getLeadership).orElseGet(trainer::getLeadership);
     }
 
     public void updateUserConfig() {
