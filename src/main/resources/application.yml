@@ -7,6 +7,9 @@ server:
 management:
   server:
     port: 1999
+  health:
+    mail:
+      enabled: false
 
 spring:
   datasource:

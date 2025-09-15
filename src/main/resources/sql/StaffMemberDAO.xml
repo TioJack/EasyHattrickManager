@@ -40,7 +40,7 @@
            cost
     FROM staff_member
     WHERE team_id = #{teamId}
-    ORDER BY season_week, start_date, id;
+    ORDER BY season_week, start_date, type, id;
   </select>
 
 </mapper>
