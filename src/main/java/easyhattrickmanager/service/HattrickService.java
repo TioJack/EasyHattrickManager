@@ -31,20 +31,24 @@ public class HattrickService {
         return this.hattrickClient.getTeamDetails(accessToken);
     }
 
+    public TeamDetails getTeamDetails(User user) {
+        return this.hattrickClient.getTeamDetails(getAccessTokenByUser(user));
+    }
+
     public Players getPlayers(int teamId) {
-        return this.hattrickClient.getPlayers(getAccessToken(teamId), teamId);
+        return this.hattrickClient.getPlayers(getAccessTokenByTeamId(teamId), teamId);
     }
 
     public Training getTraining(int teamId) {
-        return this.hattrickClient.getTraining(getAccessToken(teamId), teamId);
+        return this.hattrickClient.getTraining(getAccessTokenByTeamId(teamId), teamId);
     }
 
     public Stafflist getStaff(int teamId) {
-        return this.hattrickClient.getStafflist(getAccessToken(teamId), teamId);
+        return this.hattrickClient.getStafflist(getAccessTokenByTeamId(teamId), teamId);
     }
 
     public WorldDetails getWorlddetails() {
-        return this.hattrickClient.getWorlddetails(getAccessToken(DEFAULT_TEAM_ID));
+        return this.hattrickClient.getWorlddetails(getAccessTokenByTeamId(DEFAULT_TEAM_ID));
     }
 
     public ManagerCompendium getManagerCompendium(OAuth1AccessToken accessToken) {
@@ -52,32 +56,35 @@ public class HattrickService {
     }
 
     public WorldLanguages getWorldLanguages() {
-        return this.hattrickClient.getWorldLanguages(getAccessToken(DEFAULT_TEAM_ID));
-    }
-
-    private OAuth1AccessToken getAccessToken(int teamId) {
-        User user = userDAO.getByTeamId(teamId);
-        return new OAuth1AccessToken(user.getToken(), user.getTokenSecret());
+        return this.hattrickClient.getWorldLanguages(getAccessTokenByTeamId(DEFAULT_TEAM_ID));
     }
 
     public Avatars getAvatars(int teamId) {
-        return this.hattrickClient.getAvatars(getAccessToken(teamId), teamId);
+        return this.hattrickClient.getAvatars(getAccessTokenByTeamId(teamId), teamId);
     }
 
     public StaffAvatars getStaffAvatars(int teamId) {
-        return this.hattrickClient.getStaffAvatars(getAccessToken(teamId), teamId);
+        return this.hattrickClient.getStaffAvatars(getAccessTokenByTeamId(teamId), teamId);
     }
 
     public Translations getTranslations(int languageId) {
-        return this.hattrickClient.getTranslations(getAccessToken(DEFAULT_TEAM_ID), languageId);
+        return this.hattrickClient.getTranslations(getAccessTokenByTeamId(DEFAULT_TEAM_ID), languageId);
     }
 
     public PlayerDetails getPlayerDetails(int playerId) {
-        return this.hattrickClient.getPlayerDetails(getAccessToken(DEFAULT_TEAM_ID), playerId);
+        return this.hattrickClient.getPlayerDetails(getAccessTokenByTeamId(DEFAULT_TEAM_ID), playerId);
     }
 
     public Avatars getAvatarsTDT(int teamId) {
-        return this.hattrickClient.getAvatars(getAccessToken(DEFAULT_TEAM_ID), teamId);
+        return this.hattrickClient.getAvatars(getAccessTokenByTeamId(DEFAULT_TEAM_ID), teamId);
     }
 
+    private OAuth1AccessToken getAccessTokenByUser(User user) {
+        return new OAuth1AccessToken(user.getToken(), user.getTokenSecret());
+    }
+
+    private OAuth1AccessToken getAccessTokenByTeamId(int teamId) {
+        User user = userDAO.getByTeamId(teamId);
+        return new OAuth1AccessToken(user.getToken(), user.getTokenSecret());
+    }
 }

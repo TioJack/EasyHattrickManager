@@ -23,6 +23,14 @@
       bot = #{team.bot};
   </insert>
 
+  <update id="deactivateTeam">
+    UPDATE team
+    SET closure_date = NOW(),
+        bot          = 1
+    WHERE user_id = #{userId}
+      AND id = #{id};
+  </update>
+
   <select id="get" resultType="easyhattrickmanager.repository.model.Team">
     SELECT t.user_id,
            t.id,

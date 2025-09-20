@@ -8,6 +8,9 @@ import {PlayerStats} from './model/player-stats';
   providedIn: 'root'
 })
 export class PlayService {
+
+  private categorySort: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 11, 12, 9, 10, 13];
+
   private selectedProjectSubject = new BehaviorSubject<Project | null>(null);
   private selectedTeamSubject = new BehaviorSubject<TeamExtendedInfo | null>(null);
   private selectedSeasonSubject = new BehaviorSubject<number | null>(null);
@@ -29,7 +32,6 @@ export class PlayService {
   training$ = this.trainingSubject.asObservable();
   trainingStats$ = this.trainingStatsSubject.asObservable();
   playerStats$ = this.playerStatsSubject.asObservable();
-
 
   selectProject(project: Project): void {
     this.selectedProjectSubject.next(project);
@@ -70,6 +72,9 @@ export class PlayService {
             } else if (sort.criteria === 'age') {
               valueA = (a.age || 0) + ((a.ageDays || 0) / 111);
               valueB = (b.age || 0) + ((b.ageDays || 0) / 111);
+            } else if (sort.criteria === 'playerCategoryId') {
+              valueA = a.playerCategoryId == 0 ? null : this.categorySort.indexOf(a.playerCategoryId);
+              valueB = b.playerCategoryId == 0 ? null : this.categorySort.indexOf(b.playerCategoryId);
             } else {
               valueA = (a as any)[sort.criteria] !== undefined ? (a as any)[sort.criteria] : null;
               valueB = (b as any)[sort.criteria] !== undefined ? (b as any)[sort.criteria] : null;

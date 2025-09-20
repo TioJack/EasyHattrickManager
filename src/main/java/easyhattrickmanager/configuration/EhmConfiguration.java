@@ -14,5 +14,6 @@ public class EhmConfiguration {
     private String registerCallbackUrl;
     private String cronAddActiveUpdateExecutions;
     private String cronCheckData;
+    private String cronCheckActive;
 
 }

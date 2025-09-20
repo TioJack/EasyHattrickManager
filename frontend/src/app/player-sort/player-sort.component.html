@@ -25,6 +25,7 @@
   </div>
   <h6 class="fw-bold text-nowrap">{{ 'ehm.sort-criteria' | translate | firstCapitalize }}</h6>
   <select class="form-select w-auto d-inline" [(ngModel)]="sort.criteria" (change)="onCriteriaChange($event)">
+    <option value="playerCategoryId">{{ 'ehm.category' | translate | firstCapitalize }}</option>
     <option value="playerNumber">{{ 'ehm.shirt-number' | translate | firstCapitalize }}</option>
     <option value="name">{{ 'ehm.full-name' | translate | firstCapitalize }}</option>
     <option value="firstName">{{ 'ehm.first-name' | translate | firstCapitalize }}</option>
@@ -39,6 +40,7 @@
     <option value="leadership">{{ 'ht.skill-leadership' | translate | firstCapitalize }}</option>
     <option value="experience">{{ 'ht.skill-experience' | translate | firstCapitalize }}</option>
     <option value="loyalty">{{ 'ehm.loyalty' | translate | firstCapitalize }}</option>
+    <option value="arrivalDate">{{ 'ehm.arrival' | translate | firstCapitalize }}</option>
     <option value="injuryLevel">{{ 'ehm.injuries' | translate | firstCapitalize }}</option>
     <option value="">---</option>
     <option value="htms">{{ 'ehm.htms-ability' | translate | firstCapitalize }}</option>

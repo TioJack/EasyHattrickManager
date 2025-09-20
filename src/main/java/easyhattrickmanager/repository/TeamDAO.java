@@ -16,4 +16,6 @@ public interface TeamDAO {
 
     List<Team> getActiveTeams();
 
+    void deactivateTeam(@Param("userId") int userId, @Param("id") int id);
+
 }

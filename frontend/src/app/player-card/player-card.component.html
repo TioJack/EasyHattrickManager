@@ -19,15 +19,31 @@
       <img src="assets/flags/{{ player.countryId }}.png" alt="" class="shadow-2"/>
     </div>
   </div>
-  <div class="row">
-    <div class="col text-start fs-90 text-nowrap">{{ 'ehm.person' | translate | firstCapitalize }} {{ 'ht.agreeability-' + player.agreeability | translate }}, {{ 'ht.agressiveness-' + player.aggressiveness | translate }} {{ 'ehm.and' | translate }} {{ 'ht.honesty-' + player.honesty | translate }}.
+  <div class="row align-items-stretch">
+    <div class="col-10">
+      <div class="row">
+        <div class="col-12 text-start fs-90 text-nowrap">
+          {{ 'ehm.person' | translate | firstCapitalize }} {{ 'ht.agreeability-' + player.agreeability | translate }},
+          {{ 'ht.agressiveness-' + player.aggressiveness | translate }} {{ 'ehm.and' | translate }}
+          {{ 'ht.honesty-' + player.honesty | translate }}.
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 text-start fs-90 text-nowrap">
+          {{ 'ehm.has' | translate | firstCapitalize }}
+          {{ 'ht.skill-level-' + player.experience | translate }} ({{ player.experience }})
+          {{ 'ht.skill-experience' | translate | lowercase }},
+          {{ 'ht.skill-level-' + player.leadership | translate }} ({{ player.leadership }})
+          {{ 'ht.skill-leadership' | translate | lowercase }} {{ 'ehm.and' | translate }}
+          {{ 'ht.skill-level-' + player.loyalty | translate }} ({{ player.loyalty }})
+          {{ 'ehm.loyalty' | translate }}.
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col text-start fs-90 text-nowrap">
-      {{ 'ehm.has' | translate | firstCapitalize }} {{ 'ht.skill-level-' + player.experience | translate }} ({{ player.experience }}) {{ 'ht.skill-experience' | translate | lowercase }},
-      {{ 'ht.skill-level-' + player.leadership | translate }} ({{ player.leadership }}) {{ 'ht.skill-leadership' | translate | lowercase }} {{ 'ehm.and' | translate }}
-      {{ 'ht.skill-level-' + player.loyalty | translate }} ({{ player.loyalty }}) {{ 'ehm.loyalty' | translate }}.
+    <div class="col-2 text-end d-flex align-items-center justify-content-end">
+      <span *ngIf="player.playerCategoryId != 0" class="player-category" title="{{ 'ehm.category-name-' + player.playerCategoryId | translate | firstCapitalize }}">
+        {{ 'ehm.category-abbr-' + player.playerCategoryId | translate | firstCapitalize }}
+      </span>
     </div>
   </div>
   <div class="row">

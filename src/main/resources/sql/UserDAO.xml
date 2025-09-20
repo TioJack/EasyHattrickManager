@@ -30,6 +30,12 @@
     WHERE id = #{id};
   </update>
 
+  <update id="updateName">
+    UPDATE user
+    SET name = #{name}
+    WHERE id = #{id};
+  </update>
+
   <insert id="link">
     INSERT
     IGNORE INTO user_ehm_user (user_ehm_id, user_id)
