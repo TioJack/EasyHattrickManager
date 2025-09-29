@@ -17,6 +17,7 @@ public class RepairController {
 
     @GetMapping
     public ResponseEntity<Void> getData() {
+        // TODO add fill in gaps for player_training
         repairService.fillInGaps();
         return ResponseEntity.ok().build();
     }
@@ -24,6 +25,12 @@ public class RepairController {
     @GetMapping("/extendStaff")
     public ResponseEntity<Void> extendStaff(@RequestParam("teamId") int teamId) {
         repairService.extendStaff(teamId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/playerTraining")
+    public ResponseEntity<Void> getPlayerTraining() {
+        repairService.getPlayerTraining();
         return ResponseEntity.ok().build();
     }
 

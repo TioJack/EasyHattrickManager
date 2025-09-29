@@ -14,11 +14,12 @@ import {PlayerSortComponent} from '../player-sort/player-sort.component';
 import {DataService} from '../services/data.service';
 import {AlertComponent} from '../alert/alert.component';
 import {DateFormatComponent} from '../date-format/date-format.component';
+import {ShowTrainingInfoComponent} from '../show-training-info/show-training-info.component';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [NgForOf, TranslatePipe, LanguageComponent, CurrencyComponent, FirstCapitalizePipe, AsyncPipe, RouterLink, PlayerFilterComponent, PlayerSortComponent, AlertComponent, DatePipe, DateFormatComponent],
+  imports: [NgForOf, TranslatePipe, LanguageComponent, CurrencyComponent, FirstCapitalizePipe, AsyncPipe, RouterLink, PlayerFilterComponent, PlayerSortComponent, AlertComponent, DatePipe, DateFormatComponent, ShowTrainingInfoComponent],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })

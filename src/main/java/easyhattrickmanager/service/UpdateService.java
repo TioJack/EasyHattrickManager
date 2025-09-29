@@ -3,6 +3,7 @@ package easyhattrickmanager.service;
 import static easyhattrickmanager.utils.FileUtils.downloadFile;
 import static easyhattrickmanager.utils.HTMSUtils.calculateHTMS;
 import static easyhattrickmanager.utils.SeasonWeekUtils.convertToSeasonWeek;
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import easyhattrickmanager.client.hattrick.model.avatars.Avatar;
@@ -19,6 +20,7 @@ import easyhattrickmanager.repository.CountryDAO;
 import easyhattrickmanager.repository.LeagueDAO;
 import easyhattrickmanager.repository.PlayerDAO;
 import easyhattrickmanager.repository.PlayerDataDAO;
+import easyhattrickmanager.repository.PlayerTrainingDAO;
 import easyhattrickmanager.repository.StaffMemberDAO;
 import easyhattrickmanager.repository.TeamDAO;
 import easyhattrickmanager.repository.TrainerDAO;
@@ -29,6 +31,7 @@ import easyhattrickmanager.repository.model.Country;
 import easyhattrickmanager.repository.model.League;
 import easyhattrickmanager.repository.model.Player;
 import easyhattrickmanager.repository.model.PlayerData;
+import easyhattrickmanager.repository.model.PlayerTraining;
 import easyhattrickmanager.repository.model.StaffMember;
 import easyhattrickmanager.repository.model.Team;
 import easyhattrickmanager.repository.model.Trainer;
@@ -60,6 +63,7 @@ public class UpdateService {
     private final LeagueDAO leagueDAO;
     private final PlayerDAO playerDAO;
     private final PlayerDataDAO playerDataDAO;
+    private final PlayerTrainingDAO playerTrainingDAO;
     private final TrainingDAO trainingDAO;
     private final TrainerDAO trainerDAO;
     private final StaffMemberDAO staffMemberDAO;
@@ -67,6 +71,7 @@ public class UpdateService {
     private final UserDAO userDAO;
     private final AssetsConfiguration assetsConfiguration;
     private final UserConfigDAO userConfigDAO;
+    private final CalculateTrainingPercentageService calculateTrainingPercentageService;
 
     private List<String> images = new ArrayList<>();
 
@@ -98,12 +103,26 @@ public class UpdateService {
                     playerDataDAO.insert(playerData);
                 }
             });
-        trainingDAO.insert(getTraining(hattrickService.getTraining(teamId), seasonWeek));
+        Training training = getTraining(hattrickService.getTraining(teamId), seasonWeek);
+        trainingDAO.insert(training);
         Stafflist staff = hattrickService.getStaff(teamId);
         trainerDAO.insert(getTrainer(teamId, staff.getStaffList().getTrainer(), seasonWeek));
         staff.getStaffList().getStaffs().forEach(staffHT -> staffMemberDAO.insert(getStaffMember(teamId, staffHT, seasonWeek)));
         saveAvatars(hattrickService.getAvatars(teamId));
         saveStaffAvatars(hattrickService.getStaffAvatars(teamId));
+        List<PlayerTraining> playerTrainings = calculateTrainingPercentageService.calculateTrainingPercentage(seasonWeek, teamId, training, getTrainerLevel(staff), getAssistantsLevel(staff));
+        playerTrainings.forEach(playerTrainingDAO::insert);
+    }
+
+    private int getTrainerLevel(Stafflist staff) {
+        return staff.getStaffList().getTrainer().getTrainerSkillLevel();
+    }
+
+    private int getAssistantsLevel(Stafflist staff) {
+        return isEmpty(staff.getStaffList().getStaffs()) ? 0 : staff.getStaffList().getStaffs().stream()
+            .filter(stf -> stf.getStaffType() == 1)
+            .map(Staff::getStaffLevel)
+            .reduce(0, Integer::sum);
     }
 
     public int getActualWeek(int teamId) {
@@ -397,19 +416,15 @@ public class UpdateService {
 
     public void updateUserConfig() {
         List<Country> countries = countryDAO.getAllCountries();
-        userDAO.getAllUsers()
-            .forEach(user -> {
-                try {
-                    UserConfig userConfig = new ObjectMapper().readValue(userConfigDAO.get(user.getId()), UserConfig.class);
-                    if (userConfig.getDateFormat() == null) {
-                        Country country = countries.stream().filter(cntry -> cntry.getId() == user.getCountryId()).findFirst().orElseThrow();
-                        userConfig.setDateFormat(country.getDateFormat().replace('D', 'd').replace('Y', 'y'));
-                        userConfigDAO.update(user.getId(), new ObjectMapper().writeValueAsString(userConfig));
-                    }
-                } catch (Exception e) {
-                    System.err.printf("Error updateUserConfig %s. %s%n", user.getId(), e.getMessage());
-                }
-            });
+        userDAO.getAllUsers().forEach(user -> {
+            try {
+                UserConfig userConfig = new ObjectMapper().readValue(userConfigDAO.get(user.getId()), UserConfig.class);
+                userConfig.setShowTrainingInfo(true);
+                userConfigDAO.update(user.getId(), new ObjectMapper().writeValueAsString(userConfig));
+            } catch (Exception e) {
+                System.err.printf("Error updateUserConfig %s. %s%n", user.getId(), e.getMessage());
+            }
+        });
     }
 
 }

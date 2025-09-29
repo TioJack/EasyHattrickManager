@@ -4,6 +4,9 @@ import com.github.scribejava.core.model.OAuth1AccessToken;
 import easyhattrickmanager.client.hattrick.HattrickClient;
 import easyhattrickmanager.client.hattrick.model.avatars.Avatars;
 import easyhattrickmanager.client.hattrick.model.managercompendium.ManagerCompendium;
+import easyhattrickmanager.client.hattrick.model.matchdetail.MatchDetail;
+import easyhattrickmanager.client.hattrick.model.matchesarchive.MatchesArchive;
+import easyhattrickmanager.client.hattrick.model.matchlineup.MatchLineup;
 import easyhattrickmanager.client.hattrick.model.playerdetails.PlayerDetails;
 import easyhattrickmanager.client.hattrick.model.players.Players;
 import easyhattrickmanager.client.hattrick.model.staffavatars.StaffAvatars;
@@ -15,6 +18,7 @@ import easyhattrickmanager.client.hattrick.model.worlddetails.WorldDetails;
 import easyhattrickmanager.client.hattrick.model.worldlanguages.WorldLanguages;
 import easyhattrickmanager.repository.UserDAO;
 import easyhattrickmanager.repository.model.User;
+import java.time.ZonedDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -77,6 +81,18 @@ public class HattrickService {
 
     public Avatars getAvatarsTDT(int teamId) {
         return this.hattrickClient.getAvatars(getAccessTokenByTeamId(DEFAULT_TEAM_ID), teamId);
+    }
+
+    public MatchesArchive getMatchesArchive(int teamId, ZonedDateTime startDate, ZonedDateTime endDate) {
+        return this.hattrickClient.getMatchesArchive(getAccessTokenByTeamId(teamId), teamId, startDate, endDate);
+    }
+
+    public MatchDetail getMatchDetail(int teamId, int matchId) {
+        return this.hattrickClient.getMatchDetail(getAccessTokenByTeamId(teamId), matchId);
+    }
+
+    public MatchLineup getMatchLineup(int teamId, int matchId) {
+        return this.hattrickClient.getMatchLineup(getAccessTokenByTeamId(teamId), teamId, matchId);
     }
 
     private OAuth1AccessToken getAccessTokenByUser(User user) {

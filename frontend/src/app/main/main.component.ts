@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {PlayService} from '../services/play.service';
-import {PlayerInfo} from '../services/model/data-response';
+import {PlayerInfo, TrainingInfo} from '../services/model/data-response';
 import {NgForOf} from '@angular/common';
 import {PlayerCardComponent} from '../player-card/player-card.component';
 import {StaffComponent} from '../staff/staff.component';
@@ -21,6 +21,7 @@ import {PlayerStatsComponent} from '../player-stats/player-stats.component';
 })
 export class MainComponent implements OnInit {
   players: PlayerInfo[] = [];
+  training: TrainingInfo | null = null;
 
   constructor(private playService: PlayService) {
   }
@@ -29,5 +30,8 @@ export class MainComponent implements OnInit {
     this.playService.players$.subscribe(players => {
       this.players = players;
     })
+    this.playService.training$.subscribe(training => {
+      this.training = training;
+    });
   }
 }

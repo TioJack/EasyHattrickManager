@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
-import {PlayerInfo, Project, StaffInfo, TeamExtendedInfo, TrainingInfo} from './model/data-response';
+import {PlayerInfo, PlayerTrainingInfo, Project, StaffInfo, TeamExtendedInfo, TrainingInfo} from './model/data-response';
 import {TrainingStats} from './model/training-stats';
 import {PlayerStats} from './model/player-stats';
 
@@ -75,6 +75,9 @@ export class PlayService {
             } else if (sort.criteria === 'playerCategoryId') {
               valueA = a.playerCategoryId == 0 ? null : this.categorySort.indexOf(a.playerCategoryId);
               valueB = b.playerCategoryId == 0 ? null : this.categorySort.indexOf(b.playerCategoryId);
+            } else if (sort.criteria === 'training') {
+              valueA = a.playerTraining ? this.getMaxTrainingValue(a.playerTraining) : null;
+              valueB = b.playerTraining ? this.getMaxTrainingValue(b.playerTraining) : null;
             } else {
               valueA = (a as any)[sort.criteria] !== undefined ? (a as any)[sort.criteria] : null;
               valueB = (b as any)[sort.criteria] !== undefined ? (b as any)[sort.criteria] : null;
@@ -114,6 +117,11 @@ export class PlayService {
         this.playerStatsSubject.next(null);
       }
     }
+  }
+
+  private getMaxTrainingValue(trainingInfo: PlayerTrainingInfo): number {
+    const values = Object.values(trainingInfo);
+    return Math.max(...values);
   }
 
   private clearSeasonWeek(): void {

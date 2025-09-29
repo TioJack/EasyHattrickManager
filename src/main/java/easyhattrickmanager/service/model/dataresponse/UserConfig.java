@@ -15,5 +15,6 @@ public class UserConfig {
     Integer languageId;
     CurrencyInfo currency;
     String dateFormat;
+    boolean showTrainingInfo;
     List<ProjectInfo> projects;
 }

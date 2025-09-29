@@ -2,6 +2,7 @@ package easyhattrickmanager.client.hattrick;
 
 import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
 import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS;
+import static java.time.format.DateTimeFormatter.ofPattern;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -13,6 +14,9 @@ import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth10aService;
 import easyhattrickmanager.client.hattrick.model.avatars.Avatars;
 import easyhattrickmanager.client.hattrick.model.managercompendium.ManagerCompendium;
+import easyhattrickmanager.client.hattrick.model.matchdetail.MatchDetail;
+import easyhattrickmanager.client.hattrick.model.matchesarchive.MatchesArchive;
+import easyhattrickmanager.client.hattrick.model.matchlineup.MatchLineup;
 import easyhattrickmanager.client.hattrick.model.playerdetails.PlayerDetails;
 import easyhattrickmanager.client.hattrick.model.players.Players;
 import easyhattrickmanager.client.hattrick.model.staffavatars.StaffAvatars;
@@ -35,8 +39,8 @@ import org.springframework.stereotype.Service;
 public class HattrickClient {
 
     private final OAuth10aService oAuth10aService;
-
-    private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter DATE_FORMAT = ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter DATE_TIME_FORMAT = ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final XmlMapper XMLMAPPER = XmlMapper.builder()
         .addModule(new JavaTimeModule().addDeserializer(ZonedDateTime.class, new ZonedDateTimeDeserializer(DATE_TIME_FORMAT)))
         .configure(WRITE_DATES_AS_TIMESTAMPS, false)
@@ -168,4 +172,33 @@ public class HattrickClient {
         }
     }
 
+    public MatchesArchive getMatchesArchive(OAuth1AccessToken accessToken, int teamId, ZonedDateTime startDate, ZonedDateTime endDate) {
+        try {
+            String xml = this.getXML(accessToken, "matchesarchive&version=1.5&teamID=" + teamId + "&FirstMatchDate=" + startDate.format(DATE_FORMAT) + "&LastMatchDate=" + endDate.format(DATE_FORMAT));
+            MatchesArchive matchesArchive = XMLMAPPER.readValue(xml, MatchesArchive.class);
+            return matchesArchive;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public MatchDetail getMatchDetail(OAuth1AccessToken accessToken, int matchId) {
+        try {
+            String xml = this.getXML(accessToken, "matchdetails&version=3.1&matchEvents=false&matchID=" + matchId);
+            MatchDetail matchDetail = XMLMAPPER.readValue(xml, MatchDetail.class);
+            return matchDetail;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public MatchLineup getMatchLineup(OAuth1AccessToken accessToken, int teamId, int matchId) {
+        try {
+            String xml = this.getXML(accessToken, "matchlineup&version=2.1&teamID=" + teamId + "&matchID=" + matchId);
+            MatchLineup matchLineup = XMLMAPPER.readValue(xml, MatchLineup.class);
+            return matchLineup;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
 }

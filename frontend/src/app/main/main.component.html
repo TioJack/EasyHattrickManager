@@ -11,7 +11,7 @@
         <app-training class="flex-fill w-100"></app-training>
       </div>
       <div *ngFor="let player of players" class="col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-4 d-flex">
-        <app-player-card class="flex-fill w-100" [player]="player"></app-player-card>
+        <app-player-card class="flex-fill w-100" [player]="player" [training]="training"></app-player-card>
       </div>
     </div>
   </div>

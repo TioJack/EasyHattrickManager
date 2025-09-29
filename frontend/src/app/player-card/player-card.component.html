@@ -55,40 +55,40 @@
           </td>
           <td class="text-end pe-1 text-nowrap">{{ 'ehm.age' | translate | firstCapitalize }}</td>
           <td class="text-start text-nowrap" colspan="2">{{ player.age }}{{ 'ehm.years' | translate | firstLetter }} {{ player.ageDays }}{{ 'ehm.days' | translate | firstLetter }}</td>
-          <td class="text-end pe-1 text-nowrap">{{ 'ht.skill-keeper' | translate }}</td>
-          <td>
+          <td class="text-end pe-1 text-nowrap" [title]="getTraining('keeper')" [ngStyle]="getBackgroundColor('keeper')">{{ 'ht.skill-keeper' | translate }}</td>
+          <td [title]="getTraining('keeper')" [ngStyle]="getBackgroundColor('keeper')">
             <app-skill [skill]="player.keeperSkill" [max]="20"></app-skill>
           </td>
-          <td class="text-end" style="width: 3%;">{{ player.keeperSkill }}</td>
+          <td class="text-end" style="width: 3%;" [title]="getTraining('keeper')" [ngStyle]="getBackgroundColor('keeper')">{{ player.keeperSkill }}</td>
         </tr>
         <tr>
           <td class="text-end pe-1 text-nowrap">TSI</td>
           <td class="text-start text-nowrap" colspan="2">{{ player.tsi | numberSeparator }}</td>
-          <td class="text-end pe-1 text-nowrap">{{ 'ht.skill-defender' | translate }}</td>
-          <td>
+          <td class="text-end pe-1 text-nowrap" [title]="getTraining('defender')" [ngStyle]="getBackgroundColor('defender')">{{ 'ht.skill-defender' | translate }}</td>
+          <td [title]="getTraining('defender')" [ngStyle]="getBackgroundColor('defender')">
             <app-skill [skill]="player.defenderSkill" [max]="20"></app-skill>
           </td>
-          <td class="text-end">{{ player.defenderSkill }}</td>
+          <td class="text-end" [title]="getTraining('defender')" [ngStyle]="getBackgroundColor('defender')">{{ player.defenderSkill }}</td>
         </tr>
         <tr>
           <td class="text-end pe-1 text-nowrap">{{ 'ehm.wage' | translate | firstCapitalize }}</td>
           <td class="text-start text-nowrap" colspan="2">{{ player.salary | salary:userConfig.currency }}</td>
-          <td class="text-end pe-1 text-nowrap">{{ 'ht.skill-playmaker' | translate }}</td>
-          <td>
+          <td class="text-end pe-1 text-nowrap" [title]="getTraining('playmaker')" [ngStyle]="getBackgroundColor('playmaker')">{{ 'ht.skill-playmaker' | translate }}</td>
+          <td [title]="getTraining('playmaker')" [ngStyle]="getBackgroundColor('playmaker')">
             <app-skill [skill]="player.playmakerSkill" [max]="20"></app-skill>
           </td>
-          <td class="text-end">{{ player.playmakerSkill }}</td>
+          <td class="text-end" [title]="getTraining('playmaker')" [ngStyle]="getBackgroundColor('playmaker')">{{ player.playmakerSkill }}</td>
         </tr>
         <tr>
           <td class="text-end pe-1 text-nowrap">{{ 'ht.specialty' | translate }}</td>
           <td class="text-start text-nowrap" colspan="2">
             <app-specialty [specialty]="player.specialty"></app-specialty>
           </td>
-          <td class="text-end pe-1 text-nowrap">{{ 'ht.skill-winger' | translate }}</td>
-          <td>
+          <td class="text-end pe-1 text-nowrap" [title]="getTraining('winger')" [ngStyle]="getBackgroundColor('winger')">{{ 'ht.skill-winger' | translate }}</td>
+          <td [title]="getTraining('winger')" [ngStyle]="getBackgroundColor('winger')">
             <app-skill [skill]="player.wingerSkill" [max]="20"></app-skill>
           </td>
-          <td class="text-end">{{ player.wingerSkill }}</td>
+          <td class="text-end" [title]="getTraining('winger')" [ngStyle]="getBackgroundColor('winger')">{{ player.wingerSkill }}</td>
         </tr>
         <tr>
           <td class="text-end pe-1 text-nowrap">{{ 'ht.skill-form' | translate }}</td>
@@ -96,11 +96,11 @@
             <app-skill [skill]="player.playerForm" [max]="8"></app-skill>
           </td>
           <td class="text-start text-nowrap">{{ player.playerForm }}</td>
-          <td class="text-end pe-1">{{ 'ht.skill-passer' | translate }}</td>
-          <td>
+          <td class="text-end pe-1" [title]="getTraining('passing')" [ngStyle]="getBackgroundColor('passing')">{{ 'ht.skill-passer' | translate }}</td>
+          <td [title]="getTraining('passing')" [ngStyle]="getBackgroundColor('passing')">
             <app-skill [skill]="player.passingSkill" [max]="20"></app-skill>
           </td>
-          <td class="text-end">{{ player.passingSkill }}</td>
+          <td class="text-end" [title]="getTraining('passing')" [ngStyle]="getBackgroundColor('passing')">{{ player.passingSkill }}</td>
         </tr>
         <tr>
           <td class="text-end pe-1 text-nowrap">{{ 'ht.skill-stamina' | translate }}</td>
@@ -108,20 +108,20 @@
             <app-skill [skill]="player.staminaSkill" [max]="9"></app-skill>
           </td>
           <td class="text-start text-nowrap">{{ player.staminaSkill }}</td>
-          <td class="text-end pe-1 text-nowrap">{{ 'ht.skill-scorer' | translate }}</td>
-          <td>
+          <td class="text-end pe-1 text-nowrap" [title]="getTraining('scorer')" [ngStyle]="getBackgroundColor('scorer')">{{ 'ht.skill-scorer' | translate }}</td>
+          <td [title]="getTraining('scorer')" [ngStyle]="getBackgroundColor('scorer')">
             <app-skill [skill]="player.scorerSkill" [max]="20"></app-skill>
           </td>
-          <td class="text-end">{{ player.scorerSkill }}</td>
+          <td class="text-end" [title]="getTraining('scorer')" [ngStyle]="getBackgroundColor('scorer')">{{ player.scorerSkill }}</td>
         </tr>
         <tr>
           <td class="text-end pe-1 text-nowrap">HTMS</td>
           <td class="text-start text-nowrap" colspan="2">{{ player.htms }} | {{ player.htms28 }}</td>
-          <td class="text-end pe-1 text-nowrap">{{ 'ht.skill-kicker' | translate }}</td>
-          <td>
+          <td class="text-end pe-1 text-nowrap" [title]="getTraining('setPieces')" [ngStyle]="getBackgroundColor('setPieces')">{{ 'ht.skill-kicker' | translate }}</td>
+          <td [title]="getTraining('setPieces')" [ngStyle]="getBackgroundColor('setPieces')">
             <app-skill [skill]="player.setPiecesSkill" [max]="20"></app-skill>
           </td>
-          <td class="text-end">{{ player.setPiecesSkill }}</td>
+          <td class="text-end" [title]="getTraining('setPieces')" [ngStyle]="getBackgroundColor('setPieces')">{{ player.setPiecesSkill }}</td>
         </tr>
       </table>
     </div>

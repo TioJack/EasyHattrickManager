@@ -5,15 +5,18 @@ import static easyhattrickmanager.utils.SeasonWeekUtils.convertToSeasonWeek;
 import static easyhattrickmanager.utils.SeasonWeekUtils.next;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 
 import easyhattrickmanager.repository.LeagueDAO;
 import easyhattrickmanager.repository.PlayerDataDAO;
+import easyhattrickmanager.repository.PlayerTrainingDAO;
 import easyhattrickmanager.repository.StaffMemberDAO;
 import easyhattrickmanager.repository.TeamDAO;
 import easyhattrickmanager.repository.TrainerDAO;
 import easyhattrickmanager.repository.TrainingDAO;
 import easyhattrickmanager.repository.model.League;
 import easyhattrickmanager.repository.model.PlayerData;
+import easyhattrickmanager.repository.model.PlayerTraining;
 import easyhattrickmanager.repository.model.StaffMember;
 import easyhattrickmanager.repository.model.Team;
 import easyhattrickmanager.repository.model.Trainer;
@@ -45,6 +48,8 @@ public class RepairService {
     private final LeagueDAO leagueDAO;
     private final TrainerDAO trainerDAO;
     private final StaffMemberDAO staffMemberDAO;
+    private final PlayerTrainingDAO playerTrainingDAO;
+    private final CalculateTrainingPercentageService calculateTrainingPercentageService;
 
     public void fillInGaps() {
         teamDAO.getActiveTeams().forEach(team -> {
@@ -412,5 +417,29 @@ public class RepairService {
                 .cost(ini.getCost())
                 .build());
         }
+    }
+
+    public void getPlayerTraining() {
+        teamDAO.getActiveTeams().forEach(team -> {
+            // Team team = Team.builder().id(1333746).build();
+            List<String> playerTrainingWeeks = playerTrainingDAO.get(team.getId()).stream().map(PlayerTraining::getSeasonWeek).distinct().toList();
+            List<String> dataWeeks = playerDataDAO.get(team.getId()).stream().map(PlayerData::getSeasonWeek).distinct().toList();
+
+            Map<String, Training> trainings = trainingDAO.get(team.getId()).stream().collect(Collectors.toMap(Training::getSeasonWeek, training -> training));
+            Map<String, Trainer> trainers = trainerDAO.get(team.getId()).stream().collect(Collectors.toMap(Trainer::getSeasonWeek, trainer -> trainer));
+            Map<String, List<StaffMember>> staffMembersByWeek = staffMemberDAO.get(team.getId()).stream().collect(groupingBy(StaffMember::getSeasonWeek));
+
+            dataWeeks.stream().filter(seasonWeek -> !playerTrainingWeeks.contains(seasonWeek)).forEach(seasonWeek -> {
+                List<PlayerTraining> playerTrainings = calculateTrainingPercentageService.calculateTrainingPercentage(seasonWeek, team.getId(), trainings.get(seasonWeek), trainers.get(seasonWeek).getSkillLevel(), getAssistantsLevel(staffMembersByWeek.get(seasonWeek)));
+                playerTrainings.forEach(playerTrainingDAO::insert);
+            });
+        });
+    }
+
+    private int getAssistantsLevel(List<StaffMember> staffMembers) {
+        return isEmpty(staffMembers) ? 0 : staffMembers.stream()
+            .filter(stf -> stf.getType() == 1)
+            .map(StaffMember::getLevel)
+            .reduce(0, Integer::sum);
     }
 }

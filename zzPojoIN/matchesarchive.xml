@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HattrickData>
+  <FileName>matchesArchive.xml</FileName>
+  <Version>1.5</Version>
+  <UserID>4495104</UserID>
+  <FetchedDate>2025-09-23 18:24:21</FetchedDate>
+  <IsYouth>False</IsYouth>
+  <Team>
+    <TeamID>1333746</TeamID>
+    <TeamName>Com jugam!!!</TeamName>
+    <MatchList>
+      <Match>
+        <MatchID>752747663</MatchID>
+        <HomeTeam>
+          <HomeTeamID>1333746</HomeTeamID>
+          <HomeTeamName>Com jugam!!!</HomeTeamName>
+        </HomeTeam>
+        <AwayTeam>
+          <AwayTeamID>493118</AwayTeamID>
+          <AwayTeamName>Unique's FT</AwayTeamName>
+        </AwayTeam>
+        <MatchDate>2025-09-13 15:00:00</MatchDate>
+        <MatchType>1</MatchType>
+        <MatchContextId>38874</MatchContextId>
+        <SourceSystem>Hattrick</SourceSystem>
+        <MatchRuleId>0</MatchRuleId>
+        <CupId>0</CupId>
+        <CupLevel>0</CupLevel>
+        <CupLevelIndex>0</CupLevelIndex>
+        <HomeGoals>0</HomeGoals>
+        <AwayGoals>5</AwayGoals>
+      </Match>
+      <Match>
+        <MatchID>755748873</MatchID>
+        <HomeTeam>
+          <HomeTeamID>2252854</HomeTeamID>
+          <HomeTeamName>Sniper Elite</HomeTeamName>
+        </HomeTeam>
+        <AwayTeam>
+          <AwayTeamID>1333746</AwayTeamID>
+          <AwayTeamName>Com jugam!!!</AwayTeamName>
+        </AwayTeam>
+        <MatchDate>2025-09-17 12:45:00</MatchDate>
+        <MatchType>3</MatchType>
+        <MatchContextId>1379</MatchContextId>
+        <SourceSystem>Hattrick</SourceSystem>
+        <MatchRuleId>0</MatchRuleId>
+        <CupId>1379</CupId>
+        <CupLevel>2</CupLevel>
+        <CupLevelIndex>3</CupLevelIndex>
+        <HomeGoals>1</HomeGoals>
+        <AwayGoals>2</AwayGoals>
+      </Match>
+    </MatchList>
+  </Team>
+</HattrickData>

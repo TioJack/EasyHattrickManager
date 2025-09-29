@@ -102,12 +102,24 @@ export interface PlayerInfo {
   htms: number;
   htms28: number;
   playerCategoryId: number;
+  playerTraining: PlayerTrainingInfo;
+}
+
+export interface PlayerTrainingInfo {
+  keeper: number;
+  defender: number;
+  playmaker: number;
+  winger: number;
+  passing: number;
+  scorer: number;
+  setPieces: number;
 }
 
 export interface UserConfig {
   languageId: number;
   currency: Currency;
   dateFormat: string;
+  showTrainingInfo: boolean;
   projects: Project[];
 }
 

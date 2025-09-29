@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HattrickData>
+  <FileName>matchdetails.xml</FileName>
+  <Version>3.1</Version>
+  <UserID>4495104</UserID>
+  <FetchedDate>2025-09-23 19:21:39</FetchedDate>
+  <UserSupporterTier>platinum</UserSupporterTier>
+  <SourceSystem>Hattrick</SourceSystem>
+  <Match>
+    <MatchID>752659352</MatchID>
+    <MatchType>1</MatchType>
+    <MatchContextId>14603</MatchContextId>
+    <MatchRuleId>0</MatchRuleId>
+    <CupLevel>0</CupLevel>
+    <CupLevelIndex>0</CupLevelIndex>
+    <MatchDate>2025-09-20 14:00:00</MatchDate>
+    <FinishedDate>2025-09-20 15:46:00</FinishedDate>
+    <AddedMinutes>1</AddedMinutes>
+    <HomeTeam>
+      <HomeTeamID>797465</HomeTeamID>
+      <HomeTeamName>Fhetoky Mathoyoh</HomeTeamName>
+      <DressURI>//res.hattrick.org/kits/30/296/2951/2950228/matchKitSmall.png</DressURI>
+      <Formation>5-5-0</Formation>
+      <HomeGoals>2</HomeGoals>
+      <TacticType>7</TacticType>
+      <TacticSkill>13</TacticSkill>
+      <RatingMidfield>22</RatingMidfield>
+      <RatingRightDef>35</RatingRightDef>
+      <RatingMidDef>36</RatingMidDef>
+      <RatingLeftDef>28</RatingLeftDef>
+      <RatingRightAtt>8</RatingRightAtt>
+      <RatingMidAtt>6</RatingMidAtt>
+      <RatingLeftAtt>14</RatingLeftAtt>
+      <RatingIndirectSetPiecesDef>22</RatingIndirectSetPiecesDef>
+      <RatingIndirectSetPiecesAtt>18</RatingIndirectSetPiecesAtt>
+      <NrOfChancesLeft>2</NrOfChancesLeft>
+      <NrOfChancesCenter>4</NrOfChancesCenter>
+      <NrOfChancesRight>2</NrOfChancesRight>
+      <NrOfChancesSpecialEvents>2</NrOfChancesSpecialEvents>
+      <NrOfChancesOther>1</NrOfChancesOther>
+    </HomeTeam>
+    <AwayTeam>
+      <AwayTeamID>1436801</AwayTeamID>
+      <AwayTeamName>Magic Cube</AwayTeamName>
+      <DressURI>//res.hattrick.org/kits/29/283/2830/2829176/matchKitSmall.png</DressURI>
+      <Formation>5-3-2</Formation>
+      <AwayGoals>1</AwayGoals>
+      <TacticType>7</TacticType>
+      <TacticSkill>11</TacticSkill>
+      <RatingMidfield>12</RatingMidfield>
+      <RatingRightDef>34</RatingRightDef>
+      <RatingMidDef>55</RatingMidDef>
+      <RatingLeftDef>38</RatingLeftDef>
+      <RatingRightAtt>10</RatingRightAtt>
+      <RatingMidAtt>18</RatingMidAtt>
+      <RatingLeftAtt>12</RatingLeftAtt>
+      <RatingIndirectSetPiecesDef>40</RatingIndirectSetPiecesDef>
+      <RatingIndirectSetPiecesAtt>35</RatingIndirectSetPiecesAtt>
+      <NrOfChancesLeft>2</NrOfChancesLeft>
+      <NrOfChancesCenter>2</NrOfChancesCenter>
+      <NrOfChancesRight>0</NrOfChancesRight>
+      <NrOfChancesSpecialEvents>1</NrOfChancesSpecialEvents>
+      <NrOfChancesOther>0</NrOfChancesOther>
+    </AwayTeam>
+    <Arena>
+      <ArenaID>800903</ArenaID>
+      <ArenaName>La Regaliz</ArenaName>
+      <WeatherID>2</WeatherID>
+      <SoldTotal>28853</SoldTotal>
+      <SoldTerraces>17828</SoldTerraces>
+      <SoldBasic>7365</SoldBasic>
+      <SoldRoof>3034</SoldRoof>
+      <SoldVIP>626</SoldVIP>
+    </Arena>
+    <MatchOfficials>
+      <Referee>
+        <RefereeId>446406981</RefereeId>
+        <RefereeName>Carlos Norberto Teixeira Antunes</RefereeName>
+        <RefereeCountryId>25</RefereeCountryId>
+        <RefereeCountryName>Portugal</RefereeCountryName>
+        <RefereeTeamId>563132</RefereeTeamId>
+        <RefereeTeamname>Gagarine F.C.</RefereeTeamname>
+      </Referee>
+      <RefereeAssistant1>
+        <RefereeId>425725776</RefereeId>
+        <RefereeName>Kevin Reeperbahn</RefereeName>
+        <RefereeCountryId>3</RefereeCountryId>
+        <RefereeCountryName>Deutschland</RefereeCountryName>
+        <RefereeTeamId>334831</RefereeTeamId>
+        <RefereeTeamname>BFC Büderich 05</RefereeTeamname>
+      </RefereeAssistant1>
+      <RefereeAssistant2>
+        <RefereeId>441277060</RefereeId>
+        <RefereeName>Ishmael Hermans</RefereeName>
+        <RefereeCountryId>2</RefereeCountryId>
+        <RefereeCountryName>England</RefereeCountryName>
+        <RefereeTeamId>785115</RefereeTeamId>
+        <RefereeTeamname>Pyynikin Blazers</RefereeTeamname>
+      </RefereeAssistant2>
+    </MatchOfficials>
+    <Scorers>
+      <Goal Index="0">
+        <ScorerPlayerID>488548394</ScorerPlayerID>
+        <ScorerPlayerName>Pedro Manso Tabernero</ScorerPlayerName>
+        <ScorerTeamID>797465</ScorerTeamID>
+        <ScorerHomeGoals>1</ScorerHomeGoals>
+        <ScorerAwayGoals>0</ScorerAwayGoals>
+        <ScorerMinute>17</ScorerMinute>
+        <MatchPart>1</MatchPart>
+      </Goal>
+      <Goal Index="1">
+        <ScorerPlayerID>488548394</ScorerPlayerID>
+        <ScorerPlayerName>Pedro Manso Tabernero</ScorerPlayerName>
+        <ScorerTeamID>797465</ScorerTeamID>
+        <ScorerHomeGoals>1</ScorerHomeGoals>
+        <ScorerAwayGoals>1</ScorerAwayGoals>
+        <ScorerMinute>29</ScorerMinute>
+        <MatchPart>1</MatchPart>
+      </Goal>
+      <Goal Index="2">
+        <ScorerPlayerID>481049729</ScorerPlayerID>
+        <ScorerPlayerName>Mathias Brändle</ScorerPlayerName>
+        <ScorerTeamID>797465</ScorerTeamID>
+        <ScorerHomeGoals>2</ScorerHomeGoals>
+        <ScorerAwayGoals>1</ScorerAwayGoals>
+        <ScorerMinute>85</ScorerMinute>
+        <MatchPart>2</MatchPart>
+      </Goal>
+    </Scorers>
+    <Bookings/>
+    <Injuries/>
+    <PossessionFirstHalfHome>65</PossessionFirstHalfHome>
+    <PossessionFirstHalfAway>35</PossessionFirstHalfAway>
+    <PossessionSecondHalfHome>63</PossessionSecondHalfHome>
+    <PossessionSecondHalfAway>37</PossessionSecondHalfAway>
+  </Match>
+</HattrickData>

@@ -6,26 +6,9 @@ import {NgIf} from '@angular/common';
 import {Chart, ChartConfiguration, registerables} from 'chart.js';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {FirstCapitalizePipe} from '../pipes/first-capitalize.pipe';
+import {trainingTypeColor} from '../constants/training-colors.constant';
 
 Chart.register(...registerables);
-
-const TRAINING_TYPE_COLORS: Record<number, string> = {
-  0: '#78909C',  // General (form)
-  1: '#66BB6A',  // Stamina
-  2: '#546E7A',  // Set pieces
-  3: '#7E57C2',  // Defending
-  4: '#D84315',  // Scoring
-  5: '#26A69A',  // Winger
-  6: '#BF6D3A',  // Scoring and Set Pieces
-  7: '#F9A825',  // Passing
-  8: '#2E7D32',  // Playmaking
-  9: '#2F6C8E',  // Keeper
-  10: '#FFB74D', // Passing (Def + Mid)
-  11: '#5C6BC0', // Defending (GK, Def + Mid)
-  12: '#4DB6AC', // Winger (Wingers + Attackers)
-  13: '#9575CD'  // Individual
-};
-const DEFAULT_TRAINING_COLOR = '#9E9E9E';
 
 @Component({
   selector: 'app-training',
@@ -75,10 +58,7 @@ export class TrainingComponent implements OnInit, AfterViewInit, OnDestroy {
     this.destroyChart();
   }
 
-  public trainingTypeColor(typeId: number | null | undefined): string {
-    if (typeId == null) return DEFAULT_TRAINING_COLOR;
-    return TRAINING_TYPE_COLORS[typeId] ?? DEFAULT_TRAINING_COLOR;
-  }
+  public trainingTypeColor = trainingTypeColor;
 
   private updateChart(): void {
     const canvas = this.trainingChartRef?.nativeElement;
@@ -126,7 +106,7 @@ export class TrainingComponent implements OnInit, AfterViewInit, OnDestroy {
         ctx.restore();
       }
     };
-    const barColors = data.map(d => TRAINING_TYPE_COLORS[d.typeId] ?? DEFAULT_TRAINING_COLOR);
+    const barColors = data.map(d => trainingTypeColor(d.typeId));
     const config: ChartConfiguration<'bar'> = {
       type: 'bar',
       data: {

@@ -632,6 +632,12 @@ public class UpdateTranslationService {
         addTranslation_EN_ES_CA("ehm.low", "low", "bajo", "baix");
         addTranslation_EN_ES_CA("ehm.high", "high", "alto", "alt");
         addTranslation_EN_ES_CA("ehm.very-high", "very high", "muy alto", "molt alt");
+        addTranslation_EN_ES_CA("ehm.training", "training", "entrenamiento", "entrenament");
+        addTranslation_EN_ES_CA("ehm.show-training-info", "show training info", "mostrar información del entrenamiento", "mostrar informació de l'entrenament");
+        addTranslation_EN_ES_CA("ehm.show-training-info-help",
+            "The calculation of training received takes into account minutes played, position, training type, coach level, assistant coach level, training intensity, and stamina part.",
+            "El cálculo del entrenamiento recibido tiene en cuenta los minutos jugados, la posición, el tipo de entrenamiento, el nivel del entrenador, el nivel de los entrenadores asistentes, la intensidad del entreno y la parte de resistencia.",
+            "El càlcul de l'entrenament rebut té en compte els minuts jugats, la posició, el tipus d'entrenament, el nivell de l'entrenador, el nivell dels entrenadors assistents, la intensitat de l'entrenament i la part de resistència.");
     }
 
     private void addTranslation_EN_ES_CA(String key, String en, String es, String ca) {

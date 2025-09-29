@@ -121,6 +121,20 @@ CREATE TABLE IF NOT EXISTS `player_data` (
     PRIMARY KEY (`id`, `season_week`, `team_id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS player_training (
+    id INT NOT NULL,
+    season_week VARCHAR(7) NOT NULL,
+    team_id INT NOT NULL,
+    keeper DOUBLE NOT NULL,
+    defender DOUBLE NOT NULL,
+    playmaker DOUBLE NOT NULL,
+    winger DOUBLE NOT NULL,
+    passing DOUBLE NOT NULL,
+    scorer DOUBLE NOT NULL,
+    set_pieces DOUBLE NOT NULL,
+    PRIMARY KEY (id, season_week, team_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE IF NOT EXISTS `training` (
     season_week VARCHAR(7) NOT NULL,
     team_id INT NOT NULL,
