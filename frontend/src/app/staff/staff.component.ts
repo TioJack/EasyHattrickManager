@@ -4,6 +4,7 @@ import {PlayService} from '../services/play.service';
 import {LowerCasePipe, NgForOf, NgIf} from '@angular/common';
 import {StaffLevelComponent} from '../staff-level/staff-level.component';
 import {TranslatePipe} from '@ngx-translate/core';
+import {DEFAULT_AVATAR} from '../constants/avatar.constant';
 
 @Component({
   selector: 'app-staff',
@@ -37,7 +38,7 @@ export class StaffComponent implements OnInit {
 
   onImageError(event: Event): void {
     const imgElement = event.target as HTMLImageElement;
-    imgElement.src = 'assets/defaultAvatar.png';
+    imgElement.src = DEFAULT_AVATAR;
   }
 
 }

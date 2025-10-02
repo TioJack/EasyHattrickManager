@@ -212,6 +212,7 @@ public class LoginService {
                     .currencyRate(new BigDecimal(managerCompendium.getManager().getCurrency().getCurrencyRate().replace(",", ".")))
                     .build())
                 .dateFormat(getDateFormat(managerCompendium.getManager().getCountry().getCountryId()))
+                .showTrainingInfo(true)
                 .projects(createProjects(managerCompendium.getManager().getTeams()))
                 .build();
             userConfigDAO.insert(managerCompendium.getManager().getUserId(), new ObjectMapper().writeValueAsString(userConfig));

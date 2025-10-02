@@ -10,6 +10,7 @@ import {SpecialtyComponent} from '../specialty/specialty.component';
 import {FirstCapitalizePipe} from '../pipes/first-capitalize.pipe';
 import {NumberSeparatorPipe} from '../pipes/number-separator.pipe';
 import {trainingTypeColor} from '../constants/training-colors.constant';
+import {DEFAULT_AVATAR} from '../constants/avatar.constant';
 
 @Component({
   selector: 'app-player-card',
@@ -65,7 +66,7 @@ export class PlayerCardComponent implements OnInit {
 
   onImageError(event: Event): void {
     const imgElement = event.target as HTMLImageElement;
-    imgElement.src = 'assets/defaultAvatar.png';
+    imgElement.src = DEFAULT_AVATAR;
   }
 
 }
