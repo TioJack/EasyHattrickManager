@@ -23,6 +23,8 @@ export class DataService {
                 const previousPlayer: PlayerInfo | null = previousWeek.players.find(prev => prev.id === player.id) ?? null;
                 if (previousPlayer) {
                   this.computeChanges(player, previousPlayer);
+                } else {
+                  player.changes = {};
                 }
               });
             }
