@@ -13,6 +13,7 @@ import {NgIf} from '@angular/common';
 })
 export class SkillComponent implements OnInit {
   @Input() skill?: number;
+  @Input() change?: number;
   @Input() max?: number;
   percentage: number = 100;
   width: string = '100px';

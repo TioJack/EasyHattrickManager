@@ -57,7 +57,7 @@
           <td class="text-start text-nowrap" colspan="2">{{ player.age }}{{ 'ehm.years' | translate | firstLetter }} {{ player.ageDays }}{{ 'ehm.days' | translate | firstLetter }}</td>
           <td class="text-end pe-1 text-nowrap" [title]="getTraining('keeper')" [ngStyle]="getBackgroundColor('keeper')">{{ 'ht.skill-keeper' | translate }}</td>
           <td [title]="getTraining('keeper')" [ngStyle]="getBackgroundColor('keeper')">
-            <app-skill [skill]="player.keeperSkill" [max]="20"></app-skill>
+            <app-skill [skill]="player.keeperSkill" [max]="20" [change]="player.changes['keeperSkill']"></app-skill>
           </td>
           <td class="text-end" style="width: 3%;" [title]="getTraining('keeper')" [ngStyle]="getBackgroundColor('keeper')">{{ player.keeperSkill }}</td>
         </tr>
@@ -66,7 +66,7 @@
           <td class="text-start text-nowrap" colspan="2">{{ player.tsi | numberSeparator }}</td>
           <td class="text-end pe-1 text-nowrap" [title]="getTraining('defender')" [ngStyle]="getBackgroundColor('defender')">{{ 'ht.skill-defender' | translate }}</td>
           <td [title]="getTraining('defender')" [ngStyle]="getBackgroundColor('defender')">
-            <app-skill [skill]="player.defenderSkill" [max]="20"></app-skill>
+            <app-skill [skill]="player.defenderSkill" [max]="20" [change]="player.changes['defenderSkill']"></app-skill>
           </td>
           <td class="text-end" [title]="getTraining('defender')" [ngStyle]="getBackgroundColor('defender')">{{ player.defenderSkill }}</td>
         </tr>
@@ -75,7 +75,7 @@
           <td class="text-start text-nowrap" colspan="2">{{ player.salary | salary:userConfig.currency }}</td>
           <td class="text-end pe-1 text-nowrap" [title]="getTraining('playmaker')" [ngStyle]="getBackgroundColor('playmaker')">{{ 'ht.skill-playmaker' | translate }}</td>
           <td [title]="getTraining('playmaker')" [ngStyle]="getBackgroundColor('playmaker')">
-            <app-skill [skill]="player.playmakerSkill" [max]="20"></app-skill>
+            <app-skill [skill]="player.playmakerSkill" [max]="20" [change]="player.changes['playmakerSkill']"></app-skill>
           </td>
           <td class="text-end" [title]="getTraining('playmaker')" [ngStyle]="getBackgroundColor('playmaker')">{{ player.playmakerSkill }}</td>
         </tr>
@@ -86,7 +86,7 @@
           </td>
           <td class="text-end pe-1 text-nowrap" [title]="getTraining('winger')" [ngStyle]="getBackgroundColor('winger')">{{ 'ht.skill-winger' | translate }}</td>
           <td [title]="getTraining('winger')" [ngStyle]="getBackgroundColor('winger')">
-            <app-skill [skill]="player.wingerSkill" [max]="20"></app-skill>
+            <app-skill [skill]="player.wingerSkill" [max]="20" [change]="player.changes['wingerSkill']"></app-skill>
           </td>
           <td class="text-end" [title]="getTraining('winger')" [ngStyle]="getBackgroundColor('winger')">{{ player.wingerSkill }}</td>
         </tr>
@@ -98,7 +98,7 @@
           <td class="text-start text-nowrap">{{ player.playerForm }}</td>
           <td class="text-end pe-1" [title]="getTraining('passing')" [ngStyle]="getBackgroundColor('passing')">{{ 'ht.skill-passer' | translate }}</td>
           <td [title]="getTraining('passing')" [ngStyle]="getBackgroundColor('passing')">
-            <app-skill [skill]="player.passingSkill" [max]="20"></app-skill>
+            <app-skill [skill]="player.passingSkill" [max]="20" [change]="player.changes['passingSkill']"></app-skill>
           </td>
           <td class="text-end" [title]="getTraining('passing')" [ngStyle]="getBackgroundColor('passing')">{{ player.passingSkill }}</td>
         </tr>
@@ -110,7 +110,7 @@
           <td class="text-start text-nowrap">{{ player.staminaSkill }}</td>
           <td class="text-end pe-1 text-nowrap" [title]="getTraining('scorer')" [ngStyle]="getBackgroundColor('scorer')">{{ 'ht.skill-scorer' | translate }}</td>
           <td [title]="getTraining('scorer')" [ngStyle]="getBackgroundColor('scorer')">
-            <app-skill [skill]="player.scorerSkill" [max]="20"></app-skill>
+            <app-skill [skill]="player.scorerSkill" [max]="20" [change]="player.changes['scorerSkill']"></app-skill>
           </td>
           <td class="text-end" [title]="getTraining('scorer')" [ngStyle]="getBackgroundColor('scorer')">{{ player.scorerSkill }}</td>
         </tr>
@@ -119,7 +119,7 @@
           <td class="text-start text-nowrap" colspan="2">{{ player.htms }} | {{ player.htms28 }}</td>
           <td class="text-end pe-1 text-nowrap" [title]="getTraining('setPieces')" [ngStyle]="getBackgroundColor('setPieces')">{{ 'ht.skill-kicker' | translate }}</td>
           <td [title]="getTraining('setPieces')" [ngStyle]="getBackgroundColor('setPieces')">
-            <app-skill [skill]="player.setPiecesSkill" [max]="20"></app-skill>
+            <app-skill [skill]="player.setPiecesSkill" [max]="20" [change]="player.changes['setPiecesSkill']"></app-skill>
           </td>
           <td class="text-end" [title]="getTraining('setPieces')" [ngStyle]="getBackgroundColor('setPieces')">{{ player.setPiecesSkill }}</td>
         </tr>

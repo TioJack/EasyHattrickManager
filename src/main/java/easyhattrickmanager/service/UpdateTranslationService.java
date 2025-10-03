@@ -638,6 +638,16 @@ public class UpdateTranslationService {
             "The calculation of training received takes into account minutes played, position, training type, coach level, assistant coach level, training intensity, and stamina part.",
             "El cálculo del entrenamiento recibido tiene en cuenta los minutos jugados, la posición, el tipo de entrenamiento, el nivel del entrenador, el nivel de los entrenadores asistentes, la intensidad del entreno y la parte de resistencia.",
             "El càlcul de l'entrenament rebut té en compte els minuts jugats, la posició, el tipus d'entrenament, el nivell de l'entrenador, el nivell dels entrenadors assistents, la intensitat de l'entrenament i la part de resistència.");
+        addTranslation_EN_ES_CA("ehm.forum", "forum", "foro", "fòrum");
+        addTranslation_EN_ES_CA("ehm.forum-help",
+            "Access this CHPP's forum. Updates are posted there and are open to any feedback, questions, suggestions, improvements or errors.",
+            "Acceso al foro de esta CHPP. Allí se publican las actualizaciones y esta abierto a cualquier opinión, consulta, sugerencia, mejora o error.",
+            "Accés al fòrum d´aquesta CHPP. Allí es publiquen les actualitzacions i està obert a qualsevol opinió, consulta, suggeriment, millora o error.");
+        addTranslation_EN_ES_CA("ehm.donations", "donations", "donaciones", "donacions");
+        addTranslation_EN_ES_CA("ehm.donations-help",
+            "This CHPP will always be free. However, any contribution towards its maintenance and improvement is appreciated.",
+            "Esta CHPP siempre va a ser gratis. Pero se agradece cualquier contribución para su mantenimiento y crecimiento.",
+            "Aquesta CHPP sempre serà gratis. Però s'agraeix qualsevol contribució per al seu manteniment i millora.");
     }
 
     private void addTranslation_EN_ES_CA(String key, String en, String es, String ca) {

@@ -103,6 +103,7 @@ export interface PlayerInfo {
   htms28: number;
   playerCategoryId: number;
   playerTraining: PlayerTrainingInfo;
+  changes: Record<string, number>;
 }
 
 export interface PlayerTrainingInfo {

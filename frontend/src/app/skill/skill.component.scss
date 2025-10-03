@@ -30,3 +30,21 @@
   overflow: hidden;
   margin-top: 2px;
 }
+
+.arrow {
+  font-size: 1rem;
+  text-shadow: 1px 1px 1px black;
+  position: absolute;
+  right: 0;
+  top: 43%;
+  transform: translateY(-50%);
+  z-index: 3;
+}
+
+.green {
+  color: green;
+}
+
+.red {
+  color: red;
+}
