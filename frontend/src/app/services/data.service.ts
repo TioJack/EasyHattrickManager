@@ -27,10 +27,13 @@ export class DataService {
                   player.changes = {};
                 }
               });
+            } else {
+              weekData.players.forEach(player => {
+                player.changes = {};
+              });
             }
           });
         });
-        console.log(dataResponse);
         return dataResponse;
       })
     );
