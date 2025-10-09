@@ -11,4 +11,6 @@ public interface PlayerDAO {
     void insert(@Param("player") Player player);
 
     List<Player> get(@Param("teamId") int teamId);
+
+    Player getPlayer(@Param("playerId") int playerId);
 }

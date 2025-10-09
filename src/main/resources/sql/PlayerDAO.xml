@@ -31,4 +31,17 @@
     WHERE pd.team_id = #{teamId};
   </select>
 
+  <select id="getPlayer" resultType="easyhattrickmanager.repository.model.Player">
+    SELECT p.id,
+           p.first_name,
+           p.last_name,
+           p.agreeability,
+           p.aggressiveness,
+           p.honesty,
+           p.specialty,
+           p.country_id
+    FROM player p
+    WHERE p.id = #{playerId};
+  </select>
+
 </mapper>

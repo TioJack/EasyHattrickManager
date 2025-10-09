@@ -4,7 +4,7 @@ import {PlayService} from '../services/play.service';
 import {LowerCasePipe, NgForOf, NgIf} from '@angular/common';
 import {StaffLevelComponent} from '../staff-level/staff-level.component';
 import {TranslatePipe} from '@ngx-translate/core';
-import {DEFAULT_AVATAR} from '../constants/avatar.constant';
+import {DEFAULT_AVATAR} from '../constants/global.constant';
 
 @Component({
   selector: 'app-staff',

@@ -15,6 +15,7 @@ import {DataService} from '../services/data.service';
 import {AlertComponent} from '../alert/alert.component';
 import {DateFormatComponent} from '../date-format/date-format.component';
 import {ShowTrainingInfoComponent} from '../show-training-info/show-training-info.component';
+import {DEFAULT_DATE_FORMAT} from '../constants/global.constant';
 
 @Component({
   selector: 'app-header',
@@ -124,4 +125,5 @@ export class HeaderComponent implements OnInit {
     return Array.from(new Map(filteredPlayers.map(player => [player.id, player])).values()).sort((a, b) => a.id - b.id);
   }
 
+  protected readonly DEFAULT_DATE_FORMAT = DEFAULT_DATE_FORMAT;
 }

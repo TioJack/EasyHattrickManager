@@ -14,6 +14,8 @@ public interface TeamDAO {
 
     List<Team> getByUserId(@Param("userId") int userId);
 
+    Team getByUserIdAndPlayerId(@Param("userId") int userId, @Param("playerId") int playerId);
+
     List<Team> getActiveTeams();
 
     void deactivateTeam(@Param("userId") int userId, @Param("id") int id);

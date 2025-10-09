@@ -9,13 +9,13 @@ import {FirstLetterPipe} from '../pipes/first-letter.pipe';
 import {SpecialtyComponent} from '../specialty/specialty.component';
 import {FirstCapitalizePipe} from '../pipes/first-capitalize.pipe';
 import {NumberSeparatorPipe} from '../pipes/number-separator.pipe';
-import {trainingTypeColor} from '../constants/training-colors.constant';
-import {DEFAULT_AVATAR} from '../constants/avatar.constant';
+import {DEFAULT_AVATAR, trainingTypeColor} from '../constants/global.constant';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-player-card',
   standalone: true,
-  imports: [NgIf, SalaryPipe, SkillComponent, TranslatePipe, FirstLetterPipe, SpecialtyComponent, LowerCasePipe, FirstCapitalizePipe, NumberSeparatorPipe, NgStyle],
+  imports: [NgIf, SalaryPipe, SkillComponent, TranslatePipe, FirstLetterPipe, SpecialtyComponent, LowerCasePipe, FirstCapitalizePipe, NumberSeparatorPipe, NgStyle, RouterLink],
   templateUrl: './player-card.component.html',
   styleUrls: ['./player-card.component.scss']
 })

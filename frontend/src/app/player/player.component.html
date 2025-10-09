@@ -1,0 +1,16 @@
+<div class="col-12 w-100">
+  <div class="card m-4">
+    <div *ngIf="player" class="col text-start fw-bold fs-6 ms-2">
+      <a target="_blank" href="http://hattrick.org/goto.ashx?path=/Club/Players/Player.aspx?playerId={{ player.id }}">
+            <span>
+              {{ player.firstName }}
+              <span *ngIf="player.nickName">'{{ player.nickName }}'</span>
+              {{ player.lastName }}
+            </span>
+      </a>
+    </div>
+    <div class="card border-0">
+        <canvas #playerStatsChart></canvas>
+    </div>
+  </div>
+</div>

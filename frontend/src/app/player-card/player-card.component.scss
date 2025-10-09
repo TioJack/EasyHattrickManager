@@ -19,3 +19,20 @@
   margin-top: 3px;
   margin-right: 2px;
 }
+
+.player-card-header {
+  .tab-icon {
+    font-size: 1.5em;
+    cursor: pointer;
+    color: #6c757d;
+    vertical-align: middle;
+
+    &.active {
+      color: #277e31;
+    }
+
+    &:hover {
+      color: #309b3c;
+    }
+  }
+}

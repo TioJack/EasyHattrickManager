@@ -45,4 +45,21 @@
     ORDER BY season_week;
   </select>
 
+  <select id="getPlayer" resultType="easyhattrickmanager.repository.model.PlayerTraining">
+    SELECT id,
+           season_week,
+           team_id,
+           keeper,
+           defender,
+           playmaker,
+           winger,
+           passing,
+           scorer,
+           set_pieces
+    FROM player_training
+    WHERE team_id = #{teamId}
+      AND id = #{playerId}
+    ORDER BY season_week;
+  </select>
+
 </mapper>

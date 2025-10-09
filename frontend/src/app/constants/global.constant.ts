@@ -21,3 +21,7 @@ export function trainingTypeColor(typeId: number | null | undefined): string {
   if (typeId == null) return DEFAULT_TRAINING_COLOR;
   return TRAINING_TYPE_COLORS[typeId] ?? DEFAULT_TRAINING_COLOR;
 }
+
+export const DEFAULT_AVATAR = 'assets/defaultAvatar.png';
+
+export const DEFAULT_DATE_FORMAT = 'dd-MM-yyyy';

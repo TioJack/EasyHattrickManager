@@ -1,5 +1,5 @@
 <div class="card container" *ngIf="player && userConfig">
-  <div class="row">
+  <div class="row player-card-header">
     <div class="col-9 text-start fw-bold fs-6">
       <span *ngIf="player.playerNumber">{{ player.playerNumber }}. </span>
       <a target="_blank" href="http://hattrick.org/goto.ashx?path=/Club/Players/Player.aspx?playerId={{ player.id }}">
@@ -16,6 +16,9 @@
       <img *ngIf="player.transferListed" src="assets/status/onSale.png" alt="" class="icon"/>
     </div>
     <div class="col-3 text-end">
+      <a [routerLink]="['/player', player.id]" target="_blank">
+        <i class="tab-icon bi bi-bar-chart fs-6 me-2"></i>
+      </a>
       <img src="assets/flags/{{ player.countryId }}.png" alt="" class="shadow-2"/>
     </div>
   </div>
@@ -62,7 +65,7 @@
           <td class="text-end" style="width: 3%;" [title]="getTraining('keeper')" [ngStyle]="getBackgroundColor('keeper')">{{ player.keeperSkill }}</td>
         </tr>
         <tr>
-          <td class="text-end pe-1 text-nowrap">TSI</td>
+          <td class="text-end pe-1 text-nowrap">{{ 'ehm.tsi' | translate }}</td>
           <td class="text-start text-nowrap" colspan="2">{{ player.tsi | numberSeparator }}</td>
           <td class="text-end pe-1 text-nowrap" [title]="getTraining('defender')" [ngStyle]="getBackgroundColor('defender')">{{ 'ht.skill-defender' | translate }}</td>
           <td [title]="getTraining('defender')" [ngStyle]="getBackgroundColor('defender')">

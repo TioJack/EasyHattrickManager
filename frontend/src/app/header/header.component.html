@@ -31,7 +31,7 @@
         {{ 'ehm.week' | translate }} {{ (playService.selectedWeek$ | async) }}
       </span>
       <small class="text-muted">
-        {{ (playService.date$ | async) | date:(dateFormat ?? 'dd-MM-yyyy') }}
+        {{ (playService.date$ | async) | date:(dateFormat ?? DEFAULT_DATE_FORMAT) }}
       </small>
     </div>
     <button class="btn btn-outline-secondary" (click)="playService.onNextWeek()" title="+1 {{ 'ehm.week' | translate }}">

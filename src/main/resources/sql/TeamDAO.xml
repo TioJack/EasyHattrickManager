@@ -75,4 +75,21 @@
       AND NOT t.bot;
   </select>
 
+  <select id="getByUserIdAndPlayerId" resultType="easyhattrickmanager.repository.model.Team">
+    SELECT t.user_id,
+           t.id,
+           t.name,
+           t.primary_club,
+           t.founded_date,
+           t.closure_date,
+           t.league_id,
+           t.country_id,
+           t.bot
+    FROM team t
+    JOIN player_data pd ON t.id = pd.team_id
+    WHERE t.user_id = #{userId}
+      AND pd.id = #{playerId}
+      LIMIT 1;
+  </select>
+
 </mapper>

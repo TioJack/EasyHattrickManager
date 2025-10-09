@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {map, Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {Currency, DataResponse, Language, PlayerInfo, UserConfig} from './model/data-response';
+import {PlayerDataResponse} from './model/player-data-response';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class DataService {
   constructor(private http: HttpClient) {
   }
 
-  gatData(): Observable<DataResponse> {
+  getData(): Observable<DataResponse> {
     return this.http.get<DataResponse>(this.apiUrl).pipe(
       map((dataResponse: DataResponse) => {
         dataResponse.teams.forEach(team => {
@@ -83,6 +84,10 @@ export class DataService {
 
   update(): Observable<void> {
     return this.http.get<void>(`${this.apiUrl}/update`);
+  }
+
+  getPlayerData(playerId: number): Observable<PlayerDataResponse> {
+    return this.http.get<PlayerDataResponse>(`${this.apiUrl}/player/${playerId}`);
   }
 
 }

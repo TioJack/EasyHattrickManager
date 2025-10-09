@@ -6,6 +6,7 @@ import {RegisterComponent} from './register/register.component';
 import {SaveComponent} from './save/save.component';
 import {ProjectsComponent} from './projects/projects.component';
 import {ManualComponent} from './manual/manual.component';
+import {PlayerComponent} from './player/player.component';
 
 export const routes: Routes = [
   {path: 'register', component: RegisterComponent},
@@ -13,6 +14,7 @@ export const routes: Routes = [
   {path: 'login', component: LoginComponent},
   {path: 'manual', component: ManualComponent},
   {path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
+  {path: 'player/:playerId', component: PlayerComponent, canActivate: [AuthGuard]},
   {path: 'projects', component: ProjectsComponent, canActivate: [AuthGuard]},
   {path: '**', redirectTo: 'login'}
 ];

@@ -22,7 +22,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
-    this.dataService.gatData().subscribe({
+    this.dataService.getData().subscribe({
       next: (response: DataResponse) => {
         this.loading = false;
         this.dataResponse = response;

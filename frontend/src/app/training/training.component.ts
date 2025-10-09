@@ -6,7 +6,7 @@ import {NgIf} from '@angular/common';
 import {Chart, ChartConfiguration, registerables} from 'chart.js';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {FirstCapitalizePipe} from '../pipes/first-capitalize.pipe';
-import {trainingTypeColor} from '../constants/training-colors.constant';
+import {trainingTypeColor} from '../constants/global.constant';
 
 Chart.register(...registerables);
 

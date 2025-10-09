@@ -1,7 +1,9 @@
 package easyhattrickmanager.controller;
 
 import easyhattrickmanager.controller.model.DataResponse;
+import easyhattrickmanager.controller.model.PlayerDataResponse;
 import easyhattrickmanager.service.DataService;
+import easyhattrickmanager.service.PlayerDataService;
 import easyhattrickmanager.service.UpdateService;
 import easyhattrickmanager.service.model.dataresponse.CurrencyInfo;
 import easyhattrickmanager.service.model.dataresponse.LanguageInfo;
@@ -11,6 +13,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +26,7 @@ public class DataController {
 
     private final DataService dataService;
     private final UpdateService updateService;
+    private final PlayerDataService playerDataService;
 
     @GetMapping
     public ResponseEntity<DataResponse> getData() {
@@ -55,6 +59,13 @@ public class DataController {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         updateService.update(username);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/player/{playerId}")
+    public ResponseEntity<PlayerDataResponse> getPlayerData(@PathVariable("playerId") int playerId) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        PlayerDataResponse playerDataResponse = playerDataService.getPlayerData(username, playerId);
+        return ResponseEntity.ok(playerDataResponse);
     }
 
 }

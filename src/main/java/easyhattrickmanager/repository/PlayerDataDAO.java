@@ -12,5 +12,7 @@ public interface PlayerDataDAO {
 
     List<PlayerData> get(@Param("teamId") int teamId);
 
+    List<PlayerData> getPlayer(@Param("teamId") int teamId, @Param("playerId") int playerId);
+
     void updateHTMS(@Param("player") PlayerData player);
 }
