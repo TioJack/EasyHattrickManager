@@ -23,43 +23,43 @@ public class UpdateController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/team")
+    @GetMapping("team")
     public ResponseEntity<Void> updateTeam(@RequestParam("id") int teamId) {
         updateService.update(teamId);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/leagues")
+    @GetMapping("leagues")
     public ResponseEntity<Void> updateLeagues() {
         updateService.updateLeagues();
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/translationsHT")
+    @GetMapping("translationsHT")
     public ResponseEntity<Void> updateTranslationsHT() {
         updateTranslationService.updateTranslationsHT();
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/translationsEHM")
+    @GetMapping("translationsEHM")
     public ResponseEntity<Void> updateTranslationsEHM() {
         updateTranslationService.updateTranslationsEHM();
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/i18n")
+    @GetMapping("i18n")
     public ResponseEntity<Void> updateI18n() {
         updateTranslationService.updateI18n();
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/htms")
+    @GetMapping("htms")
     public ResponseEntity<Void> updateHTMS() {
         updateService.updateHTMS();
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/userConfig")
+    @GetMapping("userConfig")
     public ResponseEntity<Void> updateUserConfig() {
         updateService.updateUserConfig();
         return ResponseEntity.ok().build();

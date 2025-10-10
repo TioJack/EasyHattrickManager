@@ -21,7 +21,7 @@ public class CheckActiveService {
     private final EhmConfiguration ehmConfiguration;
 
     @Scheduled(cron = "#{ehmConfiguration.cronCheckActive}")
-    public void addActiveUpdateExecutions() throws Exception {
+    public void checkActive() throws Exception {
         userDAO.getAllUsers()
             .stream().filter(User::isActive)
             .forEach(user -> {

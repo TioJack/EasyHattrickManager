@@ -35,7 +35,7 @@ public class DataController {
         return ResponseEntity.ok(dataResponse);
     }
 
-    @GetMapping("/languages")
+    @GetMapping("languages")
     public ResponseEntity<List<LanguageInfo>> getLanguages() {
         List<LanguageInfo> languages = dataService.getLanguages();
         return ResponseEntity.ok(languages);
@@ -47,21 +47,21 @@ public class DataController {
         return ResponseEntity.ok(currencies);
     }
 
-    @PostMapping("/user-config")
+    @PostMapping("user-config")
     public ResponseEntity<Void> saveUserConfig(@RequestBody UserConfig userConfig) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         dataService.saveUserConfig(username, userConfig);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/update")
+    @GetMapping("update")
     public ResponseEntity<Void> update() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         updateService.update(username);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/player/{playerId}")
+    @GetMapping("player/{playerId}")
     public ResponseEntity<PlayerDataResponse> getPlayerData(@PathVariable("playerId") int playerId) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         PlayerDataResponse playerDataResponse = playerDataService.getPlayerData(username, playerId);

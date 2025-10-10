@@ -5,37 +5,37 @@
 
 <mapper namespace="easyhattrickmanager.repository.CheckDataDAO">
 
-  <select id="checkTraining" resultType="java.lang.Boolean">
-    SELECT NOT EXISTS (SELECT 1
-                       FROM training t
-                              JOIN team tm ON tm.id = t.team_id
-                              JOIN user u ON u.id = tm.user_id
-                       WHERE u.active
-                         AND NOT tm.bot
-                       GROUP BY t.team_id
-                       HAVING SUM(t.season_week = #{seasonWeek}) = 0) AS no_result;
+  <select id="checkTraining" resultType="java.lang.Integer">
+    SELECT t.team_id
+    FROM training t
+        JOIN team tm ON tm.id = t.team_id
+        JOIN user u ON u.id = tm.user_id
+    WHERE u.active
+      AND NOT tm.bot
+    GROUP BY t.team_id
+    HAVING SUM(t.season_week = #{seasonWeek}) = 0;
+</select>
+
+  <select id="checkPlayerData" resultType="java.lang.Integer">
+    SELECT pd.team_id
+    FROM player_data pd
+        JOIN team tm ON tm.id = pd.team_id
+        JOIN user u ON u.id = tm.user_id
+    WHERE u.active
+      AND NOT tm.bot
+    GROUP BY pd.team_id
+    HAVING SUM(pd.season_week = #{seasonWeek}) = 0;
   </select>
 
-  <select id="checkPlayerData" resultType="java.lang.Boolean">
-    SELECT NOT EXISTS (SELECT 1
-                       FROM player_data pd
-                              JOIN team tm ON tm.id = pd.team_id
-                              JOIN user u ON u.id = tm.user_id
-                       WHERE u.active
-                         AND NOT tm.bot
-                       GROUP BY pd.team_id
-                       HAVING SUM(pd.season_week = #{seasonWeek}) = 0) AS no_result;
-  </select>
-
-  <select id="checkTrainer" resultType="java.lang.Boolean">
-    SELECT NOT EXISTS (SELECT 1
-                       FROM trainer t
-                              JOIN team tm ON tm.id = t.team_id
-                              JOIN user u ON u.id = tm.user_id
-                       WHERE u.active
-                         AND NOT tm.bot
-                       GROUP BY t.team_id
-                       HAVING SUM(t.season_week = #{seasonWeek}) = 0) AS no_result;
+  <select id="checkTrainer" resultType="java.lang.Integer">
+    SELECT t.team_id
+    FROM trainer t
+        JOIN team tm ON tm.id = t.team_id
+        JOIN user u ON u.id = tm.user_id
+    WHERE u.active
+      AND NOT tm.bot
+    GROUP BY t.team_id
+    HAVING SUM(t.season_week = #{seasonWeek}) = 0;
   </select>
 
   <select id="checkStartProjects" resultType="java.lang.Boolean">

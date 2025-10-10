@@ -22,13 +22,13 @@ public class RepairController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/extendStaff")
+    @GetMapping("extendStaff")
     public ResponseEntity<Void> extendStaff(@RequestParam("teamId") int teamId) {
         repairService.extendStaff(teamId);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/playerTraining")
+    @GetMapping("playerTraining")
     public ResponseEntity<Void> getPlayerTraining() {
         repairService.getPlayerTraining();
         return ResponseEntity.ok().build();
