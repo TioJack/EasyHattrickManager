@@ -88,7 +88,9 @@ public class UpdateService {
 
     public void update(String username) {
         User user = userDAO.get(username);
-        teamDAO.getByUserId(user.getId()).forEach(team -> update(team.getId()));
+        teamDAO.getByUserId(user.getId()).stream()
+            .filter(team -> !team.isBot())
+            .forEach(team -> update(team.getId()));
     }
 
     public void update(int teamId) {
