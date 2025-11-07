@@ -381,7 +381,7 @@ public class CalculateTrainingPercentageService {
     }
 
     private int findPlayerIndex(List<PlayerRole> playerRoles, int playerId) {
-        for (int i = 0; i < playerRoles.size(); i++) {
+        for (int i = playerRoles.size() - 1; i > -1; i--) {
             if (playerRoles.get(i).getPlayerId() == playerId) {
                 return i;
             }
