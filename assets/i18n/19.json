@@ -239,6 +239,8 @@
   "ehm.season" : "sezon sezonu",
   "ehm.select-all" : "tüm seçin",
   "ehm.shirt-number" : "gömlek numarası",
+  "ehm.show-sub-skills" : "show subskills",
+  "ehm.show-sub-skills-help" : "schum'un formülü hesaplama için kullanıldı.",
   "ehm.show-training-info" : "show eğitim bilgileri",
   "ehm.show-training-info-help" : "verilen eğitimin hesaplaması birkaç dakika boyunca, pozisyon, eğitim türü, antrenör seviyesi, yardımcı antrenör seviyesi, eğitim yoğunluğu ve durgun kısmı dikkate alır.",
   "ehm.skill-level" : "yetenek seviyesi",

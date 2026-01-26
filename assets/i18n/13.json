@@ -239,6 +239,8 @@
   "ehm.season" : "sezon",
   "ehm.select-all" : "wybierz wszystkie",
   "ehm.shirt-number" : "numer koszuli",
+  "ehm.show-sub-skills" : "pokaż podumiejętności",
+  "ehm.show-sub-skills-help" : "do obliczeń wykorzystano wzory schum.",
   "ehm.show-training-info" : "pokaż informacje o treningu",
   "ehm.show-training-info-help" : "obliczenie otrzymanego szkolenia uwzględnia minuty, miejsce, typ szkolenia, poziom trenera, poziom asystenta trenera, intensywność treningu i część wytrzymałości.",
   "ehm.skill-level" : "poziom umiejętności",

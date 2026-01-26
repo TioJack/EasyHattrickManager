@@ -239,6 +239,8 @@
   "ehm.season" : "hooaja",
   "ehm.select-all" : "valige",
   "ehm.shirt-number" : "särginumber",
+  "ehm.show-sub-skills" : "subskills",
+  "ehm.show-sub-skills-help" : "arvutamisel kasutati schumi valemeid.",
   "ehm.show-training-info" : "näidata koolitusinfot",
   "ehm.show-training-info-help" : "koolituse arvutamisel võetakse arvesse mängitud minuteid, ametikohta, treeningu tüüpi, treeneri taset, abitreenerit, koolituse intensiivsust ja vastupidavust.",
   "ehm.skill-level" : "oskuste tase",

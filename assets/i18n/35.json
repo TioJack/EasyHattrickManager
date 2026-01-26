@@ -239,6 +239,8 @@
   "ehm.season" : "sezóna",
   "ehm.select-all" : "vybrat všechny",
   "ehm.shirt-number" : "číslo košile",
+  "ehm.show-sub-skills" : "ukázat poddovednosti",
+  "ehm.show-sub-skills-help" : "schumovy vzorce byly použity pro výpočet.",
   "ehm.show-training-info" : "zobrazit informace o výcviku",
   "ehm.show-training-info-help" : "výpočet absolvovaného výcviku bere v úvahu minuty hrané, pozici, typ výcviku, úroveň trenéra, úroveň asistenta trenéra, intenzitu výcviku a výdrž.",
   "ehm.skill-level" : "úroveň dovedností",

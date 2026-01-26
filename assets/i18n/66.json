@@ -240,6 +240,8 @@
   "ehm.season" : "temporada",
   "ehm.select-all" : "seleccionar tots",
   "ehm.shirt-number" : "dorsal",
+  "ehm.show-sub-skills" : "mostrar subnivells",
+  "ehm.show-sub-skills-help" : "Per al càlcul s'han fet servir les fórmules de Schum.",
   "ehm.show-training-info" : "mostrar informació de l'entrenament",
   "ehm.show-training-info-help" : "El càlcul de l'entrenament rebut té en compte els minuts jugats, la posició, el tipus d'entrenament, el nivell de l'entrenador, el nivell dels entrenadors assistents, la intensitat de l'entrenament i la part de resistència.",
   "ehm.skill-level" : "nivell d'habilitat",

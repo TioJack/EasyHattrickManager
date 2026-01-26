@@ -9,6 +9,7 @@ import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 
 import easyhattrickmanager.repository.LeagueDAO;
 import easyhattrickmanager.repository.PlayerDataDAO;
+import easyhattrickmanager.repository.PlayerSubSkillDAO;
 import easyhattrickmanager.repository.PlayerTrainingDAO;
 import easyhattrickmanager.repository.StaffMemberDAO;
 import easyhattrickmanager.repository.TeamDAO;
@@ -16,6 +17,7 @@ import easyhattrickmanager.repository.TrainerDAO;
 import easyhattrickmanager.repository.TrainingDAO;
 import easyhattrickmanager.repository.model.League;
 import easyhattrickmanager.repository.model.PlayerData;
+import easyhattrickmanager.repository.model.PlayerSubSkill;
 import easyhattrickmanager.repository.model.PlayerTraining;
 import easyhattrickmanager.repository.model.StaffMember;
 import easyhattrickmanager.repository.model.Team;
@@ -49,7 +51,9 @@ public class RepairService {
     private final TrainerDAO trainerDAO;
     private final StaffMemberDAO staffMemberDAO;
     private final PlayerTrainingDAO playerTrainingDAO;
+    private final PlayerSubSkillDAO playerSubSkillDAO;
     private final CalculateTrainingPercentageService calculateTrainingPercentageService;
+    private final CalculateSubSkillTrainingService calculateSubSkillTrainingService;
 
     public void fillInGaps() {
         teamDAO.getActiveTeams().forEach(team -> {
@@ -421,7 +425,7 @@ public class RepairService {
 
     public void getPlayerTraining() {
         teamDAO.getActiveTeams().forEach(team -> {
-            // Team team = Team.builder().id(1333746).build();
+            //Team team = Team.builder().id(1333746).build();
             List<String> playerTrainingWeeks = playerTrainingDAO.get(team.getId()).stream().map(PlayerTraining::getSeasonWeek).distinct().toList();
             List<String> dataWeeks = playerDataDAO.get(team.getId()).stream().map(PlayerData::getSeasonWeek).distinct().toList();
 
@@ -433,6 +437,36 @@ public class RepairService {
                 List<PlayerTraining> playerTrainings = calculateTrainingPercentageService.calculateTrainingPercentage(seasonWeek, team.getId(), trainings.get(seasonWeek), trainers.get(seasonWeek).getSkillLevel(), getAssistantsLevel(staffMembersByWeek.get(seasonWeek)));
                 playerTrainings.forEach(playerTrainingDAO::insert);
             });
+        });
+    }
+
+    public void getPlayerSubSkill() {
+        teamDAO.getActiveTeams().forEach(team -> {
+            //Team team = Team.builder().id(1333746).build();
+            List<String> playerSubSkillWeeks = playerSubSkillDAO.get(team.getId()).stream().map(PlayerSubSkill::getSeasonWeek).distinct().toList();
+            List<String> dataWeeks = playerDataDAO.get(team.getId()).stream().map(PlayerData::getSeasonWeek).distinct().toList();
+
+            Map<String, Training> trainings = trainingDAO.get(team.getId()).stream().collect(Collectors.toMap(Training::getSeasonWeek, training -> training));
+            Map<String, Trainer> trainers = trainerDAO.get(team.getId()).stream().collect(Collectors.toMap(Trainer::getSeasonWeek, trainer -> trainer));
+            Map<String, List<StaffMember>> staffMembersByWeek = staffMemberDAO.get(team.getId()).stream().collect(groupingBy(StaffMember::getSeasonWeek));
+            Map<String, List<PlayerTraining>> playerTrainingsByWeek = playerTrainingDAO.get(team.getId()).stream().collect(groupingBy(PlayerTraining::getSeasonWeek));
+            Map<String, List<PlayerData>> playerDataByWeek = playerDataDAO.get(team.getId()).stream().collect(groupingBy(PlayerData::getSeasonWeek));
+
+            dataWeeks.stream()
+                .sorted()
+                .filter(seasonWeek -> !playerSubSkillWeeks.contains(seasonWeek))
+                .forEach(seasonWeek -> {
+                    List<PlayerSubSkill> playerSubSkills = calculateSubSkillTrainingService.calculateSubSkillTraining(
+                        seasonWeek,
+                        team.getId(),
+                        trainings.get(seasonWeek),
+                        trainers.get(seasonWeek).getSkillLevel(),
+                        getAssistantsLevel(staffMembersByWeek.get(seasonWeek)),
+                        playerDataByWeek.getOrDefault(seasonWeek, List.of()),
+                        playerTrainingsByWeek.getOrDefault(seasonWeek, List.of())
+                    );
+                    playerSubSkills.forEach(playerSubSkillDAO::insert);
+                });
         });
     }
 

@@ -239,6 +239,8 @@
   "ehm.season" : "【특전】",
   "ehm.select-all" : "모두 선택",
   "ehm.shirt-number" : "옷 번호",
+  "ehm.show-sub-skills" : "서브스킬",
+  "ehm.show-sub-skills-help" : "schum의 공식은 계산에 사용되었습니다.",
   "ehm.show-training-info" : "쇼 교육 정보",
   "ehm.show-training-info-help" : "교육의 계산은 계정 분으로 재생, 위치, 훈련 유형, 코치 레벨, 보조 코치 레벨, 교육 강도 및 체력 부분.",
   "ehm.skill-level" : "기술 수준",

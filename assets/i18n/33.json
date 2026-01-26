@@ -239,6 +239,8 @@
   "ehm.season" : "szezon",
   "ehm.select-all" : "válassza ki az összes",
   "ehm.shirt-number" : "ingszám",
+  "ehm.show-sub-skills" : "alkészségek megjelenítése",
+  "ehm.show-sub-skills-help" : "schum képleteit használták a számításhoz.",
   "ehm.show-training-info" : "show training info",
   "ehm.show-training-info-help" : "a kapott képzés kiszámítása során figyelembe kell venni a lejátszott perceket, a pozíciót, a képzési típust, az autóbusz-szintet, az autóbusz-asszisztens szintet, a képzési intenzitást és az állóképességet.",
   "ehm.skill-level" : "készségszint",

@@ -239,6 +239,8 @@
   "ehm.season" : "sezona",
   "ehm.select-all" : "izberi vse",
   "ehm.shirt-number" : "številka srajce",
+  "ehm.show-sub-skills" : "prikaži subskills",
+  "ehm.show-sub-skills-help" : "za izračun so bile uporabljene schumove formule.",
   "ehm.show-training-info" : "prikaži podatke o usposabljanju",
   "ehm.show-training-info-help" : "izračun prejetega usposabljanja upošteva minute igranega usposabljanja, položaj, vrsto usposabljanja, raven trenerja, raven pomočnika trenerja, intenzivnost usposabljanja in vzdržljivost.",
   "ehm.skill-level" : "stopnja usposobljenosti",

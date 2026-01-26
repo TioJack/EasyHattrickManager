@@ -239,6 +239,8 @@
   "ehm.season" : "kausi",
   "ehm.select-all" : "valitse kaikki",
   "ehm.shirt-number" : "paidan numero",
+  "ehm.show-sub-skills" : "näytä alitaidot",
+  "ehm.show-sub-skills-help" : "laskelmassa käytettiin schumin kaavoja.",
   "ehm.show-training-info" : "näytä koulutustiedot",
   "ehm.show-training-info-help" : "saadun koulutuksen laskennassa otetaan huomioon minuutit, asema, koulutustyyppi, valmentajataso, apuvalmentajataso, koulutusintensiteetti ja kestävyys.",
   "ehm.skill-level" : "taitotaso",

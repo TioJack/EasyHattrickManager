@@ -239,6 +239,8 @@
   "ehm.season" : "musim",
   "ehm.select-all" : "pilih semua",
   "ehm.shirt-number" : "nomor kemeja",
+  "ehm.show-sub-skills" : "tampilkan subskills",
+  "ehm.show-sub-skills-help" : "formula schum digunakan untuk perhitungan.",
   "ehm.show-training-info" : "tampilkan info pelatihan",
   "ehm.show-training-info-help" : "perhitungan pelatihan diterima masuk ke dalam hitungan menit dimainkan, posisi, tipe pelatihan, tingkat pelatih, tingkat asisten pelatih, intensitas pelatihan, dan bagian stamina.",
   "ehm.skill-level" : "tingkat keterampilan",

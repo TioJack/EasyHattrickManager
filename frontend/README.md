@@ -1,6 +1,8 @@
 nvm use 20
 ng serve
 
+http://localhost:1985/
+
 ng generate component header --standalone --skip-tests --style=none
 ng generate component PlayerList --standalone --skip-tests --style=none
 ng generate component Player --standalone --skip-tests --style=none

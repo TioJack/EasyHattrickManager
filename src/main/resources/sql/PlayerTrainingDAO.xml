@@ -13,7 +13,8 @@
       winger,
       passing,
       scorer,
-      set_pieces
+      set_pieces,
+      minutes
     )
     VALUES (
       #{player.id},
@@ -25,7 +26,8 @@
       #{player.winger},
       #{player.passing},
       #{player.scorer},
-      #{player.setPieces}
+      #{player.setPieces},
+      #{player.minutes}
     );
   </insert>
 
@@ -39,7 +41,8 @@
            winger,
            passing,
            scorer,
-           set_pieces
+           set_pieces,
+           minutes
     FROM player_training
     WHERE team_id = #{teamId}
     ORDER BY season_week;
@@ -55,7 +58,8 @@
            winger,
            passing,
            scorer,
-           set_pieces
+           set_pieces,
+           minutes
     FROM player_training
     WHERE team_id = #{teamId}
       AND id = #{playerId}

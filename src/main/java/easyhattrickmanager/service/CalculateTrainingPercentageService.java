@@ -21,6 +21,7 @@ import easyhattrickmanager.utils.SeasonWeekUtils;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -91,8 +92,9 @@ public class CalculateTrainingPercentageService {
         List<PlayerPerTrained> minLevStaTra = applyTrainerLevel(minLevSta, trainerLevel);
         List<PlayerPerTrained> minLevStaTraAss = applyAssistantsLevel(minLevStaTra, assistantsLevel);
 
+        Map<Integer, Integer> playerMinutes = calculatePlayerMinutes(playerRoles);
+
         return minLevStaTraAss.stream()
-            .filter(playerPerTrained -> getMaxSkillValue(playerPerTrained.getPerTrained()) > 0)
             .map(playerPerTrained -> PlayerTraining.builder()
                 .teamId(teamId)
                 .seasonWeek(seasonWeek)
@@ -104,6 +106,7 @@ public class CalculateTrainingPercentageService {
                 .passing(playerPerTrained.getPerTrained().getPassing())
                 .scorer(playerPerTrained.getPerTrained().getScorer())
                 .setPieces(playerPerTrained.getPerTrained().getSetPieces())
+                .minutes(playerMinutes.getOrDefault(playerPerTrained.getPlayerId(), 0))
                 .build())
             .toList();
     }
@@ -510,6 +513,15 @@ public class CalculateTrainingPercentageService {
             playerPer.setPerTrained(applyPerBySkill(actual, PER_ASSISTANTS.get(assistantsLevel)));
         });
         return playersPer;
+    }
+
+    private Map<Integer, Integer> calculatePlayerMinutes(List<PlayerRole> playerRoles) {
+        Map<Integer, Integer> playerMinutes = new HashMap<>();
+        for (PlayerRole role : playerRoles) {
+            int minutes = role.getEnd() - role.getStart();
+            playerMinutes.merge(role.getPlayerId(), minutes, Integer::sum);
+        }
+        return playerMinutes;
     }
 
 }

@@ -58,4 +58,5 @@ public class PlayerInfo {
     int htms28;
     int playerCategoryId;
     PlayerTrainingInfo playerTraining;
+    PlayerSubSkillInfo playerSubSkill;
 }

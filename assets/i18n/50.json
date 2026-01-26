@@ -239,6 +239,8 @@
   "ehm.season" : "temporada",
   "ehm.select-all" : "selecionar todos",
   "ehm.shirt-number" : "número da camisa",
+  "ehm.show-sub-skills" : "mostrar subskills",
+  "ehm.show-sub-skills-help" : "as fórmulas de schum foram usadas para o cálculo.",
   "ehm.show-training-info" : "mostre informações de treinamento",
   "ehm.show-training-info-help" : "o cálculo do treinamento recebido leva em conta os minutos jogados, posição, tipo de treinamento, nível de treinador, nível de treinador assistente, intensidade de treinamento e resistência.",
   "ehm.skill-level" : "nível de habilidade",

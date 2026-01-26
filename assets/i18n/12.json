@@ -239,6 +239,8 @@
   "ehm.season" : "季節限定",
   "ehm.select-all" : "すべてを選択",
   "ehm.shirt-number" : "シャツ番号",
+  "ehm.show-sub-skills" : "サブスキルを表示する",
+  "ehm.show-sub-skills-help" : "計算にはスカウムの式が使われていました.",
   "ehm.show-training-info" : "トレーニング情報を表示する",
   "ehm.show-training-info-help" : "受けたトレーニングの計算は、演算、ポジション、トレーニングタイプ、コーチレベル、アシスタントコーチレベル、トレーニング強度、スタミナ部分にかかります.",
   "ehm.skill-level" : "スキルレベル",

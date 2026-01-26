@@ -239,6 +239,8 @@
   "ehm.season" : "فصل",
   "ehm.select-all" : "انتخاب همه",
   "ehm.shirt-number" : "شماره پیراهن",
+  "ehm.show-sub-skills" : "نشان دادن subkills",
+  "ehm.show-sub-skills-help" : "فرمول های sch برای محاسبه استفاده شد.",
   "ehm.show-training-info" : "آموزش اطلاعات",
   "ehm.show-training-info-help" : "محاسبه آموزش دریافت شده در نظر گرفتن دقیقه بازی، موقعیت، نوع آموزش، سطح مربی، سطح مربی، شدت آموزش و بخش استقامت است.",
   "ehm.skill-level" : "سطح مهارت",

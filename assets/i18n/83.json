@@ -239,6 +239,8 @@
   "ehm.season" : "season",
   "ehm.select-all" : "select all",
   "ehm.shirt-number" : "Shirt number",
+  "ehm.show-sub-skills" : "show subskills",
+  "ehm.show-sub-skills-help" : "Schum's formulas were used for the calculation.",
   "ehm.show-training-info" : "show training info",
   "ehm.show-training-info-help" : "The calculation of training received takes into account minutes played, position, training type, coach level, assistant coach level, training intensity, and stamina part.",
   "ehm.skill-level" : "skill level",

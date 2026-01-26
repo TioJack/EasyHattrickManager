@@ -239,6 +239,8 @@
   "ehm.season" : "עונת העונה",
   "ehm.select-all" : "בחר את כל",
   "ehm.shirt-number" : "חולצה מספר",
+  "ehm.show-sub-skills" : "תגית: subskills",
+  "ehm.show-sub-skills-help" : "הנוסחאות של schum שימשו לחישוב.",
   "ehm.show-training-info" : "הצג מידע",
   "ehm.show-training-info-help" : "חישוב האימון המתקבל לוקח בחשבון דקות משחק, מיקום, סוג אימון, רמת מאמנים, רמת מאמן עוזר, אינטנסיביות אימונים וחלק סיבולת.",
   "ehm.skill-level" : "מיומנות",

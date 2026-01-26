@@ -239,6 +239,8 @@
   "ehm.season" : "saison",
   "ehm.select-all" : "alle",
   "ehm.shirt-number" : "hemdnummer",
+  "ehm.show-sub-skills" : "subskills anzeigen",
+  "ehm.show-sub-skills-help" : "schum's formeln wurden für die berechnung verwendet.",
   "ehm.show-training-info" : "schulung info",
   "ehm.show-training-info-help" : "die berechnung der erhaltenen ausbildung berücksichtigt minuten gespielt, position, training typ, trainer ebene, assistenz trainer ebene, trainingsintensität und ausdauer teil.",
   "ehm.skill-level" : "qualifikationsniveau",

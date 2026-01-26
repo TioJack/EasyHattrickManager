@@ -15,12 +15,13 @@ import {DataService} from '../services/data.service';
 import {AlertComponent} from '../alert/alert.component';
 import {DateFormatComponent} from '../date-format/date-format.component';
 import {ShowTrainingInfoComponent} from '../show-training-info/show-training-info.component';
+import {ShowSubSkillsComponent} from '../show-sub-skills/show-sub-skills.component';
 import {DEFAULT_DATE_FORMAT} from '../constants/global.constant';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [NgForOf, TranslatePipe, LanguageComponent, CurrencyComponent, FirstCapitalizePipe, AsyncPipe, RouterLink, PlayerFilterComponent, PlayerSortComponent, AlertComponent, DatePipe, DateFormatComponent, ShowTrainingInfoComponent],
+  imports: [NgForOf, TranslatePipe, LanguageComponent, CurrencyComponent, FirstCapitalizePipe, AsyncPipe, RouterLink, PlayerFilterComponent, PlayerSortComponent, AlertComponent, DatePipe, DateFormatComponent, ShowTrainingInfoComponent, ShowSubSkillsComponent],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })

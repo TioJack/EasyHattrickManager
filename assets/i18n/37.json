@@ -239,6 +239,8 @@
   "ehm.season" : "sezona",
   "ehm.select-all" : "izvēlēties visu",
   "ehm.shirt-number" : "krekla numurs",
+  "ehm.show-sub-skills" : "rādīt apakšprasmes",
+  "ehm.show-sub-skills-help" : "šoma formulas tika izmantotas aprēķinos.",
   "ehm.show-training-info" : "rādīt apmācības informāciju",
   "ehm.show-training-info-help" : "aprēķinot saņemto apmācību, ņem vērā spēlētās minūtes, amatu, apmācības veidu, trenera līmeni, trenera palīga līmeni, apmācības intensitāti un izturību.",
   "ehm.skill-level" : "prasmju līmenis",

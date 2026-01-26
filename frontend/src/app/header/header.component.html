@@ -106,6 +106,14 @@
         </li>
         <li>
           <button class="dropdown-item">
+            <i class="bi bi-calculator me-2"></i>
+            <span>{{ 'ehm.show-sub-skills' | translate }}</span>
+            <app-show-sub-skills></app-show-sub-skills>
+            <i class="bi bi-info-circle fs-6" title="{{ 'ehm.show-sub-skills-help' | translate }}"></i>
+          </button>
+        </li>
+        <li>
+          <button class="dropdown-item">
             <i class="bi bi-list-task me-2"></i>
             <a routerLink="/projects" class="nav-link">{{ 'ehm.manage-projects' | translate }}</a>
           </button>

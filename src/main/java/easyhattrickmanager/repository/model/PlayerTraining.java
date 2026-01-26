@@ -17,4 +17,5 @@ public class PlayerTraining {
     double passing;
     double scorer;
     double setPieces;
+    int minutes;
 }

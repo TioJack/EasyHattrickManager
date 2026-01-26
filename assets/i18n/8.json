@@ -239,6 +239,8 @@
   "ehm.season" : "sæson",
   "ehm.select-all" : "vælg alle",
   "ehm.shirt-number" : "skjortnummer",
+  "ehm.show-sub-skills" : "show subskills",
+  "ehm.show-sub-skills-help" : "schum 's formler blev brugt til beregningen.",
   "ehm.show-training-info" : "show training info",
   "ehm.show-training-info-help" : "ved beregningen af den modtagne uddannelse tages der hensyn til de anvendte minutter, position, kursustype, busniveau, assisterende kursusniveau, uddannelsesintensitet og udholdenhedskomponent.",
   "ehm.skill-level" : "færdighedsniveau",

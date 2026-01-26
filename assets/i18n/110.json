@@ -239,6 +239,8 @@
   "ehm.season" : "denboraldia",
   "ehm.select-all" : "hautatu denak",
   "ehm.shirt-number" : "alkandora zenbakia",
+  "ehm.show-sub-skills" : "erakutsi azpitrebetasunak",
+  "ehm.show-sub-skills-help" : "schum-en formulak kalkulurako erabili ziren.",
   "ehm.show-training-info" : "erakutsi prestakuntza-informazioa",
   "ehm.show-training-info-help" : "jasotako prestakuntzaren kalkuluak kontuan hartzen ditu jokatutako minutuak, posizioa, entrenamendu mota, entrenatzaile maila, entrenatzaile maila laguntzailea, entrenamendu intentsitatea eta egoera fisikoa.",
   "ehm.skill-level" : "trebetasun maila",

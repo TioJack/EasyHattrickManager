@@ -34,4 +34,10 @@ public class RepairController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("playerSubSkill")
+    public ResponseEntity<Void> getPlayerSubSkill() {
+        repairService.getPlayerSubSkill();
+        return ResponseEntity.ok().build();
+    }
+
 }

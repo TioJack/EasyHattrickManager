@@ -638,6 +638,11 @@ public class UpdateTranslationService {
             "The calculation of training received takes into account minutes played, position, training type, coach level, assistant coach level, training intensity, and stamina part.",
             "El cálculo del entrenamiento recibido tiene en cuenta los minutos jugados, la posición, el tipo de entrenamiento, el nivel del entrenador, el nivel de los entrenadores asistentes, la intensidad del entreno y la parte de resistencia.",
             "El càlcul de l'entrenament rebut té en compte els minuts jugats, la posició, el tipus d'entrenament, el nivell de l'entrenador, el nivell dels entrenadors assistents, la intensitat de l'entrenament i la part de resistència.");
+        addTranslation_EN_ES_CA("ehm.show-sub-skills", "show subskills", "mostrar subniveles", "mostrar subnivells");
+        addTranslation_EN_ES_CA("ehm.show-sub-skills-help",
+            "Schum's formulas were used for the calculation.",
+            "Para el cálculo se han usado las fórmulas de Schum.",
+            "Per al càlcul s'han fet servir les fórmules de Schum.");
         addTranslation_EN_ES_CA("ehm.forum", "forum", "foro", "fòrum");
         addTranslation_EN_ES_CA("ehm.forum-help",
             "Access this CHPP's forum. Updates are posted there and are open to any feedback, questions, suggestions, improvements or errors.",

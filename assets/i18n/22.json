@@ -239,6 +239,8 @@
   "ehm.season" : "الموسم الأول",
   "ehm.select-all" : "اختيار",
   "ehm.shirt-number" : "قميص",
+  "ehm.show-sub-skills" : "شوارع العرض",
+  "ehm.show-sub-skills-help" : "صيغ شوم استخدمت للحساب.",
   "ehm.show-training-info" : "برامج التدريب",
   "ehm.show-training-info-help" : "ويراعى في حساب التدريب المتلقاة الدقائق التي تُجرى، والوظيفة، ونوع التدريب، ورتبة المدرب المساعد، وكثافة التدريب، والجزء المتعلق بالحصانة.",
   "ehm.skill-level" : "مستوى المهارات",

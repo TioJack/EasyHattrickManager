@@ -103,6 +103,7 @@ export interface PlayerInfo {
   htms28: number;
   playerCategoryId: number;
   playerTraining: PlayerTrainingInfo;
+  playerSubSkill?: PlayerSubSkillInfo;
   changes: Record<string, number>;
 }
 
@@ -116,11 +117,25 @@ export interface PlayerTrainingInfo {
   setPieces: number;
 }
 
+export interface PlayerSubSkillInfo {
+  stamina: number;
+  keeper: number;
+  defender: number;
+  playmaker: number;
+  winger: number;
+  passing: number;
+  scorer: number;
+  setPieces: number;
+  htms: number;
+  htms28: number;
+}
+
 export interface UserConfig {
   languageId: number;
   currency: Currency;
   dateFormat: string;
   showTrainingInfo: boolean;
+  showSubSkills: boolean;
   projects: Project[];
 }
 

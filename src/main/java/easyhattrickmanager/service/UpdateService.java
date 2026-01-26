@@ -20,6 +20,7 @@ import easyhattrickmanager.repository.CountryDAO;
 import easyhattrickmanager.repository.LeagueDAO;
 import easyhattrickmanager.repository.PlayerDAO;
 import easyhattrickmanager.repository.PlayerDataDAO;
+import easyhattrickmanager.repository.PlayerSubSkillDAO;
 import easyhattrickmanager.repository.PlayerTrainingDAO;
 import easyhattrickmanager.repository.StaffMemberDAO;
 import easyhattrickmanager.repository.TeamDAO;
@@ -31,6 +32,7 @@ import easyhattrickmanager.repository.model.Country;
 import easyhattrickmanager.repository.model.League;
 import easyhattrickmanager.repository.model.Player;
 import easyhattrickmanager.repository.model.PlayerData;
+import easyhattrickmanager.repository.model.PlayerSubSkill;
 import easyhattrickmanager.repository.model.PlayerTraining;
 import easyhattrickmanager.repository.model.StaffMember;
 import easyhattrickmanager.repository.model.Team;
@@ -64,6 +66,7 @@ public class UpdateService {
     private final PlayerDAO playerDAO;
     private final PlayerDataDAO playerDataDAO;
     private final PlayerTrainingDAO playerTrainingDAO;
+    private final PlayerSubSkillDAO playerSubSkillDAO;
     private final TrainingDAO trainingDAO;
     private final TrainerDAO trainerDAO;
     private final StaffMemberDAO staffMemberDAO;
@@ -72,6 +75,7 @@ public class UpdateService {
     private final AssetsConfiguration assetsConfiguration;
     private final UserConfigDAO userConfigDAO;
     private final CalculateTrainingPercentageService calculateTrainingPercentageService;
+    private final CalculateSubSkillTrainingService calculateSubSkillTrainingService;
 
     private List<String> images = new ArrayList<>();
 
@@ -97,14 +101,16 @@ public class UpdateService {
         int adjustmentDays = getAdjustmentDays(teamId);
         String seasonWeek = convertToSeasonWeek(ZonedDateTime.now().plusDays(adjustmentDays));
         Players players = hattrickService.getPlayers(teamId);
+        List<PlayerData> playerDatas = new ArrayList<>();
         players.getTeam().getPlayers()
             .forEach(playerHT -> {
                 playerDAO.insert(getPlayer(playerHT));
                 PlayerData playerData = getPlayerData(teamId, playerHT, adjustmentDays, seasonWeek);
                 if (playerData.getAge() > 16) {
-                    playerDataDAO.insert(playerData);
+                    playerDatas.add(playerData);
                 }
             });
+        playerDatas.forEach(playerDataDAO::insert);
         Training training = getTraining(hattrickService.getTraining(teamId), seasonWeek);
         trainingDAO.insert(training);
         Stafflist staff = hattrickService.getStaff(teamId);
@@ -114,6 +120,8 @@ public class UpdateService {
         saveStaffAvatars(hattrickService.getStaffAvatars(teamId));
         List<PlayerTraining> playerTrainings = calculateTrainingPercentageService.calculateTrainingPercentage(seasonWeek, teamId, training, getTrainerLevel(staff), getAssistantsLevel(staff));
         playerTrainings.forEach(playerTrainingDAO::insert);
+        List<PlayerSubSkill> playerSubSkills = calculateSubSkillTrainingService.calculateSubSkillTraining(seasonWeek, teamId, training, getTrainerLevel(staff), getAssistantsLevel(staff), playerDatas, playerTrainings);
+        playerSubSkills.forEach(playerSubSkillDAO::insert);
     }
 
     private int getTrainerLevel(Stafflist staff) {
@@ -417,11 +425,10 @@ public class UpdateService {
     }
 
     public void updateUserConfig() {
-        List<Country> countries = countryDAO.getAllCountries();
         userDAO.getAllUsers().forEach(user -> {
             try {
                 UserConfig userConfig = new ObjectMapper().readValue(userConfigDAO.get(user.getId()), UserConfig.class);
-                userConfig.setShowTrainingInfo(true);
+                userConfig.setShowSubSkills(true);
                 userConfigDAO.update(user.getId(), new ObjectMapper().writeValueAsString(userConfig));
             } catch (Exception e) {
                 System.err.printf("Error updateUserConfig %s. %s%n", user.getId(), e.getMessage());

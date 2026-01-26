@@ -239,6 +239,8 @@
   "ehm.season" : "saison",
   "ehm.select-all" : "tout sélectionner",
   "ehm.shirt-number" : "numéro de chemise",
+  "ehm.show-sub-skills" : "montrer les sous-compétences",
+  "ehm.show-sub-skills-help" : "les formules de schum ont été utilisées pour le calcul.",
   "ehm.show-training-info" : "montrer les informations de formation",
   "ehm.show-training-info-help" : "le calcul de la formation reçue tient compte des minutes de jeu, du poste, du type de formation, du niveau d'entraîneur, du niveau d'entraîneur adjoint, de l'intensité de la formation et de l'endurance.",
   "ehm.skill-level" : "niveau de compétence",

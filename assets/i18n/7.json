@@ -239,6 +239,8 @@
   "ehm.season" : "sesong",
   "ehm.select-all" : "velg alle",
   "ehm.shirt-number" : "skjortenummer",
+  "ehm.show-sub-skills" : "show subskills",
+  "ehm.show-sub-skills-help" : "schums formler ble brukt til beregningen.",
   "ehm.show-training-info" : "vise trening info",
   "ehm.show-training-info-help" : "beregningen av mottatt trening tar hensyn til minutter som spilles, posisjon, treningstype, treningsnivå, assistent coach nivå, treningsintensitet og utholdenhet del.",
   "ehm.skill-level" : "ferdighetsnivå",

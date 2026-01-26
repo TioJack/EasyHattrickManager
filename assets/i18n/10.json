@@ -239,6 +239,8 @@
   "ehm.season" : "seizoen",
   "ehm.select-all" : "alles selecteren",
   "ehm.shirt-number" : "shirtnummer",
+  "ehm.show-sub-skills" : "subvaardigheden tonen",
+  "ehm.show-sub-skills-help" : "schum's formules werden gebruikt voor de berekening.",
   "ehm.show-training-info" : "show training info",
   "ehm.show-training-info-help" : "bij de berekening van de ontvangen opleiding wordt rekening gehouden met de gespeelde minuten, de positie, het type opleiding, het niveau van de touringcar, het niveau van de assistent-coach, de intensiteit van de opleiding en het uithoudingsvermogen.",
   "ehm.skill-level" : "vaardigheidsniveau",

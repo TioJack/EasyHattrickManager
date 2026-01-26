@@ -239,6 +239,8 @@
   "ehm.season" : "sezonas",
   "ehm.select-all" : "pasirinkti visus",
   "ehm.shirt-number" : "marškinėlių skaičius",
+  "ehm.show-sub-skills" : "rodyti subįgūdžius",
+  "ehm.show-sub-skills-help" : "apskaičiavimui buvo naudojamos schum formulės.",
   "ehm.show-training-info" : "rodyti mokymo informaciją",
   "ehm.show-training-info-help" : "apskaičiuojant gautą mokymą, atsižvelgiama į sugaištų minučių skaičių, padėtį, mokymo tipą, tolimojo susisiekimo autobuso lygį, instruktoriaus padėjėjo lygį, mokymo intensyvumą ir ištvermę.",
   "ehm.skill-level" : "įgūdžių lygis",
