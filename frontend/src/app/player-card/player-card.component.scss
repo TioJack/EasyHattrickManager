@@ -37,6 +37,48 @@
   }
 }
 
+.hidden-text {
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.player-card-table {
+  table-layout: fixed;
+}
+
+.player-card-table td {
+  vertical-align: middle;
+}
+
+.player-card-col-avatar {
+  width: 90px;
+}
+
+.player-card-col-label-left {
+  width: 14%;
+}
+
+.player-card-col-value-left {
+  width: 14%;
+}
+
+.player-card-col-value-left-2 {
+  width: 7%;
+}
+
+.player-card-col-label-right {
+  width: 14%;
+}
+
+.player-card-col-bar {
+  width: 21%;
+}
+
+.player-card-col-value-right {
+  width: 8%;
+}
+
 .green {
   color: green;
 }
