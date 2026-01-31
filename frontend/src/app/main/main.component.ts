@@ -72,6 +72,10 @@ export class MainComponent implements OnInit {
   plannerResultByPlayerId: Record<number, PlayerInfo> = {};
   private plannerRequestTimer: number | null = null;
   private latestResponseWeek: number | null = null;
+  private plannerPlayersByWeek: Record<number, Record<number, PlayerInfo>> = {};
+  private plannerHtmsByPlayerId: Record<number, Array<number | null>> = {};
+  private plannerMaxHtmsByPlayerId: Record<number, number | null> = {};
+  private plannerMaxHtmsRangesByPlayerId: Record<number, Array<{leftPercent: number; widthPercent: number}>> = {};
   private hoverWeekByPlayerId: Record<number, number> = {};
   private hoverTimelinePercentByPlayerId: Record<number, number> = {};
   private lastProjectKey: string | null = null;
@@ -309,6 +313,7 @@ export class MainComponent implements OnInit {
       next: response => {
         this.teamTrainingResponse = response;
         this.plannerResultByPlayerId = this.buildPlannerResultMap(response);
+        this.buildPlannerCaches(response);
         this.endWeekInfo = response.endWeek ?? null;
       },
       error: error => {
@@ -316,6 +321,7 @@ export class MainComponent implements OnInit {
         this.plannerResultByPlayerId = {};
         this.latestResponseWeek = null;
         this.endWeekInfo = null;
+        this.resetPlannerCaches();
       }
     });
   }
@@ -341,6 +347,7 @@ export class MainComponent implements OnInit {
     this.endWeekInfo = null;
     this.plannerResultByPlayerId = {};
     this.latestResponseWeek = null;
+    this.resetPlannerCaches();
     this.hoverWeekByPlayerId = {};
     this.hoverTimelinePercentByPlayerId = {};
   }
@@ -422,6 +429,80 @@ export class MainComponent implements OnInit {
     return map;
   }
 
+  private buildPlannerCaches(response: TeamTrainingResponse): void {
+    this.resetPlannerCaches();
+    const weekPlayers = response.weekPlayers ?? {};
+    const weekKeys = Object.keys(weekPlayers).map(key => Number(key)).filter(Number.isFinite);
+    if (weekKeys.length === 0) {
+      return;
+    }
+    const weekCount = Math.max(...weekKeys);
+    for (const week of weekKeys) {
+      const players = weekPlayers[week] ?? [];
+      const map: Record<number, PlayerInfo> = {};
+      for (const player of players) {
+        map[player.id] = player;
+      }
+      this.plannerPlayersByWeek[week] = map;
+    }
+
+    if (weekCount <= 0) {
+      return;
+    }
+
+    for (const player of this.players) {
+      const htmsByWeek: Array<number | null> = [];
+      let maxHtms: number | null = null;
+      for (let week = 1; week <= weekCount; week++) {
+        const weekMap = this.plannerPlayersByWeek[week];
+        const weekPlayer = weekMap ? weekMap[player.id] : undefined;
+        const htms = weekPlayer?.playerSubSkill?.htms ?? weekPlayer?.htms ?? null;
+        htmsByWeek.push(htms);
+        if (htms != null) {
+          maxHtms = maxHtms == null ? htms : Math.max(maxHtms, htms);
+        }
+      }
+      this.plannerHtmsByPlayerId[player.id] = htmsByWeek;
+      this.plannerMaxHtmsByPlayerId[player.id] = maxHtms;
+
+      if (maxHtms == null || !Number.isFinite(maxHtms)) {
+        this.plannerMaxHtmsRangesByPlayerId[player.id] = [];
+        continue;
+      }
+
+      const ranges: Array<{start: number; end: number}> = [];
+      let currentStart: number | null = null;
+      for (let i = 0; i < htmsByWeek.length; i++) {
+        const week = i + 1;
+        const value = htmsByWeek[i];
+        if (value === maxHtms) {
+          if (currentStart == null) {
+            currentStart = week;
+          }
+        } else if (currentStart != null) {
+          ranges.push({start: currentStart, end: week - 1});
+          currentStart = null;
+        }
+      }
+      if (currentStart != null) {
+        ranges.push({start: currentStart, end: weekCount});
+      }
+      const percentPerWeek = 100 / weekCount;
+      this.plannerMaxHtmsRangesByPlayerId[player.id] = ranges.map(range => {
+        const leftPercent = (range.start - 1) * percentPerWeek;
+        const widthPercent = (range.end - range.start + 1) * percentPerWeek;
+        return {leftPercent, widthPercent};
+      });
+    }
+  }
+
+  private resetPlannerCaches(): void {
+    this.plannerPlayersByWeek = {};
+    this.plannerHtmsByPlayerId = {};
+    this.plannerMaxHtmsByPlayerId = {};
+    this.plannerMaxHtmsRangesByPlayerId = {};
+  }
+
   getPlannerResultPlayer(playerId: number): PlayerInfo | null {
     return this.plannerResultByPlayerId[playerId] ?? null;
   }
@@ -499,98 +580,32 @@ export class MainComponent implements OnInit {
     if (this.latestResponseWeek && week > this.latestResponseWeek) {
       return null;
     }
-    const players = this.teamTrainingResponse.weekPlayers[week] ?? [];
-    return players.find(player => player.id === playerId) ?? null;
+    const playersById = this.plannerPlayersByWeek[week];
+    return playersById ? playersById[playerId] ?? null : null;
   }
 
   getMaxHtmsRanges(playerId: number): Array<{leftPercent: number; widthPercent: number}> {
-    const weekCount = this.getPlannerWeekCount();
-    if (!this.teamTrainingResponse?.weekPlayers || weekCount <= 0) {
-      return [];
-    }
-    const htmsByWeek: Array<number | null> = [];
-    for (let week = 1; week <= weekCount; week++) {
-      const players = this.teamTrainingResponse.weekPlayers[week] ?? [];
-      const player = players.find(candidate => candidate.id === playerId);
-      const htms = player?.playerSubSkill?.htms ?? player?.htms ?? null;
-      htmsByWeek.push(htms);
-    }
-    const maxHtms = htmsByWeek.reduce((max, value) => {
-      if (value == null) {
-        return max;
-      }
-      if (max == null) {
-        return value;
-      }
-      return Math.max(max, value);
-    }, null as number | null);
-    if (maxHtms == null || !Number.isFinite(maxHtms)) {
-      return [];
-    }
-    const ranges: Array<{start: number; end: number}> = [];
-    let currentStart: number | null = null;
-    for (let i = 0; i < htmsByWeek.length; i++) {
-      const week = i + 1;
-      const value = htmsByWeek[i];
-      if (value === maxHtms) {
-        if (currentStart == null) {
-          currentStart = week;
-        }
-      } else if (currentStart != null) {
-        ranges.push({start: currentStart, end: week - 1});
-        currentStart = null;
-      }
-    }
-    if (currentStart != null) {
-      ranges.push({start: currentStart, end: weekCount});
-    }
-    const percentPerWeek = 100 / weekCount;
-    return ranges.map(range => {
-      const leftPercent = (range.start - 1) * percentPerWeek;
-      const widthPercent = (range.end - range.start + 1) * percentPerWeek;
-      return {leftPercent, widthPercent};
-    });
-  }
-
-  private getMaxHtmsWeek(playerId: number, weekCount: number): number | null {
-    let bestWeek: number | null = null;
-    let bestHtms = -Infinity;
-    for (let week = 1; week <= weekCount; week++) {
-      const players = this.teamTrainingResponse?.weekPlayers?.[week] ?? [];
-      const player = players.find(candidate => candidate.id === playerId);
-      if (!player) {
-        continue;
-      }
-      const htms = player.playerSubSkill?.htms ?? player.htms ?? 0;
-      if (htms > bestHtms) {
-        bestHtms = htms;
-        bestWeek = week;
-      }
-    }
-    return bestWeek;
+    return this.plannerMaxHtmsRangesByPlayerId[playerId] ?? [];
   }
 
   private isMaxHtmsWeek(playerId: number, week: number, weekCount: number): boolean {
     if (!this.teamTrainingResponse?.weekPlayers || week <= 0 || weekCount <= 0) {
       return false;
     }
-    let maxHtms: number | null = null;
-    for (let i = 1; i <= weekCount; i++) {
-      const players = this.teamTrainingResponse.weekPlayers[i] ?? [];
-      const player = players.find(candidate => candidate.id === playerId);
-      const htms = player?.playerSubSkill?.htms ?? player?.htms ?? null;
-      if (htms == null) {
-        continue;
-      }
-      maxHtms = maxHtms == null ? htms : Math.max(maxHtms, htms);
-    }
+    const maxHtms = this.plannerMaxHtmsByPlayerId[playerId];
     if (maxHtms == null) {
       return false;
     }
-    const players = this.teamTrainingResponse.weekPlayers[week] ?? [];
-    const player = players.find(candidate => candidate.id === playerId);
-    const htms = player?.playerSubSkill?.htms ?? player?.htms ?? null;
+    const htms = this.plannerHtmsByPlayerId[playerId]?.[week - 1] ?? null;
     return htms != null && htms === maxHtms;
+  }
+
+  trackByPlayerId(_index: number, player: PlayerInfo): number {
+    return player.id;
+  }
+
+  trackByStageIndex(index: number): number {
+    return index;
   }
 
   getTrainingTypeIdForWeek(week: number): number | null {

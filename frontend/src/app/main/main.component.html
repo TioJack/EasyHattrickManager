@@ -10,7 +10,7 @@
       <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-4 d-flex">
         <app-training class="flex-fill w-100"></app-training>
       </div>
-      <div *ngFor="let player of players" class="col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-4 d-flex">
+      <div *ngFor="let player of players; trackBy: trackByPlayerId" class="col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-4 d-flex">
         <app-player-card class="flex-fill w-100" [player]="player" [training]="training"></app-player-card>
       </div>
     </div>
@@ -107,7 +107,7 @@
                 </div>
                 <div *ngIf="trainingPlans.length > 0" class="planner-stack">
                   <div
-                    *ngFor="let plan of trainingPlans; let i = index"
+                    *ngFor="let plan of trainingPlans; let i = index; trackBy: trackByStageIndex"
                     class="planner-segment planner-segment--form"
                     [style.flex-grow]="plan.weeks"
                     [style.flex-basis.%]="0"
@@ -209,7 +209,7 @@
         </div>
       </div>
 
-      <div *ngFor="let player of players" class="col-12">
+      <div *ngFor="let player of players; trackBy: trackByPlayerId" class="col-12">
         <div class="planner-row align-items-stretch">
           <div class="planner-side d-flex">
             <app-player-card-compact class="flex-fill w-100" [player]="player"></app-player-card-compact>
@@ -221,7 +221,7 @@
                 <div *ngIf="trainingPlans.length > 0" class="planner-sliders-area">
                   <div class="planner-sliders">
                     <div
-                      *ngFor="let plan of trainingPlans; let i = index"
+                      *ngFor="let plan of trainingPlans; let i = index; trackBy: trackByStageIndex"
                       class="planner-slider-segment"
                       [style.flex-grow]="plan.weeks"
                       [style.flex-basis.%]="0">
@@ -253,7 +253,7 @@
                         [style.width.%]="range.widthPercent">
                       </div>
                       <div
-                        *ngFor="let plan of trainingPlans"
+                        *ngFor="let plan of trainingPlans; trackBy: trackByStageIndex"
                         class="planner-timeline-segment"
                         [style.flex-grow]="plan.weeks"
                         [style.flex-basis.%]="0"

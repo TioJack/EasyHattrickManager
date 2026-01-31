@@ -85,7 +85,7 @@ export class PlayService {
         const sort = this.selectedProjectSubject.value?.sort;
         let sortedPlayers = filteredPlayers;
         if (sort) {
-          sortedPlayers = filteredPlayers.sort((a, b) => {
+          sortedPlayers = [...filteredPlayers].sort((a, b) => {
             let valueA;
             let valueB;
             if (sort.criteria === 'name') {
