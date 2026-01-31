@@ -1,0 +1,70 @@
+.card-body {
+  line-height: 1.2;
+}
+
+.icon {
+  width: 1.2em;
+  height: 1.2em;
+  vertical-align: text-bottom;
+}
+
+.hidden-text {
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.player-card-table {
+  table-layout: fixed;
+}
+
+.player-card-table td {
+  vertical-align: middle;
+}
+
+.player-card-col-label-left {
+  width: 32%;
+}
+
+.player-card-col-bar {
+  width: 50%;
+}
+
+.player-card-col-value-right {
+  width: 18%;
+}
+
+.player-card-col-label-top {
+  width: 32%;
+}
+
+.player-card-col-value-top {
+  width: 28%;
+}
+
+.player-card-col-extra-top {
+  width: 40%;
+}
+
+.green {
+  color: green;
+}
+
+.htms-table {
+  table-layout: fixed;
+  margin: 0;
+  padding: 0;
+  text-align: right;
+  display: inline-table;
+  margin-left: auto;
+}
+
+.htms-cell {
+  text-align: right;
+}
+
+.htms-table td {
+  line-height: 1;
+  padding-top: 0;
+  padding-bottom: 0;
+}

@@ -52,8 +52,8 @@ public class RepairService {
     private final StaffMemberDAO staffMemberDAO;
     private final PlayerTrainingDAO playerTrainingDAO;
     private final PlayerSubSkillDAO playerSubSkillDAO;
-    private final CalculateTrainingPercentageService calculateTrainingPercentageService;
-    private final CalculateSubSkillTrainingService calculateSubSkillTrainingService;
+    private final TrainingPercentageService trainingPercentageService;
+    private final PlayerTrainingService playerTrainingService;
 
     public void fillInGaps() {
         teamDAO.getActiveTeams().forEach(team -> {
@@ -434,7 +434,7 @@ public class RepairService {
             Map<String, List<StaffMember>> staffMembersByWeek = staffMemberDAO.get(team.getId()).stream().collect(groupingBy(StaffMember::getSeasonWeek));
 
             dataWeeks.stream().filter(seasonWeek -> !playerTrainingWeeks.contains(seasonWeek)).forEach(seasonWeek -> {
-                List<PlayerTraining> playerTrainings = calculateTrainingPercentageService.calculateTrainingPercentage(seasonWeek, team.getId(), trainings.get(seasonWeek), trainers.get(seasonWeek).getSkillLevel(), getAssistantsLevel(staffMembersByWeek.get(seasonWeek)));
+                List<PlayerTraining> playerTrainings = trainingPercentageService.calculateTrainingPercentage(seasonWeek, team.getId(), trainings.get(seasonWeek), trainers.get(seasonWeek).getSkillLevel(), getAssistantsLevel(staffMembersByWeek.get(seasonWeek)));
                 playerTrainings.forEach(playerTrainingDAO::insert);
             });
         });
@@ -456,7 +456,7 @@ public class RepairService {
                 .sorted()
                 .filter(seasonWeek -> !playerSubSkillWeeks.contains(seasonWeek))
                 .forEach(seasonWeek -> {
-                    List<PlayerSubSkill> playerSubSkills = calculateSubSkillTrainingService.calculateSubSkillTraining(
+                    List<PlayerSubSkill> playerSubSkills = playerTrainingService.calculateSubSkillTraining(
                         seasonWeek,
                         team.getId(),
                         trainings.get(seasonWeek),

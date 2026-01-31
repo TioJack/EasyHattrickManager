@@ -74,8 +74,8 @@ public class UpdateService {
     private final UserDAO userDAO;
     private final AssetsConfiguration assetsConfiguration;
     private final UserConfigDAO userConfigDAO;
-    private final CalculateTrainingPercentageService calculateTrainingPercentageService;
-    private final CalculateSubSkillTrainingService calculateSubSkillTrainingService;
+    private final TrainingPercentageService trainingPercentageService;
+    private final PlayerTrainingService playerTrainingService;
 
     private List<String> images = new ArrayList<>();
 
@@ -118,9 +118,9 @@ public class UpdateService {
         staff.getStaffList().getStaffs().forEach(staffHT -> staffMemberDAO.insert(getStaffMember(teamId, staffHT, seasonWeek)));
         saveAvatars(hattrickService.getAvatars(teamId));
         saveStaffAvatars(hattrickService.getStaffAvatars(teamId));
-        List<PlayerTraining> playerTrainings = calculateTrainingPercentageService.calculateTrainingPercentage(seasonWeek, teamId, training, getTrainerLevel(staff), getAssistantsLevel(staff));
+        List<PlayerTraining> playerTrainings = trainingPercentageService.calculateTrainingPercentage(seasonWeek, teamId, training, getTrainerLevel(staff), getAssistantsLevel(staff));
         playerTrainings.forEach(playerTrainingDAO::insert);
-        List<PlayerSubSkill> playerSubSkills = calculateSubSkillTrainingService.calculateSubSkillTraining(seasonWeek, teamId, training, getTrainerLevel(staff), getAssistantsLevel(staff), playerDatas, playerTrainings);
+        List<PlayerSubSkill> playerSubSkills = playerTrainingService.calculateSubSkillTraining(seasonWeek, teamId, training, getTrainerLevel(staff), getAssistantsLevel(staff), playerDatas, playerTrainings);
         playerSubSkills.forEach(playerSubSkillDAO::insert);
     }
 

@@ -1,5 +1,5 @@
 <main class="flex-grow-1 d-flex flex-column justify-content-center align-items-center text-center">
-  <div>
+  <div *ngIf="viewMode === 'players'; else plannerView">
     <div class="row g-3 p-3 align-items-stretch">
       <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-4 d-flex">
         <app-player-stats class="flex-fill w-100"></app-player-stats>
@@ -15,4 +15,281 @@
       </div>
     </div>
   </div>
+
+  <ng-template #plannerView>
+    <div class="row g-3 p-3 w-100 align-items-stretch">
+      <div class="col-12">
+        <div class="planner-row align-items-stretch">
+          <div class="planner-side">
+            <div class="d-flex flex-column gap-2">
+              <div class="card w-100">
+                <div class="py-2">
+                  <div class="card-body p-2">
+                  <div class="d-flex flex-column gap-2">
+                    <div class="d-flex align-items-center gap-2 flex-nowrap">
+                      <span class="text-muted small text-nowrap flex-shrink-0">
+                        {{ 'ehm.training' | translate | firstCapitalize }}
+                      </span>
+                      <select class="form-select form-select-sm flex-grow-1" [(ngModel)]="newTrainingTypeId">
+                        <option *ngFor="let typeId of trainingTypes" [ngValue]="typeId">
+                          {{ ('ht.training-type-' + typeId) | translate | firstCapitalize }}
+                        </option>
+                      </select>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 flex-nowrap">
+                      <span class="text-muted small flex-shrink-0 d-flex flex-column">
+                        <span class="text-nowrap">{{ 'ehm.duration' | translate | firstCapitalize }}</span>
+                        <span class="text-nowrap">({{ 'ehm.weeks' | translate }})</span>
+                      </span>
+                      <select class="form-select form-select-sm flex-grow-1" [(ngModel)]="newTrainingWeeks">
+                        <option *ngFor="let weeks of durationOptions" [ngValue]="weeks">
+                          {{ getDurationLabel(weeks) }}
+                        </option>
+                      </select>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 flex-nowrap">
+                      <span class="text-muted small flex-shrink-0 d-flex flex-column">
+                        <span class="text-nowrap">{{ 'ehm.coach' | translate | firstCapitalize }}</span>
+                      </span>
+                      <select class="form-select form-select-sm flex-grow-1" [(ngModel)]="newTrainingCoach">
+                        <option *ngFor="let level of trainerLevelOptions" [ngValue]="level">
+                          {{ level }} - {{ getTrainerLevelTranslationKey(level) | translate | firstCapitalize }}
+                        </option>
+                      </select>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 flex-nowrap">
+                      <span class="text-muted small flex-shrink-0 d-flex flex-column">
+                        <span class="text-nowrap">{{ 'ehm.assistant-coach' | translate | firstCapitalize }}</span>
+                      </span>
+                      <select class="form-select form-select-sm flex-grow-1" [(ngModel)]="newTrainingAssistants">
+                        <option *ngFor="let assistants of assistantOptions" [ngValue]="assistants">
+                          {{ assistants }}
+                        </option>
+                      </select>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 flex-nowrap">
+                      <span class="text-muted small flex-shrink-0 d-flex flex-column">
+                        <span class="text-nowrap">{{ 'ehm.intensity' | translate | firstCapitalize }}</span>
+                      </span>
+                      <select class="form-select form-select-sm flex-grow-1" [(ngModel)]="newTrainingIntensity">
+                        <option *ngFor="let intensity of intensityOptions" [ngValue]="intensity">
+                          {{ intensity }}
+                        </option>
+                      </select>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 flex-nowrap">
+                      <span class="text-muted small flex-shrink-0 d-flex flex-column">
+                        <span class="text-nowrap">{{ 'ehm.stamina' | translate | firstCapitalize }}</span>
+                      </span>
+                      <select class="form-select form-select-sm flex-grow-1" [(ngModel)]="newTrainingStamina">
+                        <option *ngFor="let stamina of staminaOptions" [ngValue]="stamina">
+                          {{ stamina }}
+                        </option>
+                      </select>
+                    </div>
+                    <button class="btn btn-sm btn-primary" type="button" (click)="addTrainingPlan()">
+                      {{ 'ehm.add-training-stage' | translate | firstCapitalize }}
+                    </button>
+                  </div>
+                </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <div class="planner-center d-flex">
+            <div class="card flex-fill w-100">
+              <div class="card-body p-2" [class.planner-empty]="trainingPlans.length === 0">
+                <div *ngIf="trainingPlans.length === 0" class="planner-empty-message text-center fw-semibold p-3 border rounded bg-light">
+                  <div>{{ 'ehm.training-planner-welcome' | translate }}</div>
+                  <div>{{ 'ehm.training-planner-help' | translate }}</div>
+                  <div class="mt-0 fs-1 planner-empty-arrow">←</div>
+                </div>
+                <div *ngIf="trainingPlans.length > 0" class="planner-stack">
+                  <div
+                    *ngFor="let plan of trainingPlans; let i = index"
+                    class="planner-segment planner-segment--form"
+                    [style.flex-grow]="plan.weeks"
+                    [style.flex-basis.%]="0"
+                    [style.backgroundColor]="trainingTypeColor(plan.typeId)"
+                    [style.color]="getTrainingTextColor(plan.typeId)">
+                    <div class="d-flex flex-column gap-2 w-100">
+                      <div class="d-flex align-items-center gap-2 flex-nowrap">
+                        <select class="form-select form-select-sm flex-grow-1" [(ngModel)]="plan.typeId" (ngModelChange)="onStageTypeChanged(i)">
+                          <option *ngFor="let typeId of trainingTypes" [ngValue]="typeId">
+                            {{ ('ht.training-type-' + typeId) | translate | firstCapitalize }}
+                          </option>
+                        </select>
+                      </div>
+                      <div class="d-flex align-items-center gap-2 flex-nowrap">
+                        <select class="form-select form-select-sm flex-grow-1" [(ngModel)]="plan.weeks" (ngModelChange)="onStageUpdated()">
+                          <option *ngFor="let weeks of durationOptions" [ngValue]="weeks">
+                            {{ getDurationLabel(weeks) }}
+                          </option>
+                        </select>
+                      </div>
+                      <div class="d-flex align-items-center gap-2 flex-nowrap">
+                        <select class="form-select form-select-sm flex-grow-1" [(ngModel)]="plan.coach" (ngModelChange)="onStageUpdated()">
+                          <option *ngFor="let level of trainerLevelOptions" [ngValue]="level">
+                            {{ level }} - {{ getTrainerLevelTranslationKey(level) | translate | firstCapitalize }}
+                          </option>
+                        </select>
+                      </div>
+                      <div class="d-flex align-items-center gap-2 flex-nowrap">
+                        <select class="form-select form-select-sm flex-grow-1" [(ngModel)]="plan.assistants" (ngModelChange)="onStageUpdated()">
+                          <option *ngFor="let assistants of assistantOptions" [ngValue]="assistants">
+                            {{ assistants }}
+                          </option>
+                        </select>
+                      </div>
+                      <div class="d-flex align-items-center gap-2 flex-nowrap">
+                        <select class="form-select form-select-sm flex-grow-1" [(ngModel)]="plan.intensity" (ngModelChange)="onStageUpdated()">
+                          <option *ngFor="let intensity of intensityOptions" [ngValue]="intensity">
+                            {{ intensity }}
+                          </option>
+                        </select>
+                      </div>
+                      <div class="d-flex align-items-center gap-2 flex-nowrap">
+                        <select class="form-select form-select-sm flex-grow-1" [(ngModel)]="plan.stamina" (ngModelChange)="onStageUpdated()">
+                          <option *ngFor="let stamina of staminaOptions" [ngValue]="stamina">
+                            {{ stamina }}
+                          </option>
+                        </select>
+                      </div>
+                      <div class="planner-stage-actions">
+                        <button class="btn btn-sm planner-stage-move planner-stage-move--white" type="button" (click)="moveTrainingPlan(i, -1)" [disabled]="i === 0" aria-label="Mover a la izquierda">
+                          <i class="bi bi-chevron-left"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger planner-stage-delete" type="button" (click)="removeTrainingPlan(i)" aria-label="Eliminar">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                        <button class="btn btn-sm planner-stage-move planner-stage-move--white" type="button" (click)="moveTrainingPlan(i, 1)" [disabled]="i === trainingPlans.length - 1" aria-label="Mover a la derecha">
+                          <i class="bi bi-chevron-right"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="planner-side d-flex">
+            <div class="card w-100 h-100">
+              <div class="card-body p-3">
+                <div *ngIf="endWeekInfo; else noEndWeek" class="planner-summary">
+                  <div class="planner-summary-header">
+                    <div class="fw-bold">
+                      {{ 'ehm.season' | translate }} {{ endWeekInfo.season }}
+                      {{ 'ehm.week' | translate }} {{ endWeekInfo.week }}
+                    </div>
+                    <div class="text-muted small">
+                      {{ endWeekInfo.date | date:DEFAULT_DATE_FORMAT }}
+                    </div>
+                  </div>
+                  <div class="planner-summary-divider"></div>
+                  <div class="planner-summary-row">
+                    <span class="text-muted small">{{ 'ehm.total-weeks' | translate }}</span>
+                    <span class="fw-semibold">{{ getTotalTrainingWeeks() }}</span>
+                  </div>
+                  <div class="planner-summary-row">
+                    <span class="text-muted small">{{ 'ehm.total-seasons' | translate }}</span>
+                    <span class="fw-semibold">{{ getTotalTrainingSeasons() }}</span>
+                  </div>
+                  <div class="planner-summary-row">
+                    <span class="text-muted small">{{ 'ehm.total-wage' | translate }}</span>
+                    <span class="fw-semibold">
+                      {{ userConfig ? (getTotalWagesPaid() | salary:userConfig.currency) : (getTotalWagesPaid() | numberSeparator) }}
+                    </span>
+                  </div>
+                </div>
+                <ng-template #noEndWeek></ng-template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngFor="let player of players" class="col-12">
+        <div class="planner-row align-items-stretch">
+          <div class="planner-side d-flex">
+            <app-player-card-compact class="flex-fill w-100" [player]="player"></app-player-card-compact>
+          </div>
+          <div class="planner-center d-flex">
+            <div class="card flex-fill w-100">
+              <div class="card-body p-2 d-flex flex-column planner-center-body">
+                <div *ngIf="trainingPlans.length === 0" class="text-muted"></div>
+                <div *ngIf="trainingPlans.length > 0" class="planner-sliders-area">
+                  <div class="planner-sliders">
+                    <div
+                      *ngFor="let plan of trainingPlans; let i = index"
+                      class="planner-slider-segment"
+                      [style.flex-grow]="plan.weeks"
+                      [style.flex-basis.%]="0">
+                      <input
+                        class="planner-slider"
+                        type="range"
+                        min="0"
+                        max="100"
+                        [style.accentColor]="trainingTypeColor(plan.typeId)"
+                        [ngModel]="getPlanPercent(player.id, i)"
+                        (ngModelChange)="setPlanPercent(player.id, i, $event)">
+                      <div class="planner-slider-value text-nowrap">
+                        {{ getPlanPercent(player.id, i) }}%
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="trainingPlans.length > 0" class="planner-timeline-area">
+                  <div
+                    class="planner-timeline"
+                    (mousemove)="onTimelineMove($event, player.id)"
+                    (mouseleave)="onTimelineLeave(player.id)">
+                    <div class="planner-timeline-bar">
+                      <div
+                        *ngFor="let range of getMaxHtmsRanges(player.id)"
+                        class="planner-timeline-marker"
+                        [class.planner-timeline-marker--range]="range.widthPercent > 0"
+                        [style.left.%]="range.leftPercent"
+                        [style.width.%]="range.widthPercent">
+                      </div>
+                      <div
+                        *ngFor="let plan of trainingPlans"
+                        class="planner-timeline-segment"
+                        [style.flex-grow]="plan.weeks"
+                        [style.flex-basis.%]="0"
+                        [style.backgroundColor]="trainingTypeColor(plan.typeId)"
+                        [style.color]="getTrainingTextColor(plan.typeId)">
+                        <span class="planner-timeline-segment-label">
+                          {{ ('ht.training-type-' + plan.typeId) | translate | firstCapitalize }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  *ngIf="getTimelinePopupPlayer(player.id) as timelinePlayer"
+                  class="planner-timeline-popup"
+                  [class.planner-timeline-popup--prime]="isPrimeWeek(player.id)"
+                  [style.left.%]="getTimelinePercent(player.id)">
+                  <app-player-card-compact [player]="timelinePlayer"></app-player-card-compact>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="planner-side d-flex">
+            <ng-container *ngIf="getPlannerResultPlayer(player.id) as result; else noResult">
+              <app-player-card-compact class="flex-fill w-100" [player]="result"></app-player-card-compact>
+            </ng-container>
+            <ng-template #noResult>
+              <div class="card flex-fill w-100"></div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="players.length === 0" class="col-12 text-muted">
+        Sin jugadores
+      </div>
+    </div>
+  </ng-template>
 </main>

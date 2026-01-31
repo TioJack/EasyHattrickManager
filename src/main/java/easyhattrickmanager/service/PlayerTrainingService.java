@@ -7,8 +7,8 @@ import easyhattrickmanager.repository.model.PlayerSubSkill;
 import easyhattrickmanager.repository.model.PlayerTraining;
 import easyhattrickmanager.repository.model.Training;
 import easyhattrickmanager.service.model.HTMS;
-import easyhattrickmanager.service.model.skilltrainingrequest.Skill;
-import easyhattrickmanager.service.model.skilltrainingrequest.SkillTrainingRequest;
+import easyhattrickmanager.service.model.playertraining.Skill;
+import easyhattrickmanager.service.model.playertraining.SkillTrainingRequest;
 import easyhattrickmanager.utils.HTMSUtils;
 import easyhattrickmanager.utils.SeasonWeekUtils;
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class CalculateSubSkillTrainingService {
+public class PlayerTrainingService {
 
     private final PlayerSubSkillDAO playerSubSkillDAO;
     private final PlayerDataDAO playerDataDAO;
@@ -120,7 +120,7 @@ public class CalculateSubSkillTrainingService {
                 .assistants(assistantsLevel)
                 .intensity(training.getTrainingLevel())
                 .stamina(training.getStaminaTrainingPart())
-                .training(getTraining(skill, training.getTrainingType()))
+                .coefficientSkill(getCoefficientSkill(skill))
                 .minutes(minutes)
                 .build();
             newSubSkill += getSkillTraining(rq);
@@ -190,28 +190,26 @@ public class CalculateSubSkillTrainingService {
         return (100.0 - (((staminaTrainingPart - 10.0) * 100.0) / (100.0 - 10.0))) / 100.0;
     }
 
-    private easyhattrickmanager.service.model.skilltrainingrequest.Training getTraining(Skill skill, int trainingType) {
+    private double getCoefficientSkill(Skill skill) {
         return switch (skill) {
-            case GOALKEEPING -> easyhattrickmanager.service.model.skilltrainingrequest.Training.GOALKEEPING;
-            case DEFENDING -> easyhattrickmanager.service.model.skilltrainingrequest.Training.DEFENDING;
-            case PLAY_MAKING -> easyhattrickmanager.service.model.skilltrainingrequest.Training.PLAY_MAKING;
-            case WINGER -> easyhattrickmanager.service.model.skilltrainingrequest.Training.WINGER;
-            case PASSING -> easyhattrickmanager.service.model.skilltrainingrequest.Training.PASSING;
-            case SCORING -> easyhattrickmanager.service.model.skilltrainingrequest.Training.SCORING;
-            case SET_PIECES -> trainingType == 6
-                ? easyhattrickmanager.service.model.skilltrainingrequest.Training.SET_PIECES_PLUS
-                : easyhattrickmanager.service.model.skilltrainingrequest.Training.SET_PIECES;
+            case GOALKEEPING -> easyhattrickmanager.service.model.playertraining.Training.GOALKEEPING.getSkillCoefficients().get(0).getCoefficient();
+            case DEFENDING -> easyhattrickmanager.service.model.playertraining.Training.DEFENDING.getSkillCoefficients().get(0).getCoefficient();
+            case PLAY_MAKING -> easyhattrickmanager.service.model.playertraining.Training.PLAY_MAKING.getSkillCoefficients().get(0).getCoefficient();
+            case WINGER -> easyhattrickmanager.service.model.playertraining.Training.WINGER.getSkillCoefficients().get(0).getCoefficient();
+            case PASSING -> easyhattrickmanager.service.model.playertraining.Training.PASSING.getSkillCoefficients().get(0).getCoefficient();
+            case SCORING -> easyhattrickmanager.service.model.playertraining.Training.SCORING.getSkillCoefficients().get(0).getCoefficient();
+            case SET_PIECES -> easyhattrickmanager.service.model.playertraining.Training.SET_PIECES.getSkillCoefficients().get(0).getCoefficient();
         };
     }
 
-    private double getSkillTraining(SkillTrainingRequest rq) {
+    public double getSkillTraining(SkillTrainingRequest rq) {
         //T = f(lvl) * K(coach) * K(assist) * K(int) * K(stam) * K(train) * K(age) * K(time)
         final double training = Math.min(1, this.getSkill(rq.getSkill())
             * this.getCoefficientCoach(rq.getCoach())
             * this.getCoefficientAssistants(rq.getAssistants())
             * this.getCoefficientIntensity(rq.getIntensity())
             * this.getCoefficientStamina(rq.getStamina())
-            * rq.getTraining().getCoefficient()
+            * rq.getCoefficientSkill()
             * this.getCoefficientAge(rq.getAge())
             * this.getCoefficientTime(rq.getMinutes()));
 
@@ -318,7 +316,7 @@ public class CalculateSubSkillTrainingService {
         Map.entry(11, 0.0846)
     );
 
-    private double getDropAge(Skill skill, final int age) {
+    public double getDropAge(Skill skill, final int age) {
         final int ageLoss = age - skill.getAgeNoDrop();
         return ageLoss < 1 ? 0 : AGE_LOSS.getOrDefault(ageLoss, 0.0846);
     }
@@ -404,7 +402,7 @@ public class CalculateSubSkillTrainingService {
         return 0.5;
     }
 
-    private double getStaminaTraining(int playerAge, double playerStamina, int trainingStamina, int trainingIntensity, double staminaTrainingEffect) {
+    public double getStaminaTraining(int playerAge, double playerStamina, int trainingStamina, int trainingIntensity, double staminaTrainingEffect) {
         double lvl = playerStamina - 1.0;
         double kage = K.getOrDefault(playerAge, 21) * 7.0 / 30.0;
         double l = lvl + kage;

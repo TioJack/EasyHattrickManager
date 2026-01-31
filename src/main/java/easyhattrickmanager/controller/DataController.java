@@ -4,10 +4,13 @@ import easyhattrickmanager.controller.model.DataResponse;
 import easyhattrickmanager.controller.model.PlayerDataResponse;
 import easyhattrickmanager.service.DataService;
 import easyhattrickmanager.service.PlayerDataService;
+import easyhattrickmanager.service.TeamTrainingService;
 import easyhattrickmanager.service.UpdateService;
 import easyhattrickmanager.service.model.dataresponse.CurrencyInfo;
 import easyhattrickmanager.service.model.dataresponse.LanguageInfo;
 import easyhattrickmanager.service.model.dataresponse.UserConfig;
+import easyhattrickmanager.service.model.teamtraining.TeamTrainingRequest;
+import easyhattrickmanager.service.model.teamtraining.TeamTrainingResponse;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +30,7 @@ public class DataController {
     private final DataService dataService;
     private final UpdateService updateService;
     private final PlayerDataService playerDataService;
+    private TeamTrainingService teamTrainingService;
 
     @GetMapping
     public ResponseEntity<DataResponse> getData() {
@@ -68,4 +72,8 @@ public class DataController {
         return ResponseEntity.ok(playerDataResponse);
     }
 
+    @PostMapping("/teamTraining")
+    public TeamTrainingResponse teamTraining(@RequestBody TeamTrainingRequest teamTrainingRequest) {
+        return this.teamTrainingService.getTeamTraining(teamTrainingRequest);
+    }
 }

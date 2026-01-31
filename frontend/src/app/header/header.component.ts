@@ -2,7 +2,7 @@ import {Component, HostListener, Input, OnInit, ViewChild} from '@angular/core';
 import {AuthService} from '../services/auth.service';
 import {PlayerInfo, Project, TeamExtendedInfo, WeeklyInfo} from '../services/model/data-response';
 import {AsyncPipe, DatePipe, NgForOf} from '@angular/common';
-import {PlayService} from '../services/play.service';
+import {PlayService, ViewMode} from '../services/play.service';
 import {UserConfigService} from '../services/user-config.service';
 import {TranslatePipe} from '@ngx-translate/core';
 import {LanguageComponent} from '../language/language.component';
@@ -31,6 +31,7 @@ export class HeaderComponent implements OnInit {
   selectedProject: Project | null = null;
   selectedTeam: TeamExtendedInfo | null = null;
   dateFormat: string | null = null;
+  viewMode: ViewMode = 'players';
 
   constructor(
     private authService: AuthService,
@@ -51,6 +52,9 @@ export class HeaderComponent implements OnInit {
       if (config && config.dateFormat != null) {
         this.dateFormat = config.dateFormat;
       }
+    });
+    this.playService.viewMode$.subscribe(mode => {
+      this.viewMode = mode;
     });
   }
 
@@ -124,6 +128,14 @@ export class HeaderComponent implements OnInit {
       }
     });
     return Array.from(new Map(filteredPlayers.map(player => [player.id, player])).values()).sort((a, b) => a.id - b.id);
+  }
+
+  setViewMode(mode: ViewMode): void {
+    this.playService.setViewMode(mode);
+  }
+
+  isViewMode(mode: ViewMode): boolean {
+    return this.viewMode === mode;
   }
 
   protected readonly DEFAULT_DATE_FORMAT = DEFAULT_DATE_FORMAT;

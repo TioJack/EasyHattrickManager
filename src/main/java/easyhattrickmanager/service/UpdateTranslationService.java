@@ -258,7 +258,9 @@ public class UpdateTranslationService {
         addTranslation_EN_ES_CA("ehm.and", "and", "y", "i");
         addTranslation_EN_ES_CA("ehm.loyalty", "loyalty", "fidelidad", "fidelitat");
         addTranslation_EN_ES_CA("ehm.season", "season", "temporada", "temporada");
+        addTranslation_EN_ES_CA("ehm.seasons", "seasons", "temporadas", "temporades");
         addTranslation_EN_ES_CA("ehm.week", "week", "semana", "semana");
+        addTranslation_EN_ES_CA("ehm.weeks", "weeks", "semanas", "setmanes");
         addTranslation_EN_ES_CA("ehm.project", "project", "proyecto", "projecte");
         addTranslation_EN_ES_CA("ehm.manage-projects", "manage projects", "gestionar proyectos", "gestió de projectes");
         addTranslation_EN_ES_CA("ehm.download-data", "download data", "descargar datos", "descarregar dades");
@@ -624,8 +626,16 @@ public class UpdateTranslationService {
         addTranslation_EN_ES_CA("ehm.trainer-type-0", "defensive", "defensivo", "defensiu");
         addTranslation_EN_ES_CA("ehm.trainer-type-1", "offensive", "ofensivo", "ofensiu");
         addTranslation_EN_ES_CA("ehm.trainer-type-2", "neutral", "neutro", "neutre");
-        addTranslation_EN_ES_CA("ehm.intensity", "intensity", "intensidad ", "intensitat");
+        addTranslation_EN_ES_CA("ehm.intensity", "intensity", "intensidad", "intensitat");
+        addTranslation_EN_ES_CA("ehm.duration", "duration", "duración", "durada");
+        addTranslation_EN_ES_CA("ehm.coach", "coach", "entrenador", "entrenador");
+        addTranslation_EN_ES_CA("ehm.assistant-coach", "assistant coach", "entrenador asistente", "entrenador assistent");
+        addTranslation_EN_ES_CA("ehm.stamina", "stamina", "resistencia", "resistència");
+        addTranslation_EN_ES_CA("ehm.add-training-stage", "add training stage", "añadir etapa de entrenamiento", "afegir etapa d'entrenament");
         addTranslation_EN_ES_CA("ehm.totals", "totals", "totales", "totals");
+        addTranslation_EN_ES_CA("ehm.total-weeks", "total weeks", "total semanas", "total setmanes");
+        addTranslation_EN_ES_CA("ehm.total-seasons", "total seasons", "total temporadas", "total temporades");
+        addTranslation_EN_ES_CA("ehm.total-wage", "total wage", "salario total", "salari total");
         addTranslation_EN_ES_CA("ehm.averages", "averages", "medias", "mitges");
         addTranslation_EN_ES_CA("ehm.players", "players", "jugadores", "jugadors");
         addTranslation_EN_ES_CA("ehm.very-low", "very low", "muy bajo", "molt baix");
@@ -633,6 +643,10 @@ public class UpdateTranslationService {
         addTranslation_EN_ES_CA("ehm.high", "high", "alto", "alt");
         addTranslation_EN_ES_CA("ehm.very-high", "very high", "muy alto", "molt alt");
         addTranslation_EN_ES_CA("ehm.training", "training", "entrenamiento", "entrenament");
+        addTranslation_EN_ES_CA("ehm.view-players", "players", "jugadores", "jugadors");
+        addTranslation_EN_ES_CA("ehm.training-planner", "training planner", "planificador de entrenamiento", "planificador d'entrenament");
+        addTranslation_EN_ES_CA("ehm.training-planner-welcome", "Welcome to the Easy Hattrick Manager training planner.", "Bienvenido al planificador de entrenamiento de Easy Hattrick Manager.", "Benvingut al planificador d'entrenament d'Easy Hattrick Manager.");
+        addTranslation_EN_ES_CA("ehm.training-planner-help", "To get started, add training stages using the form on the left.", "Para empezar, añade etapas de entrenamiento mediante el formulario de la izquierda.", "Per començar, afegeix etapes d'entrenament mitjançant el formulari de l'esquerra.");
         addTranslation_EN_ES_CA("ehm.show-training-info", "show training info", "mostrar información del entrenamiento", "mostrar informació de l'entrenament");
         addTranslation_EN_ES_CA("ehm.show-training-info-help",
             "The calculation of training received takes into account minutes played, position, training type, coach level, assistant coach level, training intensity, and stamina part.",

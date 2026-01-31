@@ -3,6 +3,7 @@ import {map, Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {Currency, DataResponse, Language, PlayerInfo, UserConfig} from './model/data-response';
 import {PlayerDataResponse} from './model/player-data-response';
+import {TeamTrainingRequest, TeamTrainingResponse} from './model/team-training';
 
 @Injectable({
   providedIn: 'root'
@@ -88,6 +89,10 @@ export class DataService {
 
   getPlayerData(playerId: number): Observable<PlayerDataResponse> {
     return this.http.get<PlayerDataResponse>(`${this.apiUrl}/player/${playerId}`);
+  }
+
+  teamTraining(request: TeamTrainingRequest): Observable<TeamTrainingResponse> {
+    return this.http.post<TeamTrainingResponse>(`${this.apiUrl}/teamTraining`, request);
   }
 
 }

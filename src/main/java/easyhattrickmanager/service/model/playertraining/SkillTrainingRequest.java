@@ -1,4 +1,4 @@
-package easyhattrickmanager.service.model.skilltrainingrequest;
+package easyhattrickmanager.service.model.playertraining;
 
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +13,6 @@ public class SkillTrainingRequest {
     int assistants;
     int intensity;
     int stamina;
-    Training training;
+    double coefficientSkill;
     int minutes;
 }

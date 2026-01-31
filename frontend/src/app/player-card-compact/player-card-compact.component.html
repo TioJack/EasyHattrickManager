@@ -1,0 +1,177 @@
+<div class="card h-100 w-100" *ngIf="player">
+  <div class="card-body p-2">
+    <div class="fw-bold text-truncate mb-2 text-start fw-bold fs-6">
+      <span *ngIf="player.playerNumber">{{ player.playerNumber }}. </span>
+      <a target="_blank" href="http://hattrick.org/goto.ashx?path=/Club/Players/Player.aspx?playerId={{ player.id }}">
+        <span>
+          {{ player.firstName }}
+          <span *ngIf="player.nickName">'{{ player.nickName }}'</span>
+          {{ player.lastName }}
+        </span>
+      </a>
+      <img
+        *ngIf="player.motherClubBonus"
+        src="assets/status/motherClubBonus.png"
+        alt=""
+        class="icon ms-1"/>
+    </div>
+
+    <table class="w-100 player-card-table player-card-table-top">
+      <colgroup>
+        <col class="player-card-col-label-top"/>
+        <col class="player-card-col-value-top"/>
+        <col class="player-card-col-extra-top"/>
+      </colgroup>
+      <tr>
+        <td class="text-end pe-1 hidden-text" [attr.title]="'ehm.age' | translate | firstCapitalize">
+          {{ 'ehm.age' | translate | firstCapitalize }}
+        </td>
+        <td class="text-start text-nowrap">
+          {{ player.age }}{{ 'ehm.years' | translate | firstLetter }}
+          {{ player.ageDays }}{{ 'ehm.days' | translate | firstLetter }}
+        </td>
+        <td>HTMS</td>
+      </tr>
+      <tr>
+        <td class="text-end pe-1 hidden-text" [attr.title]="'ehm.tsi' | translate">
+          {{ 'ehm.tsi' | translate }}
+        </td>
+        <td class="text-start text-nowrap">{{ player.tsi | numberSeparator }}</td>
+        <td class="text-end align-top htms-cell" rowspan="2">
+          <table class="htms-table">
+            <tr>
+              <td>{{ player.htms | numberSeparator }}</td>
+              <td>|</td>
+              <td>{{ player.htms28 | numberSeparator }}</td>
+            </tr>
+            <tr *ngIf="player?.playerSubSkill && userConfig?.showSubSkills" class="green">
+              <td>{{ player.playerSubSkill?.htms | numberSeparator }}</td>
+              <td>|</td>
+              <td>{{ player.playerSubSkill?.htms28 | numberSeparator }}</td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td class="text-end pe-1 hidden-text" [attr.title]="'ehm.wage' | translate | firstCapitalize">
+          {{ 'ehm.wage' | translate | firstCapitalize }}
+        </td>
+        <td class="text-start text-nowrap">
+          {{ userConfig ? (player.salary | salary:userConfig.currency) : (player.salary | numberSeparator) }}
+        </td>
+      </tr>
+    </table>
+
+    <table class="w-100 player-card-table">
+      <colgroup>
+        <col class="player-card-col-label-left"/>
+        <col class="player-card-col-bar"/>
+        <col class="player-card-col-value-right"/>
+      </colgroup>
+      <tr>
+        <td class="text-end pe-1 hidden-text" [attr.title]="'ht.skill-stamina' | translate">
+          {{ 'ht.skill-stamina' | translate }}
+        </td>
+        <td class="text-start">
+          <app-skill [skill]="player.staminaSkill" [max]="9"></app-skill>
+        </td>
+        <td class="text-end">
+          <ng-container *ngIf="getDecimalParts((userConfig?.showSubSkills ? player.staminaSkill + (player.playerSubSkill?.stamina ?? 0) : player.staminaSkill), 2) as parts">
+            {{ parts.whole }}<span *ngIf="userConfig?.showSubSkills" class="green">.{{ parts.decimal }}</span>
+          </ng-container>
+        </td>
+      </tr>
+      <tr>
+        <td class="text-end pe-1 hidden-text" [attr.title]="'ht.skill-keeper' | translate">
+          {{ 'ht.skill-keeper' | translate }}
+        </td>
+        <td class="text-start">
+          <app-skill [skill]="player.keeperSkill" [max]="20"></app-skill>
+        </td>
+        <td class="text-end">
+          <ng-container *ngIf="getDecimalParts((userConfig?.showSubSkills ? player.keeperSkill + (player.playerSubSkill?.keeper ?? 0) : player.keeperSkill), 2) as parts">
+            {{ parts.whole }}<span *ngIf="userConfig?.showSubSkills" class="green">.{{ parts.decimal }}</span>
+          </ng-container>
+        </td>
+      </tr>
+      <tr>
+        <td class="text-end pe-1 hidden-text" [attr.title]="'ht.skill-defender' | translate">
+          {{ 'ht.skill-defender' | translate }}
+        </td>
+        <td class="text-start">
+          <app-skill [skill]="player.defenderSkill" [max]="20"></app-skill>
+        </td>
+        <td class="text-end">
+          <ng-container *ngIf="getDecimalParts((userConfig?.showSubSkills ? player.defenderSkill + (player.playerSubSkill?.defender ?? 0) : player.defenderSkill), 2) as parts">
+            {{ parts.whole }}<span *ngIf="userConfig?.showSubSkills" class="green">.{{ parts.decimal }}</span>
+          </ng-container>
+        </td>
+      </tr>
+      <tr>
+        <td class="text-end pe-1 hidden-text" [attr.title]="'ht.skill-playmaker' | translate">
+          {{ 'ht.skill-playmaker' | translate }}
+        </td>
+        <td class="text-start">
+          <app-skill [skill]="player.playmakerSkill" [max]="20"></app-skill>
+        </td>
+        <td class="text-end">
+          <ng-container *ngIf="getDecimalParts((userConfig?.showSubSkills ? player.playmakerSkill + (player.playerSubSkill?.playmaker ?? 0) : player.playmakerSkill), 2) as parts">
+            {{ parts.whole }}<span *ngIf="userConfig?.showSubSkills" class="green">.{{ parts.decimal }}</span>
+          </ng-container>
+        </td>
+      </tr>
+      <tr>
+        <td class="text-end pe-1 hidden-text" [attr.title]="'ht.skill-winger' | translate">
+          {{ 'ht.skill-winger' | translate }}
+        </td>
+        <td class="text-start">
+          <app-skill [skill]="player.wingerSkill" [max]="20"></app-skill>
+        </td>
+        <td class="text-end">
+          <ng-container *ngIf="getDecimalParts((userConfig?.showSubSkills ? player.wingerSkill + (player.playerSubSkill?.winger ?? 0) : player.wingerSkill), 2) as parts">
+            {{ parts.whole }}<span *ngIf="userConfig?.showSubSkills" class="green">.{{ parts.decimal }}</span>
+          </ng-container>
+        </td>
+      </tr>
+      <tr>
+        <td class="text-end pe-1 hidden-text" [attr.title]="'ht.skill-passer' | translate">
+          {{ 'ht.skill-passer' | translate }}
+        </td>
+        <td class="text-start">
+          <app-skill [skill]="player.passingSkill" [max]="20"></app-skill>
+        </td>
+        <td class="text-end">
+          <ng-container *ngIf="getDecimalParts((userConfig?.showSubSkills ? player.passingSkill + (player.playerSubSkill?.passing ?? 0) : player.passingSkill), 2) as parts">
+            {{ parts.whole }}<span *ngIf="userConfig?.showSubSkills" class="green">.{{ parts.decimal }}</span>
+          </ng-container>
+        </td>
+      </tr>
+      <tr>
+        <td class="text-end pe-1 hidden-text" [attr.title]="'ht.skill-scorer' | translate">
+          {{ 'ht.skill-scorer' | translate }}
+        </td>
+        <td class="text-start">
+          <app-skill [skill]="player.scorerSkill" [max]="20"></app-skill>
+        </td>
+        <td class="text-end">
+          <ng-container *ngIf="getDecimalParts((userConfig?.showSubSkills ? player.scorerSkill + (player.playerSubSkill?.scorer ?? 0) : player.scorerSkill), 2) as parts">
+            {{ parts.whole }}<span *ngIf="userConfig?.showSubSkills" class="green">.{{ parts.decimal }}</span>
+          </ng-container>
+        </td>
+      </tr>
+      <tr>
+        <td class="text-end pe-1 hidden-text" [attr.title]="'ht.skill-kicker' | translate">
+          {{ 'ht.skill-kicker' | translate }}
+        </td>
+        <td class="text-start">
+          <app-skill [skill]="player.setPiecesSkill" [max]="20"></app-skill>
+        </td>
+        <td class="text-end">
+          <ng-container *ngIf="getDecimalParts((userConfig?.showSubSkills ? player.setPiecesSkill + (player.playerSubSkill?.setPieces ?? 0) : player.setPiecesSkill), 2) as parts">
+            {{ parts.whole }}<span *ngIf="userConfig?.showSubSkills" class="green">.{{ parts.decimal }}</span>
+          </ng-container>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>

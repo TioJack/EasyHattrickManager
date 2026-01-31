@@ -3,6 +3,9 @@ import {BehaviorSubject} from 'rxjs';
 import {PlayerInfo, PlayerTrainingInfo, Project, StaffInfo, TeamExtendedInfo, TrainingInfo} from './model/data-response';
 import {TrainingStats} from './model/training-stats';
 import {PlayerStats} from './model/player-stats';
+import {WeekInfo} from '../player/model/week-info';
+
+export type ViewMode = 'players' | 'training-planner';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +24,7 @@ export class PlayService {
   private trainingSubject = new BehaviorSubject<TrainingInfo | null>(null);
   private trainingStatsSubject = new BehaviorSubject<TrainingStats | null>(null);
   private playerStatsSubject = new BehaviorSubject<PlayerStats | null>(null);
+  private viewModeSubject = new BehaviorSubject<ViewMode>('players');
 
   selectedProject$ = this.selectedProjectSubject.asObservable();
   selectedTeam$ = this.selectedTeamSubject.asObservable();
@@ -32,14 +36,32 @@ export class PlayService {
   training$ = this.trainingSubject.asObservable();
   trainingStats$ = this.trainingStatsSubject.asObservable();
   playerStats$ = this.playerStatsSubject.asObservable();
+  viewMode$ = this.viewModeSubject.asObservable();
 
   selectProject(project: Project): void {
     this.selectedProjectSubject.next(project);
   }
 
+  setViewMode(mode: ViewMode): void {
+    this.viewModeSubject.next(mode);
+  }
+
   selectTeam(team: TeamExtendedInfo): void {
     this.selectedTeamSubject.next(team);
     this.clearSeasonWeek();
+  }
+
+  getCurrentWeekInfo(): WeekInfo | null {
+    const season = this.selectedSeasonSubject.value;
+    const week = this.selectedWeekSubject.value;
+    if (season == null || week == null) {
+      return null;
+    }
+    return {
+      season,
+      week,
+      date: this.dateSubject.value ?? new Date().toISOString()
+    };
   }
 
   private selectSeasonAndWeek(season: number, week: number): void {

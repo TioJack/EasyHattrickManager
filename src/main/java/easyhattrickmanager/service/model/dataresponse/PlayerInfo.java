@@ -30,7 +30,7 @@ public class PlayerInfo {
     boolean motherClubBonus;
     int leadership;
     int salary;
-    //boolean abroad;
+    boolean abroad;
     //int leagueGoals;
     //int cupGoals;
     //int friendliesGoals;

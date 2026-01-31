@@ -31,7 +31,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class CalculateTrainingPercentageService {
+public class TrainingPercentageService {
 
     private final TeamDAO teamDAO;
     private final LeagueDAO leagueDAO;
