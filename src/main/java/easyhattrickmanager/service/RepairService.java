@@ -9,6 +9,7 @@ import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 
 import easyhattrickmanager.repository.LeagueDAO;
 import easyhattrickmanager.repository.PlayerDataDAO;
+import easyhattrickmanager.repository.PlayerFormDAO;
 import easyhattrickmanager.repository.PlayerSubSkillDAO;
 import easyhattrickmanager.repository.PlayerTrainingDAO;
 import easyhattrickmanager.repository.StaffMemberDAO;
@@ -17,6 +18,7 @@ import easyhattrickmanager.repository.TrainerDAO;
 import easyhattrickmanager.repository.TrainingDAO;
 import easyhattrickmanager.repository.model.League;
 import easyhattrickmanager.repository.model.PlayerData;
+import easyhattrickmanager.repository.model.PlayerForm;
 import easyhattrickmanager.repository.model.PlayerSubSkill;
 import easyhattrickmanager.repository.model.PlayerTraining;
 import easyhattrickmanager.repository.model.StaffMember;
@@ -52,6 +54,7 @@ public class RepairService {
     private final StaffMemberDAO staffMemberDAO;
     private final PlayerTrainingDAO playerTrainingDAO;
     private final PlayerSubSkillDAO playerSubSkillDAO;
+    private final PlayerFormDAO playerFormDAO;
     private final TrainingPercentageService trainingPercentageService;
     private final PlayerTrainingService playerTrainingService;
 
@@ -466,6 +469,29 @@ public class RepairService {
                         playerTrainingsByWeek.getOrDefault(seasonWeek, List.of())
                     );
                     playerSubSkills.forEach(playerSubSkillDAO::insert);
+                });
+        });
+    }
+
+    public void getPlayerForm() {
+        teamDAO.getActiveTeams().forEach(team -> {
+            List<String> playerFormWeeks = playerFormDAO.get(team.getId()).stream().map(PlayerForm::getSeasonWeek).distinct().toList();
+            List<String> dataWeeks = playerDataDAO.get(team.getId()).stream().map(PlayerData::getSeasonWeek).distinct().toList();
+
+            Map<String, List<PlayerSubSkill>> playerSubSkillsByWeek = playerSubSkillDAO.get(team.getId()).stream().collect(groupingBy(PlayerSubSkill::getSeasonWeek));
+            Map<String, List<PlayerData>> playerDataByWeek = playerDataDAO.get(team.getId()).stream().collect(groupingBy(PlayerData::getSeasonWeek));
+
+            dataWeeks.stream()
+                .sorted()
+                .filter(seasonWeek -> !playerFormWeeks.contains(seasonWeek))
+                .forEach(seasonWeek -> {
+                    List<PlayerForm> playerForms = playerTrainingService.calculatePlayerForm(
+                        seasonWeek,
+                        team.getId(),
+                        playerDataByWeek.getOrDefault(seasonWeek, List.of()),
+                        playerSubSkillsByWeek.getOrDefault(seasonWeek, List.of())
+                    );
+                    playerForms.forEach(playerFormDAO::insert);
                 });
         });
     }

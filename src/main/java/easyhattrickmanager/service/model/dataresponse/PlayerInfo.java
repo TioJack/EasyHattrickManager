@@ -59,4 +59,5 @@ public class PlayerInfo {
     int playerCategoryId;
     PlayerTrainingInfo playerTraining;
     PlayerSubSkillInfo playerSubSkill;
+    PlayerFormInfo playerFormInfo;
 }

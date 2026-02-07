@@ -12,6 +12,7 @@ import easyhattrickmanager.repository.LanguageDAO;
 import easyhattrickmanager.repository.LeagueDAO;
 import easyhattrickmanager.repository.PlayerDAO;
 import easyhattrickmanager.repository.PlayerDataDAO;
+import easyhattrickmanager.repository.PlayerFormDAO;
 import easyhattrickmanager.repository.PlayerSubSkillDAO;
 import easyhattrickmanager.repository.PlayerTrainingDAO;
 import easyhattrickmanager.repository.StaffMemberDAO;
@@ -24,6 +25,7 @@ import easyhattrickmanager.repository.model.Country;
 import easyhattrickmanager.repository.model.League;
 import easyhattrickmanager.repository.model.Player;
 import easyhattrickmanager.repository.model.PlayerData;
+import easyhattrickmanager.repository.model.PlayerForm;
 import easyhattrickmanager.repository.model.PlayerSubSkill;
 import easyhattrickmanager.repository.model.PlayerTraining;
 import easyhattrickmanager.repository.model.StaffMember;
@@ -70,6 +72,7 @@ public class DataService {
     private final StaffMemberDAO staffMemberDAO;
     private final PlayerDAO playerDAO;
     private final PlayerDataDAO playerDataDAO;
+    private final PlayerFormDAO playerFormDAO;
     private final PlayerSubSkillDAO playerSubSkillDAO;
     private final PlayerTrainingDAO playerTrainingDAO;
     private final LanguageDAO languageDAO;
@@ -118,6 +121,7 @@ public class DataService {
         Map<Integer, Player> playersBaseInfo = playerDAO.get(teamId).stream().collect(toMap(Player::getId, player -> player));
         Map<String, List<PlayerTraining>> playerTrainingByWeek = playerTrainingDAO.get(teamId).stream().collect(groupingBy(PlayerTraining::getSeasonWeek));
         Map<String, List<PlayerSubSkill>> playerSubSkillByWeek = playerSubSkillDAO.get(teamId).stream().collect(groupingBy(PlayerSubSkill::getSeasonWeek));
+        Map<String, List<PlayerForm>> playerFormByWeek = playerFormDAO.get(teamId).stream().collect(groupingBy(PlayerForm::getSeasonWeek));
         Map<String, List<PlayerInfo>> players = playerDataDAO
             .get(teamId)
             .stream()
@@ -127,7 +131,8 @@ public class DataService {
                     playersBaseInfo.get(playerData.getId()),
                     playerData,
                     getPlayerTraining(playerTrainingByWeek.get(playerData.getSeasonWeek()), playerData.getId()),
-                    getPlayerSubSkill(playerSubSkillByWeek.get(playerData.getSeasonWeek()), playerData.getId())
+                    getPlayerSubSkill(playerSubSkillByWeek.get(playerData.getSeasonWeek()), playerData.getId()),
+                    getPlayerForm(playerFormByWeek.get(playerData.getSeasonWeek()), playerData.getId())
                 ),
                     Collectors.toList())));
 
@@ -150,6 +155,10 @@ public class DataService {
 
     private PlayerSubSkill getPlayerSubSkill(List<PlayerSubSkill> playerSubSkills, int playerId) {
         return isEmpty(playerSubSkills) ? null : playerSubSkills.stream().filter(playerSubSkill -> playerSubSkill.getId() == playerId).findFirst().orElse(null);
+    }
+
+    private PlayerForm getPlayerForm(List<PlayerForm> playerForms, int playerId) {
+        return isEmpty(playerForms) ? null : playerForms.stream().filter(playerForm -> playerForm.getId() == playerId).findFirst().orElse(null);
     }
 
     private UserConfig getUserConfig(int userId) {

@@ -125,7 +125,11 @@
           <td class="text-start text-nowrap align-middle">
             <app-skill [skill]="player.playerForm" [max]="8"></app-skill>
           </td>
-          <td class="text-start text-nowrap align-middle">{{ player.playerForm }}</td>
+          <td class="text-start text-nowrap align-middle" [attr.title]="getExpectedFormTooltip()">
+            <ng-container *ngIf="getDecimalParts((userConfig?.showSubSkills ? getFormWithSublevel() : player.playerForm), 2) as parts">
+              {{ parts.whole }}<span *ngIf="userConfig?.showSubSkills" class="green">.{{ parts.decimal }}</span>
+            </ng-container>
+          </td>
           <td class="text-end pe-1 hidden-text" [attr.title]="('ht.skill-passer' | translate) + (getTraining('passing') ? ' - ' + getTraining('passing') : '')" [ngStyle]="getBackgroundColor('passing')">{{ 'ht.skill-passer' | translate }}</td>
           <td [title]="getTraining('passing')" [ngStyle]="getBackgroundColor('passing')">
             <app-skill [skill]="player.passingSkill" [max]="20" [change]="player.changes['passingSkill']"></app-skill>

@@ -20,6 +20,7 @@ import easyhattrickmanager.repository.CountryDAO;
 import easyhattrickmanager.repository.LeagueDAO;
 import easyhattrickmanager.repository.PlayerDAO;
 import easyhattrickmanager.repository.PlayerDataDAO;
+import easyhattrickmanager.repository.PlayerFormDAO;
 import easyhattrickmanager.repository.PlayerSubSkillDAO;
 import easyhattrickmanager.repository.PlayerTrainingDAO;
 import easyhattrickmanager.repository.StaffMemberDAO;
@@ -32,6 +33,7 @@ import easyhattrickmanager.repository.model.Country;
 import easyhattrickmanager.repository.model.League;
 import easyhattrickmanager.repository.model.Player;
 import easyhattrickmanager.repository.model.PlayerData;
+import easyhattrickmanager.repository.model.PlayerForm;
 import easyhattrickmanager.repository.model.PlayerSubSkill;
 import easyhattrickmanager.repository.model.PlayerTraining;
 import easyhattrickmanager.repository.model.StaffMember;
@@ -66,6 +68,7 @@ public class UpdateService {
     private final PlayerDAO playerDAO;
     private final PlayerDataDAO playerDataDAO;
     private final PlayerTrainingDAO playerTrainingDAO;
+    private final PlayerFormDAO playerFormDAO;
     private final PlayerSubSkillDAO playerSubSkillDAO;
     private final TrainingDAO trainingDAO;
     private final TrainerDAO trainerDAO;
@@ -122,6 +125,8 @@ public class UpdateService {
         playerTrainings.forEach(playerTrainingDAO::insert);
         List<PlayerSubSkill> playerSubSkills = playerTrainingService.calculateSubSkillTraining(seasonWeek, teamId, training, getTrainerLevel(staff), getAssistantsLevel(staff), playerDatas, playerTrainings);
         playerSubSkills.forEach(playerSubSkillDAO::insert);
+        List<PlayerForm> playerForms = playerTrainingService.calculatePlayerForm(seasonWeek, teamId, playerDatas, playerSubSkills);
+        playerForms.forEach(playerFormDAO::insert);
     }
 
     private int getTrainerLevel(Stafflist staff) {

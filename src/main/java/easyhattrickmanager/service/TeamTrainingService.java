@@ -33,7 +33,7 @@ public class TeamTrainingService {
 
     private final PlayerTrainingService playerTrainingService;
     private final WageService wageService;
-    private final TSIService tsiService;
+    private final TSIFormService tsiFormService;
 
     public TeamTrainingResponse getTeamTraining(TeamTrainingRequest teamTrainingRequest) {
         AtomicInteger week = new AtomicInteger(0);
@@ -106,7 +106,7 @@ public class TeamTrainingService {
         HTMS htmsWithSubSkills = HTMSUtils.calculateHTMS(age, ageDays, keeper, defender, playmaker, winger, passing, scorer, setPieces);
 
         double wage = ageDays < 7 ? wageService.calculateWage(age, player.isAbroad(), player.getSpecialty(), keeper, defender, playmaker, winger, passing, scorer, setPieces) : player.getSalary();
-        double TSI = tsiService.calculateTSI(player.getPlayerForm(), stamina, keeper, defender, playmaker, winger, passing, scorer);
+        double TSI = tsiFormService.calculateTSI(age, player.getPlayerForm(), stamina, keeper, defender, playmaker, winger, passing, scorer);
 
         return PlayerInfo.builder()
             .id(player.getId())

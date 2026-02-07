@@ -1,8 +1,10 @@
 package easyhattrickmanager.service;
 
 import easyhattrickmanager.repository.PlayerDataDAO;
+import easyhattrickmanager.repository.PlayerFormDAO;
 import easyhattrickmanager.repository.PlayerSubSkillDAO;
 import easyhattrickmanager.repository.model.PlayerData;
+import easyhattrickmanager.repository.model.PlayerForm;
 import easyhattrickmanager.repository.model.PlayerSubSkill;
 import easyhattrickmanager.repository.model.PlayerTraining;
 import easyhattrickmanager.repository.model.Training;
@@ -25,6 +27,8 @@ public class PlayerTrainingService {
 
     private final PlayerSubSkillDAO playerSubSkillDAO;
     private final PlayerDataDAO playerDataDAO;
+    private final PlayerFormDAO playerFormDAO;
+    private final TSIFormService tsiFormService;
 
     public List<PlayerSubSkill> calculateSubSkillTraining(String seasonWeek, int teamId, Training training, int trainerLevel, int assistantsLevel, List<PlayerData> playerDatas, List<PlayerTraining> playerTrainings) {
         if (playerDatas == null || playerDatas.isEmpty()) {
@@ -101,6 +105,47 @@ public class PlayerTrainingService {
                 .setPieces(setPieces)
                 .htms(htms.getHtms())
                 .htms28(htms.getHtms28())
+                .build());
+        }
+
+        return result;
+    }
+
+    public List<PlayerForm> calculatePlayerForm(String seasonWeek, int teamId, List<PlayerData> playerDatas, List<PlayerSubSkill> playerSubSkills) {
+        if (playerDatas == null || playerDatas.isEmpty()) {
+            return List.of();
+        }
+
+        List<PlayerSubSkill> safePlayerSubSkills = playerSubSkills == null ? List.of() : playerSubSkills;
+        Map<Integer, PlayerSubSkill> playerSubSkillById = safePlayerSubSkills.stream()
+            .collect(Collectors.toMap(PlayerSubSkill::getId, Function.identity(), (a, b) -> a));
+        String previousWeek = SeasonWeekUtils.previous(seasonWeek);
+        Map<Integer, PlayerForm> previousPlayerFormById = playerFormDAO.get(teamId).stream()
+            .filter(playerForm -> previousWeek.equals(playerForm.getSeasonWeek()))
+            .collect(Collectors.toMap(PlayerForm::getId, Function.identity(), (a, b) -> a));
+
+        List<PlayerForm> result = new ArrayList<>();
+        for (PlayerData playerData : playerDatas) {
+            PlayerSubSkill playerSubSkill = playerSubSkillById.get(playerData.getId());
+            double stamina = playerData.getStaminaSkill() + (playerSubSkill == null ? 0.0 : playerSubSkill.getStamina());
+            double keeper = playerData.getKeeperSkill() + (playerSubSkill == null ? 0.0 : playerSubSkill.getKeeper());
+            double defender = playerData.getDefenderSkill() + (playerSubSkill == null ? 0.0 : playerSubSkill.getDefender());
+            double playmaker = playerData.getPlaymakerSkill() + (playerSubSkill == null ? 0.0 : playerSubSkill.getPlaymaker());
+            double winger = playerData.getWingerSkill() + (playerSubSkill == null ? 0.0 : playerSubSkill.getWinger());
+            double passing = playerData.getPassingSkill() + (playerSubSkill == null ? 0.0 : playerSubSkill.getPassing());
+            double scorer = playerData.getScorerSkill() + (playerSubSkill == null ? 0.0 : playerSubSkill.getScorer());
+            double form = tsiFormService.calculateForm(playerData.getAge(), playerData.getTSI(), stamina, keeper, defender, playmaker, winger, passing, scorer);
+            double formPreviousWeek = previousPlayerFormById.getOrDefault(playerData.getId(), PlayerForm.builder().form(form).build()).getForm();
+            double hiddenForm = tsiFormService.calculateHiddenForm(form, formPreviousWeek);
+            double expectedForm = tsiFormService.calculateExpectedForm(form, hiddenForm);
+
+            result.add(PlayerForm.builder()
+                .id(playerData.getId())
+                .seasonWeek(seasonWeek)
+                .teamId(teamId)
+                .form(form)
+                .hiddenForm(hiddenForm)
+                .expectedForm(expectedForm)
                 .build());
         }
 

@@ -4,7 +4,7 @@ import {LowerCasePipe, NgIf, NgStyle} from '@angular/common';
 import {UserConfigService} from '../services/user-config.service';
 import {SalaryPipe} from '../pipes/salary.pipe';
 import {SkillComponent} from '../skill/skill.component';
-import {TranslatePipe} from '@ngx-translate/core';
+import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {FirstLetterPipe} from '../pipes/first-letter.pipe';
 import {SpecialtyComponent} from '../specialty/specialty.component';
 import {FirstCapitalizePipe} from '../pipes/first-capitalize.pipe';
@@ -30,7 +30,10 @@ export class PlayerCardComponent implements OnInit, AfterViewInit, OnDestroy {
   private rafId?: number;
   private readonly truncateDecimalsPipe = new TruncateDecimalsPipe();
 
-  constructor(private userConfigService: UserConfigService) {
+  constructor(
+    private userConfigService: UserConfigService,
+    private translateService: TranslateService
+  ) {
   }
 
   ngOnInit(): void {
@@ -112,6 +115,41 @@ export class PlayerCardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     const [whole, decimal] = formatted.split('.');
     return {whole, decimal: decimal ?? ''};
+  }
+
+  getFormWithSublevel(): number {
+    const visualForm = this.player?.playerForm ?? 0;
+    if (visualForm === 8) {
+      return 8;
+    }
+    const calculatedForm = this.player?.playerFormInfo?.form;
+    if (calculatedForm == null) {
+      return visualForm;
+    }
+    if (Math.floor(calculatedForm) === visualForm) {
+      return calculatedForm;
+    }
+    if (visualForm < 8 && calculatedForm > visualForm) {
+      return visualForm + 0.99;
+    }
+    return visualForm;
+  }
+
+  getExpectedFormTooltip(): string {
+    const formInfo = this.player?.playerFormInfo;
+    if (!formInfo) {
+      return '';
+    }
+    const expected = this.truncateDecimalsPipe.transform(formInfo.expectedForm, 2);
+    const calculated = this.truncateDecimalsPipe.transform(formInfo.form, 2);
+    const hidden = this.truncateDecimalsPipe.transform(formInfo.hiddenForm, 2);
+    if (!expected || !calculated || !hidden) {
+      return '';
+    }
+    const calculatedLabel = this.translateService.instant('ehm.form-calculated');
+    const hiddenLabel = this.translateService.instant('ehm.form-hidden');
+    const expectedLabel = this.translateService.instant('ehm.form-expected');
+    return `${calculatedLabel} ${calculated}\n${hiddenLabel} ${hidden}\n${expectedLabel} ${expected}`;
   }
 
   private setupSetPiecesObservers(): void {

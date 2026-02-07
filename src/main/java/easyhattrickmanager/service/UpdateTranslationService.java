@@ -668,6 +668,9 @@ public class UpdateTranslationService {
             "Esta CHPP siempre va a ser gratis. Pero se agradece cualquier contribución para su mantenimiento y crecimiento.",
             "Aquesta CHPP sempre serà gratis. Però s'agraeix qualsevol contribució per al seu manteniment i millora.");
         addTranslation_EN_ES_CA("ehm.skill-level", "skill level", "nivel de habilidad", "nivell d'habilitat");
+        addTranslation_EN_ES_CA("ehm.form-calculated", "calculated form", "forma calculada", "forma calculada");
+        addTranslation_EN_ES_CA("ehm.form-hidden", "hidden form", "forma oculta", "forma oculta");
+        addTranslation_EN_ES_CA("ehm.form-expected", "expected form", "forma esperada", "forma esperada");
         addTranslation_EN_ES_CA("ehm.main-skills-group", "skills", "habilidades", "habilitats");
         addTranslation_EN_ES_CA("ehm.status-group", "status", "estado", "estat");
         addTranslation_EN_ES_CA("ehm.trainer-skills-group", "coach", "entrenador", "entrenador");

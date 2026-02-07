@@ -104,6 +104,7 @@ export interface PlayerInfo {
   playerCategoryId: number;
   playerTraining: PlayerTrainingInfo;
   playerSubSkill?: PlayerSubSkillInfo;
+  playerFormInfo?: PlayerFormInfo;
   changes: Record<string, number>;
 }
 
@@ -128,6 +129,12 @@ export interface PlayerSubSkillInfo {
   setPieces: number;
   htms: number;
   htms28: number;
+}
+
+export interface PlayerFormInfo {
+  form: number;
+  hiddenForm: number;
+  expectedForm: number;
 }
 
 export interface UserConfig {

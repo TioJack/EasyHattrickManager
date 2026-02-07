@@ -138,6 +138,16 @@ CREATE TABLE IF NOT EXISTS `player_subskill` (
     PRIMARY KEY (`id`, `season_week`, `team_id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS `player_form` (
+    id INT NOT NULL,
+    season_week VARCHAR(7) NOT NULL,
+    team_id INT NOT NULL,
+    form DOUBLE NOT NULL,
+    hidden_form DOUBLE NOT NULL,
+    expected_form DOUBLE NOT NULL,
+    PRIMARY KEY (`id`, `season_week`, `team_id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE IF NOT EXISTS player_training (
     id INT NOT NULL,
     season_week VARCHAR(7) NOT NULL,

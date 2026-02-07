@@ -40,4 +40,10 @@ public class RepairController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("playerForm")
+    public ResponseEntity<Void> getPlayerForm() {
+        repairService.getPlayerForm();
+        return ResponseEntity.ok().build();
+    }
+
 }
