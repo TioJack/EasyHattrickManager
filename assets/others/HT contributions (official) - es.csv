@@ -1,0 +1,26 @@
+,,,,,,,,,,,,
+,Contribuciones HT (oficiales),Mediocampo,Defensa central,,Defensa lateral,,Ataque central,,Ataque lateral,,,
+,,Jugadas,Portería,Defensa,Portería,Defensa,Pases,Anotación,Pases,Extremo,Anotación,
+,Portero,,87%,35%,61%,25%,,,,,,
+,Defensa central normal,25%,,100%,,52%,,,,,,1
+,Defensa central ofensivo,40%,,73%,,40%,,,,,,1
+,Defensa central hacia banda (TW),15%,,67%,,81%,,,,26%,,1
+,Lateral normal,15%,,38%,,92%,,,,59%,,
+,Lateral ofensivo,20%,,35%,,74%,,,,69%,,
+,Lateral defensivo,10%,,43%,,100%,,,,45%,,
+,Lateral hacia el medio (TM),20%,,70%,,75%,,,,35%,,
+,Interior normal,100%,,40%,,19%,33%,22%,26%,,,1
+,Interior ofensivo,95%,,16%,,9%,49%,31%,36%,,,1
+,Interior defensivo,95%,,58%,,27%,18%,13%,14%,,,1
+,Interior hacia banda (TW),90%,,33%,,24%,23%,,31%,59%,,1
+,Extremo normal,45%,,20%,,35%,11%,,26%,86%,,
+,Extremo ofensivo,30%,,13%,,22%,13%,,29%,100%,,
+,Extremo defensivo,30%,,25%,,61%,5%,,21%,69%,,
+,Extremo hacia el medio (TM),55%,,25%,,29%,16%,,15%,74%,,
+,Delantero normal,25%,,,,,33%,100%,14%+14%,24%+24%,27%+27%,2
+,Delantero defensivo,35%,,,,,53%,56%,31%+31%,13%+13%,13%+13%,2
+,Delantero defensivo técnico,35%,,,,,53%,56%,41%+41%,13%+13%,13%+13%,2
+,Delantero hacia banda (TW),15%,,,,,23%,66%,21%+6%,64%+21%,51%+19%,2
+,,,,,,,,,,,,
+,1,"Si el jugador ocupa la posición central, su contribución al ataque lateral se divide 50%-50%; si ocupa la posición izquierda/derecha, su contribución va 100% a ese lado.",,,,,,,,,,
+,2,"Los delanteros contribuyen por igual a ambos lados, sin importar la posición ocupada (excepto el TW).",,,,,,,,,,

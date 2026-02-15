@@ -13,7 +13,7 @@
 
   <groupId>tiojack</groupId>
   <artifactId>easyhattrickmanager</artifactId>
-  <version>34</version>
+  <version>35</version>
   <packaging>jar</packaging>
 
   <name>EasyHattrickManager</name>
@@ -51,8 +51,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
-      <version>3.4.5</version>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -84,7 +82,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-jdbc</artifactId>
-      <version>3.2.2</version>
     </dependency>
     <dependency>
       <groupId>com.mysql</groupId>

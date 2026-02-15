@@ -10,14 +10,16 @@
       <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-4 d-flex">
         <app-training class="flex-fill w-100"></app-training>
       </div>
-      <div *ngFor="let player of players; trackBy: trackByPlayerId" class="col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-4 d-flex">
+      <div *ngFor="let player of basePlayers; trackBy: trackByPlayerId" class="col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-4 d-flex">
         <app-player-card class="flex-fill w-100" [player]="player" [training]="training"></app-player-card>
       </div>
     </div>
   </div>
 
   <ng-template #plannerView>
-    <div class="row g-3 p-3 w-100 align-items-stretch">
+    <div class="planner-overlay-root" [attr.aria-busy]="isTeamTrainingLoading">
+      <fieldset class="planner-busy-fieldset" [disabled]="isTeamTrainingLoading">
+        <div class="row g-3 p-3 w-100 align-items-stretch">
       <div class="col-12">
         <div class="planner-row align-items-stretch">
           <div class="planner-side">
@@ -187,19 +189,26 @@
                     </div>
                   </div>
                   <div class="planner-summary-divider"></div>
-                  <div class="planner-summary-row">
-                    <span class="text-muted small">{{ 'ehm.total-weeks' | translate }}</span>
-                    <span class="fw-semibold">{{ getTotalTrainingWeeks() }}</span>
-                  </div>
-                  <div class="planner-summary-row">
-                    <span class="text-muted small">{{ 'ehm.total-seasons' | translate }}</span>
-                    <span class="fw-semibold">{{ getTotalTrainingSeasons() }}</span>
-                  </div>
-                  <div class="planner-summary-row">
-                    <span class="text-muted small">{{ 'ehm.total-wage' | translate }}</span>
-                    <span class="fw-semibold">
-                      {{ userConfig ? (getTotalWagesPaid() | salary:userConfig.currency) : (getTotalWagesPaid() | numberSeparator) }}
-                    </span>
+                  <div>
+                    <div class="planner-ratings-title planner-ratings-title--center">
+                      {{ 'ehm.statistics-totals' | translate | firstCapitalize }}
+                    </div>
+                    <div class="planner-stats-list planner-summary-stats-list">
+                      <div class="planner-stats-row planner-stats-row--summary">
+                        <span class="planner-stats-label">{{ 'ehm.wage' | translate | firstCapitalize }}</span>
+                        <span class="planner-stats-value">
+                          {{ userConfig ? (getTotalWagesPaid() | salary:userConfig.currency) : (getTotalWagesPaid() | numberSeparator) }}
+                        </span>
+                      </div>
+                      <div class="planner-stats-row">
+                        <span class="planner-stats-label">{{ 'ehm.weeks' | translate | firstCapitalize }}</span>
+                        <span class="planner-stats-value">{{ getTotalTrainingWeeks() }}</span>
+                      </div>
+                      <div class="planner-stats-row">
+                        <span class="planner-stats-label">{{ 'ehm.seasons' | translate | firstCapitalize }}</span>
+                        <span class="planner-stats-value">{{ getTotalTrainingSeasons() }}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <ng-template #noEndWeek></ng-template>
@@ -209,87 +218,408 @@
         </div>
       </div>
 
-      <div *ngFor="let player of players; trackBy: trackByPlayerId" class="col-12">
-        <div class="planner-row align-items-stretch">
-          <div class="planner-side d-flex">
-            <app-player-card-compact class="flex-fill w-100" [player]="player"></app-player-card-compact>
-          </div>
-          <div class="planner-center d-flex">
-            <div class="card flex-fill w-100">
-              <div class="card-body p-2 d-flex flex-column planner-center-body">
-                <div *ngIf="trainingPlans.length === 0" class="text-muted"></div>
-                <div *ngIf="trainingPlans.length > 0" class="planner-sliders-area">
-                  <div class="planner-sliders">
-                    <div
-                      *ngFor="let plan of trainingPlans; let i = index; trackBy: trackByStageIndex"
-                      class="planner-slider-segment"
-                      [style.flex-grow]="plan.weeks"
-                      [style.flex-basis.%]="0">
-                      <input
-                        class="planner-slider"
-                        type="range"
-                        orient="vertical"
-                        min="0"
-                        max="100"
-                        [style.accentColor]="trainingTypeColor(plan.typeId)"
-                        [ngModel]="getPlanPercent(player.id, i)"
-                        (ngModelChange)="setPlanPercent(player.id, i, $event)">
-                      <div class="planner-slider-value text-nowrap">
-                        {{ getPlanPercent(player.id, i) }}%
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div *ngIf="trainingPlans.length > 0" class="planner-timeline-area">
-                  <div
-                    class="planner-timeline"
-                    (mousemove)="onTimelineMove($event, player.id)"
-                    (mouseleave)="onTimelineLeave(player.id)">
-                    <div class="planner-timeline-bar">
+      <div class="col-12">
+        <button
+          type="button"
+          class="planner-toggle"
+          [class.planner-toggle--inactive]="!showPlannerPlayers"
+          (click)="togglePlannerPlayers()"
+          [attr.aria-expanded]="showPlannerPlayers">
+          <span class="planner-toggle__icon">
+            <i class="bi" [class.bi-chevron-down]="showPlannerPlayers" [class.bi-chevron-up]="!showPlannerPlayers"></i>
+          </span>
+          <span class="planner-toggle__label">
+            {{ 'ehm.players' | translate | lowercase }}
+          </span>
+        </button>
+      </div>
+
+      <ng-container *ngIf="showPlannerPlayers">
+        <div *ngFor="let player of players; trackBy: trackByPlayerId" class="col-12">
+          <div class="planner-row align-items-stretch">
+            <div class="planner-side d-flex">
+              <app-player-card-compact class="flex-fill w-100" [player]="player"></app-player-card-compact>
+            </div>
+            <div class="planner-center d-flex">
+              <div class="card flex-fill w-100">
+                <div class="card-body p-2 d-flex flex-column planner-center-body">
+                  <div *ngIf="trainingPlans.length === 0" class="text-muted"></div>
+                  <div *ngIf="trainingPlans.length > 0" class="planner-sliders-area">
+                    <div class="planner-sliders">
                       <div
-                        *ngFor="let range of getMaxHtmsRanges(player.id)"
-                        class="planner-timeline-marker"
-                        [class.planner-timeline-marker--range]="range.widthPercent > 0"
-                        [style.left.%]="range.leftPercent"
-                        [style.width.%]="range.widthPercent">
-                      </div>
-                      <div
-                        *ngFor="let plan of trainingPlans; trackBy: trackByStageIndex"
-                        class="planner-timeline-segment"
+                        *ngFor="let plan of trainingPlans; let i = index; trackBy: trackByStageIndex"
+                        class="planner-slider-segment"
                         [style.flex-grow]="plan.weeks"
-                        [style.flex-basis.%]="0"
-                        [style.backgroundColor]="trainingTypeColor(plan.typeId)"
-                        [style.color]="getTrainingTextColor(plan.typeId)">
-                        <span class="planner-timeline-segment-label">
-                          {{ ('ht.training-type-' + plan.typeId) | translate | firstCapitalize }}
-                        </span>
+                        [style.flex-basis.%]="0">
+                        <input
+                          class="planner-slider"
+                          type="range"
+                          orient="vertical"
+                          min="0"
+                          max="100"
+                          [style.accentColor]="trainingTypeColor(plan.typeId)"
+                          [ngModel]="getPlanPercent(player.id, i)"
+                          (ngModelChange)="setPlanPercent(player.id, i, $event)">
+                        <div class="planner-slider-value text-nowrap">
+                          {{ getPlanPercent(player.id, i) }}%
+                        </div>
                       </div>
                     </div>
                   </div>
+                  <div *ngIf="trainingPlans.length > 0" class="planner-timeline-area">
+                    <div
+                      class="planner-timeline"
+                      (mousemove)="onTimelineMove($event, player.id)"
+                      (mouseleave)="onTimelineLeave(player.id)">
+                      <div class="planner-timeline-bar">
+                        <div
+                          *ngFor="let range of getMaxHtmsRanges(player.id)"
+                          class="planner-timeline-marker"
+                          [class.planner-timeline-marker--range]="range.widthPercent > 0"
+                          [style.left.%]="range.leftPercent"
+                          [style.width.%]="range.widthPercent">
+                        </div>
+                        <div
+                          *ngFor="let plan of trainingPlans; trackBy: trackByStageIndex"
+                          class="planner-timeline-segment"
+                          [style.flex-grow]="plan.weeks"
+                          [style.flex-basis.%]="0"
+                          [style.backgroundColor]="trainingTypeColor(plan.typeId)"
+                          [style.color]="getTrainingTextColor(plan.typeId)">
+                          <span class="planner-timeline-segment-label">
+                            {{ ('ht.training-type-' + plan.typeId) | translate | firstCapitalize }}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    *ngIf="getTimelinePopupPlayer(player.id) as timelinePlayer"
+                    class="planner-timeline-popup"
+                    [class.planner-timeline-popup--prime]="isPrimeWeek(player.id)"
+                    [style.left.%]="getTimelinePercent(player.id)">
+                    <app-player-card-compact [player]="timelinePlayer"></app-player-card-compact>
+                  </div>
                 </div>
-                <div
-                  *ngIf="getTimelinePopupPlayer(player.id) as timelinePlayer"
-                  class="planner-timeline-popup"
-                  [class.planner-timeline-popup--prime]="isPrimeWeek(player.id)"
-                  [style.left.%]="getTimelinePercent(player.id)">
-                  <app-player-card-compact [player]="timelinePlayer"></app-player-card-compact>
+              </div>
+            </div>
+            <div class="planner-side d-flex">
+              <ng-container *ngIf="getPlannerResultPlayer(player.id) as result; else noResult">
+                <app-player-card-compact class="flex-fill w-100" [player]="result"></app-player-card-compact>
+              </ng-container>
+              <ng-template #noResult>
+                <div class="card flex-fill w-100"></div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <div *ngIf="players.length > 0" class="col-12">
+        <button
+          type="button"
+          class="planner-toggle"
+          [class.planner-toggle--inactive]="!showPlannerRatings"
+          (click)="togglePlannerRatings()"
+          [attr.aria-expanded]="showPlannerRatings">
+          <span class="planner-toggle__icon">
+            <i class="bi" [class.bi-chevron-down]="showPlannerRatings" [class.bi-chevron-up]="!showPlannerRatings"></i>
+          </span>
+          <span class="planner-toggle__label">
+            {{ 'ehm.lineup-ratings' | translate }}
+          </span>
+        </button>
+      </div>
+
+      <div *ngIf="players.length > 0 && showPlannerRatings" class="col-12">
+        <div class="planner-ratings-layout">
+          <div class="planner-ratings-form-card card">
+            <div class="card-body">
+              <div class="planner-ratings-form">
+                <div class="planner-ratings-title">
+                  {{ 'ehm.lineup-parameters' | translate | firstCapitalize }}
+                </div>
+                <div class="planner-ratings-fields">
+                  <div class="planner-field d-flex flex-row align-items-center gap-2">
+                    <span class="planner-field-label mb-0">{{ 'ehm.calculate-best-lineup' | translate | firstCapitalize }}</span>
+                    <input
+                      class="form-check-input m-0"
+                      type="checkbox"
+                      [(ngModel)]="calculateBestFormation"
+                      (ngModelChange)="onRatingsInputChanged()">
+                  </div>
+                  <label class="planner-field">
+                    <span class="planner-field-label">{{ 'ehm.best-lineup-criteria' | translate | firstCapitalize }}</span>
+                    <select class="form-select form-select-sm" [disabled]="!calculateBestFormation" [(ngModel)]="bestFormationCriteria" (ngModelChange)="onRatingsInputChanged()">
+                      <option *ngFor="let criteria of bestFormationCriteriaOptions" [ngValue]="criteria">
+                        {{ getCriteriaLabel(criteria) }}
+                      </option>
+                    </select>
+                  </label>
+                  <label class="planner-field">
+                    <span class="planner-field-label">{{ 'ehm.formation' | translate | firstCapitalize }}</span>
+                    <select class="form-select form-select-sm" [disabled]="!calculateBestFormation" [(ngModel)]="fixedFormationCode" (ngModelChange)="onRatingsInputChanged()">
+                      <option [ngValue]="null">{{ 'ehm.automatic' | translate | firstCapitalize }}</option>
+                      <option *ngFor="let option of fixedFormationOptions" [ngValue]="option.code">
+                        {{ getFixedFormationOptionLabel(option) }}
+                      </option>
+                    </select>
+                  </label>
+                  <label class="planner-field">
+                    <span class="planner-field-label">{{ 'ht.tactic-types' | translate | firstCapitalize }}</span>
+                    <select class="form-select form-select-sm" [disabled]="!calculateBestFormation" [(ngModel)]="matchDetail.tactic" (ngModelChange)="onRatingsInputChanged()">
+                      <option *ngFor="let tactic of tacticOptions" [ngValue]="tactic">
+                        {{ getTacticTranslationKey(tactic) | translate | firstCapitalize }}
+                      </option>
+                    </select>
+                  </label>
+                  <label class="planner-field">
+                    <span class="planner-field-label">{{ 'ht.team-attitude' | translate | firstCapitalize }}</span>
+                    <select class="form-select form-select-sm" [disabled]="!calculateBestFormation" [(ngModel)]="matchDetail.teamAttitude" (ngModelChange)="onRatingsInputChanged()">
+                      <option *ngFor="let attitude of teamAttitudeOptions" [ngValue]="attitude">
+                        {{ getTeamAttitudeTranslationKey(attitude) | translate | firstCapitalize }}
+                      </option>
+                    </select>
+                  </label>
+                  <label class="planner-field">
+                    <span class="planner-field-label">{{ 'ht.team-spirit' | translate | firstCapitalize }}</span>
+                    <select class="form-select form-select-sm" [disabled]="!calculateBestFormation" [(ngModel)]="matchDetail.teamSpirit" (ngModelChange)="onRatingsInputChanged()">
+                      <option *ngFor="let spirit of teamSpiritOptions" [ngValue]="spirit">
+                        {{ getTeamSpiritTranslationKey(spirit) | translate | firstCapitalize }}
+                      </option>
+                    </select>
+                  </label>
+                  <label class="planner-field">
+                    <span class="planner-field-label">{{ 'ehm.team-spirit-sublevel' | translate | firstCapitalize }}</span>
+                    <select class="form-select form-select-sm" [disabled]="!calculateBestFormation" [(ngModel)]="matchDetail.teamSubSpirit" (ngModelChange)="onRatingsInputChanged()">
+                      <option *ngFor="let value of subSpiritOptions" [ngValue]="value">
+                        {{ value }}
+                      </option>
+                    </select>
+                  </label>
+                  <label class="planner-field">
+                    <span class="planner-field-label">{{ 'ehm.team-confidence' | translate | firstCapitalize }}</span>
+                    <select class="form-select form-select-sm" [disabled]="!calculateBestFormation" [(ngModel)]="matchDetail.teamConfidence" (ngModelChange)="onRatingsInputChanged()">
+                      <option *ngFor="let confidence of teamConfidenceOptions" [ngValue]="confidence">
+                        {{ getTeamConfidenceTranslationKey(confidence) | translate | firstCapitalize }}
+                      </option>
+                    </select>
+                  </label>
+                  <label class="planner-field">
+                    <span class="planner-field-label">{{ 'ehm.team-confidence-sublevel' | translate | firstCapitalize }}</span>
+                    <select class="form-select form-select-sm" [disabled]="!calculateBestFormation" [(ngModel)]="matchDetail.teamSubConfidence" (ngModelChange)="onRatingsInputChanged()">
+                      <option *ngFor="let value of subSpiritOptions" [ngValue]="value">
+                        {{ value }}
+                      </option>
+                    </select>
+                  </label>
+                  <label class="planner-field">
+                    <span class="planner-field-label">{{ 'ehm.stadium' | translate | firstCapitalize }}</span>
+                    <select class="form-select form-select-sm" [disabled]="!calculateBestFormation" [(ngModel)]="matchDetail.sideMatch" (ngModelChange)="onRatingsInputChanged()">
+                      <option *ngFor="let side of sideMatchOptions" [ngValue]="side">
+                        {{ getSideMatchLabel(side) }}
+                      </option>
+                    </select>
+                  </label>
+                  <label class="planner-field">
+                    <span class="planner-field-label">{{ 'ehm.style-of-play' | translate | firstCapitalize }}</span>
+                    <select class="form-select form-select-sm" [disabled]="!calculateBestFormation" [(ngModel)]="matchDetail.styleOfPlay" (ngModelChange)="onRatingsInputChanged()">
+                      <option *ngFor="let value of styleOfPlayOptions" [ngValue]="value">
+                        {{ getStyleOfPlayLabel(value) }}
+                      </option>
+                    </select>
+                  </label>
                 </div>
               </div>
             </div>
           </div>
-          <div class="planner-side d-flex">
-            <ng-container *ngIf="getPlannerResultPlayer(player.id) as result; else noResult">
-              <app-player-card-compact class="flex-fill w-100" [player]="result"></app-player-card-compact>
-            </ng-container>
-            <ng-template #noResult>
-              <div class="card flex-fill w-100"></div>
-            </ng-template>
+
+          <div class="planner-ratings card" [class.planner-ratings--prime-hover]="isBestFormationPrimeHover()">
+            <div class="card-body p-2 d-flex flex-column">
+            <div *ngIf="trainingPlans.length > 0" class="planner-formation-chart-area">
+              <div class="planner-hatstats-header">
+                <span class="planner-hatstats-title">{{ 'ehm.evolution' | translate | firstCapitalize }}</span>
+                <span class="planner-hatstats-week">{{ getDisplayedFormationWeekText() }}</span>
+                <span class="planner-hatstats-best-week">{{ getBestFormationWeekText() }}</span>
+              </div>
+              <div
+                class="planner-hatstats-chart"
+                (mousemove)="onBestFormationTimelineMove($event)"
+                (mouseleave)="onBestFormationTimelineLeave()">
+                <div class="planner-hatstats-chart__segments">
+                  <div
+                    *ngFor="let plan of trainingPlans; trackBy: trackByStageIndex"
+                    class="planner-hatstats-chart__segment"
+                    [style.flex-grow]="plan.weeks"
+                    [style.flex-basis.%]="0"
+                    [style.backgroundColor]="trainingTypeColor(plan.typeId)">
+                  </div>
+                </div>
+                <div
+                  *ngFor="let range of getBestFormationPrimeRanges()"
+                  class="planner-hatstats-chart__prime-range"
+                  [style.left.%]="range.leftPercent"
+                  [style.width.%]="range.widthPercent">
+                </div>
+                <svg class="planner-hatstats-chart__svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+                  <path class="planner-hatstats-chart__line" [attr.d]="getBestFormationHatStatsPath()"></path>
+                </svg>
+                <div
+                  *ngFor="let point of getBestFormationHatStatsPoints()"
+                  class="planner-hatstats-chart__point-dot"
+                  [class.planner-hatstats-chart__point-dot--prime]="point.isPrime"
+                  [class.planner-hatstats-chart__point-dot--hover]="point.isHover"
+                  [style.left.%]="point.xPercent"
+                  [style.top.%]="point.yPercent"
+                  [attr.title]="'W' + point.week + ': ' + (point.value | number:'1.0-2')">
+                </div>
+                <div
+                  *ngIf="bestFormationTimelineHoverPercent != null"
+                  class="planner-hatstats-chart__hover-marker"
+                  [style.left.%]="bestFormationTimelineHoverPercent">
+                </div>
+              </div>
+            </div>
+            <div *ngIf="trainingPlans.length > 0" class="planner-formation-timeline-area">
+              <div
+                class="planner-timeline planner-timeline--summary"
+                (mousemove)="onBestFormationTimelineMove($event)"
+                (mouseleave)="onBestFormationTimelineLeave()">
+                <div class="planner-timeline-bar">
+                  <div
+                    *ngIf="bestFormationTimelineHoverPercent != null"
+                    class="planner-timeline-marker planner-timeline-marker--hover"
+                    [style.left.%]="bestFormationTimelineHoverPercent">
+                  </div>
+                  <div
+                    *ngFor="let range of getBestFormationPrimeRanges()"
+                    class="planner-timeline-marker planner-timeline-marker--range"
+                    [style.left.%]="range.leftPercent"
+                    [style.width.%]="range.widthPercent">
+                  </div>
+                  <div
+                    *ngFor="let plan of trainingPlans; trackBy: trackByStageIndex"
+                    class="planner-timeline-segment"
+                    [style.flex-grow]="plan.weeks"
+                    [style.flex-basis.%]="0"
+                    [style.backgroundColor]="trainingTypeColor(plan.typeId)"
+                    [style.color]="getTrainingTextColor(plan.typeId)">
+                    <span class="planner-timeline-segment-label">
+                      {{ ('ht.training-type-' + plan.typeId) | translate | firstCapitalize }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="planner-ratings-pitches">
+                <div class="planner-pitch-panel">
+                  <div class="planner-pitch-title">
+                    {{ 'ehm.best-lineup' | translate | firstCapitalize }}: {{ getBestFormationSummary() }}
+                  </div>
+                  <div class="lineup-field">
+                    <svg class="lineup-overlay" viewBox="0 0 650 340" preserveAspectRatio="none">
+                      <ng-container *ngFor="let trap of lineupTraps">
+                        <polygon [attr.points]="getLineupTrapPoints(trap)" class="lineup-trap"></polygon>
+                      </ng-container>
+                      <ng-container *ngFor="let marker of getLineupDirectionMarkers()">
+                        <polygon [attr.points]="marker.band" class="lineup-direction-band"></polygon>
+                        <polygon [attr.points]="marker.triangle" class="lineup-direction-triangle"></polygon>
+                      </ng-container>
+                    </svg>
+                    <div
+                      *ngFor="let item of getBestFormationPlayers()"
+                      class="lineup-position"
+                      [style.left.%]="item.left"
+                      [style.top.%]="item.top"
+                      [title]="item.tooltip">
+                      <div class="lineup-player-name">{{ item.shortName }}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="planner-pitch-panel">
+                  <div class="planner-pitch-title">
+                    {{ 'ht.rating-sectors' | translate | firstCapitalize }}
+                  </div>
+                  <div class="planner-half-pitch planner-half-pitch--zones">
+                    <div class="planner-zones-grid">
+                      <svg class="planner-zones-overlay" viewBox="0 0 650 340" preserveAspectRatio="none">
+                        <ng-container *ngFor="let zoneTrap of ratingZoneTraps">
+                          <polygon [attr.points]="getRatingZoneTrapPoints(zoneTrap)" class="planner-zone-trap"></polygon>
+                        </ng-container>
+                      </svg>
+                      <ng-container *ngFor="let zoneTrap of ratingZoneTraps">
+                        <div
+                          class="planner-zone-node"
+                          [style.left.%]="getRatingZoneTrapCenter(zoneTrap).left"
+                          [style.top.%]="getRatingZoneTrapCenter(zoneTrap).top"
+                          [attr.title]="(zoneTrap.labelKey | translate | firstCapitalize)"
+                          [attr.aria-label]="(zoneTrap.labelKey | translate | firstCapitalize)">
+                          <span class="planner-zone-value">
+                            {{
+                              getBestFormationZoneValue(zoneTrap.zoneId) != null
+                                ? (getBestFormationZoneValue(zoneTrap.zoneId) | number:'1.0-2')
+                                : '-'
+                            }}
+                          </span>
+                        </div>
+                      </ng-container>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            </div>
+          </div>
+
+          <div class="planner-ratings-stats card">
+            <div class="card-body">
+              <div class="planner-summary-header planner-ratings-summary-header">
+                <div class="fw-bold">{{ getDisplayedFormationSeasonWeekText() }}</div>
+                <div class="text-muted small">
+                  {{ getDisplayedFormationDate() | date:DEFAULT_DATE_FORMAT }}
+                </div>
+              </div>
+              <div class="planner-summary-divider planner-ratings-summary-divider"></div>
+              <div class="planner-ratings-title planner-ratings-title--center">{{ 'ehm.statistics-weekly' | translate | firstCapitalize }}</div>
+              <div class="planner-stats-list">
+                <div class="planner-stats-row planner-stats-row--summary">
+                  <span class="planner-stats-label">{{ 'ehm.wage' | translate | firstCapitalize }}</span>
+                  <span class="planner-stats-value">
+                    {{
+                      getDisplayedWeekSalary() != null
+                        ? (userConfig
+                          ? (getDisplayedWeekSalary()! | salary:userConfig.currency)
+                          : (getDisplayedWeekSalary()! | numberSeparator))
+                        : '-'
+                    }}
+                  </span>
+                </div>
+                <div
+                  class="planner-stats-row"
+                  [class.planner-stats-row--active]="stat.criteria === bestFormationCriteria"
+                  *ngFor="let stat of getBestFormationRelevantStats()">
+                  <span class="planner-stats-label">{{ stat.label }}</span>
+                  <span class="planner-stats-value">
+                    {{ stat.value != null ? (stat.value | number:'1.0-2') : '-' }}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <div *ngIf="players.length === 0" class="col-12 text-muted">
-        Sin jugadores
+          <div *ngIf="players.length === 0" class="col-12 text-muted">
+            {{ 'ehm.no-players' | translate | firstCapitalize }}
+          </div>
+        </div>
+      </fieldset>
+
+      <div *ngIf="isTeamTrainingLoading" class="planner-loading-overlay" role="status" aria-live="polite" [attr.aria-label]="'ehm.calculating-training-plan' | translate">
+        <div class="planner-loading-box">
+          <div class="spinner-border text-warning" role="presentation" aria-hidden="true"></div>
+          <div class="planner-loading-text">{{ 'ehm.calculating-training-plan' | translate }}</div>
+        </div>
       </div>
     </div>
   </ng-template>

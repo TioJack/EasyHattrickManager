@@ -1,5 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {PlayerFilter, PlayerInfo} from '../services/model/data-response';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {PlayerFilter, PlayerInfo, UserConfig} from '../services/model/data-response';
 import {NgForOf, NgIf} from '@angular/common';
 import {UserConfigService} from '../services/user-config.service';
 import {PlayService} from '../services/play.service';
@@ -18,10 +18,14 @@ import {FirstCapitalizePipe} from '../pipes/first-capitalize.pipe';
   templateUrl: './player-filter.component.html',
   styleUrls: ['./player-filter.component.scss']
 })
-export class PlayerFilterComponent implements OnInit {
+export class PlayerFilterComponent implements OnInit, OnDestroy {
   @Input() players: PlayerInfo[] | undefined;
   projectName: string = '';
   filter: PlayerFilter = {mode: 'exclusive', playerIds: []};
+  selectedPlayerIds = new Set<number>();
+  private persistDebounceTimer: number | null = null;
+  private pendingConfigToSave: UserConfig | null = null;
+  private readonly persistDebounceMs = 300;
 
   constructor(
     private playService: PlayService,
@@ -40,52 +44,49 @@ export class PlayerFilterComponent implements OnInit {
             this.filter.mode = 'exclusive';
           }
         }
+        this.refreshSelectedIds();
       }
     });
   }
 
-  onFilterModeChange(newMode: string): void {
-    const currentConfig = this.userConfigService.getUserConfig();
-    if (currentConfig) {
-      const updatedConfig = {...currentConfig};
-      const activeProject = updatedConfig.projects.find(
-        project => project.name === this.projectName
-      );
-      if (activeProject) {
-        if (!activeProject.filter) {
-          activeProject.filter = {mode: newMode, playerIds: []};
-        } else {
-          activeProject.filter.mode = newMode;
-        }
-      }
-      this.userConfigService.setAndSaveUserConfig(updatedConfig);
-      this.playService.update();
+  ngOnDestroy(): void {
+    if (this.persistDebounceTimer != null) {
+      window.clearTimeout(this.persistDebounceTimer);
+      this.persistDebounceTimer = null;
     }
+    if (this.pendingConfigToSave) {
+      this.playService.update();
+      this.userConfigService.saveUserConfig(this.pendingConfigToSave);
+      this.pendingConfigToSave = null;
+    }
+  }
+
+  onFilterModeChange(newMode: string): void {
+    this.filter.mode = newMode as 'inclusive' | 'exclusive';
+    this.persistFilter();
   }
 
   onPlayerChange(player: PlayerInfo, event: Event): void {
     const isChecked = (event.target as HTMLInputElement).checked;
     if (isChecked) {
-      if (!this.filter.playerIds.includes(player.id)) {
-        this.filter.playerIds.push(player.id);
-      }
+      this.selectedPlayerIds.add(player.id);
     } else {
-      const playerIndex = this.filter.playerIds.indexOf(player.id);
-      if (playerIndex > -1) {
-        this.filter.playerIds.splice(playerIndex, 1);
-      }
+      this.selectedPlayerIds.delete(player.id);
     }
+    this.filter.playerIds = Array.from(this.selectedPlayerIds);
     this.persistFilter();
   }
 
   selectAll(): void {
     const allIds = (this.players ?? []).map(p => p.id);
     this.filter.playerIds = [...allIds];
+    this.refreshSelectedIds();
     this.persistFilter();
   }
 
   deselectAll(): void {
     this.filter.playerIds = [];
+    this.refreshSelectedIds();
     this.persistFilter();
   }
 
@@ -99,7 +100,16 @@ export class PlayerFilterComponent implements OnInit {
       }
     });
     this.filter.playerIds = inverted;
+    this.refreshSelectedIds();
     this.persistFilter();
+  }
+
+  isPlayerSelected(playerId: number): boolean {
+    return this.selectedPlayerIds.has(playerId);
+  }
+
+  trackByPlayerId(_index: number, player: PlayerInfo): number {
+    return player.id;
   }
 
   private persistFilter(): void {
@@ -118,8 +128,27 @@ export class PlayerFilterComponent implements OnInit {
       activeProject.filter.playerIds = [...this.filter.playerIds];
       activeProject.filter.mode = this.filter.mode ?? 'exclusive';
     }
-    this.userConfigService.setAndSaveUserConfig(updatedConfig);
-    this.playService.update();
+    this.userConfigService.setUserConfig(updatedConfig);
+    this.scheduleSave(updatedConfig);
+  }
+
+  private refreshSelectedIds(): void {
+    this.selectedPlayerIds = new Set(this.filter.playerIds ?? []);
+  }
+
+  private scheduleSave(config: UserConfig): void {
+    if (this.persistDebounceTimer != null) {
+      window.clearTimeout(this.persistDebounceTimer);
+    }
+    this.pendingConfigToSave = JSON.parse(JSON.stringify(config)) as UserConfig;
+    this.persistDebounceTimer = window.setTimeout(() => {
+      this.playService.update();
+      if (this.pendingConfigToSave) {
+        this.userConfigService.saveUserConfig(this.pendingConfigToSave);
+        this.pendingConfigToSave = null;
+      }
+      this.persistDebounceTimer = null;
+    }, this.persistDebounceMs);
   }
 
 }

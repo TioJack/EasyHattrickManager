@@ -8,6 +8,32 @@
   vertical-align: text-bottom;
 }
 
+.player-name-row {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.player-name-number {
+  flex: 0 0 auto;
+}
+
+.player-name-link {
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+.player-name-text {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
 .hidden-text {
   max-width: 100%;
   overflow: hidden;

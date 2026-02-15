@@ -30,6 +30,7 @@ export class HeaderComponent implements OnInit {
   @Input() dataResponse: any;
   selectedProject: Project | null = null;
   selectedTeam: TeamExtendedInfo | null = null;
+  filteredPlayersForFilter: PlayerInfo[] = [];
   dateFormat: string | null = null;
   viewMode: ViewMode = 'players';
 
@@ -91,6 +92,7 @@ export class HeaderComponent implements OnInit {
 
   selectProject(project: Project): void {
     this.selectedProject = project;
+    this.filteredPlayersForFilter = this.buildFilteredPlayersForProject(project);
     this.playService.selectProject(project);
     const team = this.dataResponse.teams.find((team: TeamExtendedInfo) => team.team.id === project.teamId);
     if (!team) {
@@ -111,15 +113,15 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  getFilteredPlayers(): PlayerInfo[] {
-    if (!this.selectedProject || !this.dataResponse?.teams) {
+  private buildFilteredPlayersForProject(project: Project): PlayerInfo[] {
+    if (!this.dataResponse?.teams) {
       return [];
     }
-    const projectTeam = this.dataResponse.teams.find((team: TeamExtendedInfo) => team.team.id == this.selectedProject?.teamId);
+    const projectTeam = this.dataResponse.teams.find((team: TeamExtendedInfo) => team.team.id == project.teamId);
     if (!projectTeam) {
       return [];
     }
-    const {iniSeason, iniWeek, endSeason, endWeek} = this.selectedProject;
+    const {iniSeason, iniWeek, endSeason, endWeek} = project;
     const filteredPlayers: PlayerInfo[] = [];
     projectTeam.weeklyData.forEach((weekData: WeeklyInfo) => {
       if ((weekData.season > iniSeason || (weekData.season == iniSeason && weekData.week >= iniWeek)) &&

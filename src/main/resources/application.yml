@@ -1,8 +1,12 @@
 app:
-  version: 34
+  version: 35
 
 server:
   port: 1998
+  compression:
+    enabled: true
+    min-response-size: 1024
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain,text/css,text/javascript,application/javascript
 
 management:
   server:
