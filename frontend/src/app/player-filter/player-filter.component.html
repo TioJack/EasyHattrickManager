@@ -39,11 +39,11 @@
     </button>
   </h6>
   <div class="player-list-filter-container">
-    <div *ngFor="let player of players; let i = index;" class="form-check text-nowrap"
+    <div *ngFor="let player of players; let i = index; trackBy: trackByPlayerId" class="form-check text-nowrap"
          [class.bg-light]="i % 2 === 0"
          [class.bg-gray-dark]="i % 2 !== 0">
       <input class="form-check-input" type="checkbox" [id]="'player-' + player.id" [value]="player.id"
-             [checked]="filter.playerIds.includes(player.id)"
+             [checked]="isPlayerSelected(player.id)"
              (change)="onPlayerChange(player, $event)">
       <label class="form-check-label" [for]="'player-' + player.id">
         {{ player.firstName }}

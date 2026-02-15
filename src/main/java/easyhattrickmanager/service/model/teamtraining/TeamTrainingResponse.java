@@ -13,5 +13,9 @@ public class TeamTrainingResponse {
     WeekInfo endWeek;
     // <week,players>
     Map<Integer, List<PlayerInfo>> weekPlayers;
+    // <week,FormationRating>
+    Map<Integer, FormationRating> weekFormationRatings;
 
+    FormationRating bestFormationRating;
+    int bestWeek;
 }

@@ -1,9 +1,9 @@
 <div class="card h-100 w-100" *ngIf="player">
   <div class="card-body p-2">
-    <div class="fw-bold text-truncate mb-2 text-start fw-bold fs-6">
-      <span *ngIf="player.playerNumber">{{ player.playerNumber }}. </span>
-      <a target="_blank" href="http://hattrick.org/goto.ashx?path=/Club/Players/Player.aspx?playerId={{ player.id }}">
-        <span>
+    <div class="fw-bold mb-2 text-start fw-bold fs-6 player-name-row">
+      <span *ngIf="player.playerNumber" class="player-name-number">{{ player.playerNumber }}. </span>
+      <a class="player-name-link" target="_blank" href="http://hattrick.org/goto.ashx?path=/Club/Players/Player.aspx?playerId={{ player.id }}">
+        <span class="player-name-text">
           {{ player.firstName }}
           <span *ngIf="player.nickName">'{{ player.nickName }}'</span>
           {{ player.lastName }}

@@ -249,16 +249,31 @@ public class PlayerTrainingService {
 
     public double getSkillTraining(SkillTrainingRequest rq) {
         //T = f(lvl) * K(coach) * K(assist) * K(int) * K(stam) * K(train) * K(age) * K(time)
-        final double training = Math.min(1, this.getSkill(rq.getSkill())
-            * this.getCoefficientCoach(rq.getCoach())
-            * this.getCoefficientAssistants(rq.getAssistants())
-            * this.getCoefficientIntensity(rq.getIntensity())
-            * this.getCoefficientStamina(rq.getStamina())
-            * rq.getCoefficientSkill()
-            * this.getCoefficientAge(rq.getAge())
-            * this.getCoefficientTime(rq.getMinutes()));
+        return this.getSkillTraining(
+            rq.getSkill(),
+            rq.getAge(),
+            rq.getCoefficientSkill(),
+            this.getTrainingBaseFactor(
+                rq.getCoach(),
+                rq.getAssistants(),
+                rq.getIntensity(),
+                rq.getStamina(),
+                rq.getAge(),
+                rq.getMinutes()));
+    }
 
-        return Math.max(0, training - this.getDropLevel(rq.getSkill(), rq.getAge()));
+    public double getTrainingBaseFactor(int coach, int assistants, int intensity, int stamina, int age, int minutes) {
+        return this.getCoefficientCoach(coach)
+            * this.getCoefficientAssistants(assistants)
+            * this.getCoefficientIntensity(intensity)
+            * this.getCoefficientStamina(stamina)
+            * this.getCoefficientAge(age)
+            * this.getCoefficientTime(minutes);
+    }
+
+    public double getSkillTraining(double skill, int age, double coefficientSkill, double baseFactor) {
+        final double training = Math.min(1, this.getSkill(skill) * coefficientSkill * baseFactor);
+        return Math.max(0, training - this.getDropLevel(skill, age));
     }
 
     private double getSkill(double skill) {

@@ -44,6 +44,7 @@ export class PlayService {
 
   setViewMode(mode: ViewMode): void {
     this.viewModeSubject.next(mode);
+    this.update();
   }
 
   selectTeam(team: TeamExtendedInfo): void {
@@ -76,10 +77,11 @@ export class PlayService {
         const filter = this.selectedProjectSubject.value?.filter;
         let filteredPlayers = matchingWeek.players;
         if (filter) {
+          const filterIds = new Set(filter.playerIds ?? []);
           if (filter.mode === 'inclusive') {
-            filteredPlayers = filteredPlayers.filter(player => filter.playerIds.includes(player.id));
+            filteredPlayers = filteredPlayers.filter(player => filterIds.has(player.id));
           } else if (filter.mode === 'exclusive') {
-            filteredPlayers = filteredPlayers.filter(player => !filter.playerIds.includes(player.id));
+            filteredPlayers = filteredPlayers.filter(player => !filterIds.has(player.id));
           }
         }
         const sort = this.selectedProjectSubject.value?.sort;
@@ -128,8 +130,13 @@ export class PlayService {
         this.dateSubject.next(matchingWeek.date);
         this.staffSubject.next(matchingWeek.staff);
         this.trainingSubject.next(matchingWeek.training);
-        this.trainingStatsSubject.next(this.computeTrainingStats(team, this.selectedProjectSubject.value, season, week));
-        this.playerStatsSubject.next(this.computePlayerStats(sortedPlayers));
+        if (this.viewModeSubject.value === 'players') {
+          this.trainingStatsSubject.next(this.computeTrainingStats(team, this.selectedProjectSubject.value, season, week));
+          this.playerStatsSubject.next(this.computePlayerStats(sortedPlayers));
+        } else {
+          this.trainingStatsSubject.next(null);
+          this.playerStatsSubject.next(null);
+        }
       } else {
         this.playersSubject.next([]);
         this.dateSubject.next(null);
