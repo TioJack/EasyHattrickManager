@@ -1,0 +1,21 @@
+.manual-shot {
+  position: relative;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: #fff;
+}
+
+.manual-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.manual-legend {
+  margin-top: 1rem;
+}
+
+.manual-legend li {
+  margin-bottom: 0.35rem;
+}

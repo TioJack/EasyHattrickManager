@@ -1,203 +1,132 @@
 <main class="container-fluid fs-6">
   <div class="row justify-content-center">
-    <div class="col-12">
+    <div class="col-12 col-xxl-11">
       <div class="card shadow">
         <div class="card-header bg-primary text-white text-center">
-          <h3>{{ 'ehm.manual-1010' | translate | firstCapitalize }} Easy Hattrick Manager</h3>
+          <h3 class="mb-0">{{ 'ehm.manual-v2-title' | translate }}</h3>
         </div>
         <div class="card-body">
-          <div class="row">
-            <div class="col-12">
-              <p>
-                {{ 'ehm.manual-1020' | translate | firstCapitalize }} <strong>EHM</strong>.
-              </p>
-              <div class="mb-4">
-                <h3>{{ 'ehm.manual-1029' | translate | firstCapitalize }}</h3>
-                <ul>
-                  <li><a href="/manual/#main-page">{{ 'ehm.manual-1030' | translate | firstCapitalize }}</a></li>
-                  <li><a href="/manual/#main-menu">{{ 'ehm.manual-1040' | translate | firstCapitalize }}</a></li>
-                  <li><a href="/manual/#manage-projects">{{ 'ehm.manage-projects' | translate | firstCapitalize }}</a></li>
-                  <li><a href="/manual/#sort">{{ 'ehm.manual-1060' | translate | firstCapitalize }}</a></li>
-                  <li><a href="/manual/#filter">{{ 'ehm.manual-1070' | translate | firstCapitalize }}</a></li>
-                  <li><a href="/manual/#season-week">{{ 'ehm.manual-1080' | translate | firstCapitalize }}</a></li>
-                  <li><a href="/manual/#project">{{ 'ehm.manual-1090' | translate | firstCapitalize }}</a></li>
-                </ul>
-              </div>
+          <p>{{ 'ehm.manual-v2-intro' | translate }}</p>
 
-              <h3 id="main-page" class="h3 text-primary border-bottom border-primary pb-2 mt-4 text-uppercase fw-bold">{{ 'ehm.manual-1030' | translate | firstCapitalize }}</h3>
-              <p>{{ 'ehm.manual-1100' | translate | firstCapitalize }}</p>
-              <img id="img01" src="assets/manual/01.png" alt="" class="img-fluid my-3"/>
-              <ul>
-                <li><strong>(1) {{ 'ehm.manual-1110' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-1120' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-1130' | translate | firstCapitalize }}
-                </li>
-                <li><strong>(2) {{ 'ehm.manual-1140' | translate | firstCapitalize }}</strong>&nbsp;<a href="/manual/#main-menu">{{ 'ehm.manual-1190' | translate | firstCapitalize }}</a></li>
-                <li><strong>(3) {{ 'ehm.manual-1150' | translate | firstCapitalize }}</strong>&nbsp;<a href="/manual/#sort">{{ 'ehm.manual-1190' | translate | firstCapitalize }}</a></li>
-                <li><strong>(4) {{ 'ehm.manual-1160' | translate | firstCapitalize }}</strong>&nbsp;<a href="/manual/#filter">{{ 'ehm.manual-1190' | translate | firstCapitalize }}</a></li>
-                <li><strong>(5) {{ 'ehm.manual-1170' | translate | firstCapitalize }}</strong>&nbsp;<a href="/manual/#season-week">{{ 'ehm.manual-1190' | translate | firstCapitalize }}</a></li>
-                <li><strong>(6) {{ 'ehm.manual-1180' | translate | firstCapitalize }}</strong>&nbsp;<a href="/manual/#project">{{ 'ehm.manual-1190' | translate | firstCapitalize }}</a></li>
-              </ul>
+          <h4 class="h5 text-primary border-bottom border-primary pb-2 mt-4">{{ 'ehm.manual-v2-index-title' | translate }}</h4>
+          <ul>
+            <li><a href="/manual/#main-home">{{ 'ehm.manual-v2-index-1' | translate }}</a></li>
+            <li><a href="/manual/#main-menu">{{ 'ehm.manual-v2-index-2' | translate }}</a></li>
+            <li><a href="/manual/#main-sort">{{ 'ehm.manual-v2-index-3' | translate }}</a></li>
+            <li><a href="/manual/#main-filter">{{ 'ehm.manual-v2-index-4' | translate }}</a></li>
+            <li><a href="/manual/#main-planner">{{ 'ehm.manual-v2-index-5' | translate }}</a></li>
+            <li><a href="/manual/#main-projects">{{ 'ehm.manual-v2-index-6' | translate }}</a></li>
+            <li><a href="/manual/#main-player">{{ 'ehm.manual-v2-index-7' | translate }}</a></li>
+          </ul>
 
-              <h3 id="main-menu" class="h3 text-primary border-bottom border-primary pb-2 mt-4 text-uppercase fw-bold">{{ 'ehm.manual-1040' | translate | firstCapitalize }}</h3>
-              <img id="img02" src="assets/manual/02.png" alt="" class="img-fluid my-3"/>
+          <h4 id="main-home" class="h5 text-primary border-bottom border-primary pb-2 mt-4">{{ 'ehm.manual-v2-section-1' | translate }}</h4>
+          <div class="manual-shot">
+            <img src="assets/manual/new-01-home.png" alt="Home overview" class="img-fluid"/>
+          </div>
+          <ul class="manual-legend">
+            <li><strong>(1)</strong> {{ 'ehm.manual-v2-item-1' | translate }}</li>
+            <li><strong>(2)</strong> {{ 'ehm.manual-v2-item-2' | translate }}</li>
+            <li><strong>(3)</strong> {{ 'ehm.manual-v2-item-3' | translate }}</li>
+            <li><strong>(4)</strong> {{ 'ehm.manual-v2-item-4' | translate }}</li>
+            <li><strong>(5)</strong> {{ 'ehm.manual-v2-item-5' | translate }}</li>
+            <li><strong>(6)</strong> {{ 'ehm.manual-v2-item-6' | translate }}</li>
+            <li><strong>(7)</strong> {{ 'ehm.manual-v2-item-7' | translate }}</li>
+            <li><strong>(8)</strong> {{ 'ehm.manual-v2-item-8' | translate }}</li>
+          </ul>
 
-              <ul>
-                <li><strong>(7) {{ 'ehm.manual-1200' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-1210' | translate | firstCapitalize }}</li>
-                <li>
-                  <strong>(8) {{ 'ehm.manual-1220' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-1230' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-1240' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-1250' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-1260' | translate | firstCapitalize }}:
-                  <ul>
-                    <li>
-                      <strong>{{ 'ehm.manual-1270' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-1280' | translate | firstCapitalize }},<br/>
-                      {{ 'ehm.manual-1290' | translate }}<br/>
-                      {{ 'ehm.manual-1300' | translate }}
-                    </li>
-                    <li>
-                      <strong>{{ 'ehm.manual-1310' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-1320' | translate | firstCapitalize }},<br/>
-                      {{ 'ehm.manual-1330' | translate | firstCapitalize }}.<br/>
-                      {{ 'ehm.manual-1340' | translate | firstCapitalize }} <a href="https://github.com/LibreTranslate/LibreTranslate" target="_blank">LibreTranslate</a>, {{ 'ehm.manual-1350' | translate }}<br/>
-                      {{ 'ehm.manual-1360' | translate | firstCapitalize }}<br/>
-                      {{ 'ehm.manual-1370' | translate | firstCapitalize }}
-                    </li>
-                  </ul>
-                </li>
-                <li>
-                  <strong>(9) {{ 'ehm.manual-1380' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-1390' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-1240' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-1400' | translate | firstCapitalize }}<br/>
-                </li>
-                <li>
-                  <strong>(10) {{ 'ehm.manage-projects' | translate | firstCapitalize }}:</strong>&nbsp;<a href="/manual/#manage-projects">{{ 'ehm.manual-1190' | translate | firstCapitalize }}</a>
-                </li>
-                <li>
-                  <strong>(11) {{ 'ehm.update-data' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-1410' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-1420' | translate | firstCapitalize }} <em><strong>{{ 'ehm.manual-1430' | translate }}</strong></em> {{ 'ehm.manual-1440' | translate }}<br/>
-                  {{ 'ehm.manual-1450' | translate }}<br/>
-                  {{ 'ehm.manual-1460' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-1470' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-1480' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-1490' | translate }}<br/>
-                  {{ 'ehm.manual-1500' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-1510' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-1520' | translate }}
-                </li>
-                <li>
-                  <strong>(12) {{ 'ehm.download-data' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-1530' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-1540' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-1550' | translate | firstCapitalize }}:
-                </li>
-                <img id="img03" src="assets/manual/03.png" alt="" class="img-fluid my-3"/>
-                <li><strong>(13) {{ 'ehm.log-out' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-1560' | translate | firstCapitalize }}</li>
-                <li><strong>(14) {{ 'ehm.manual-1570' | translate | firstCapitalize }}</strong></li>
-                <li><strong>(15) {{ 'ehm.manual-1580' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-1590' | translate | firstCapitalize }}</li>
-                <li><strong>(16) {{ 'ehm.manual-1600' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-1610' | translate | firstCapitalize }}</li>
-              </ul>
+          <h4 id="main-menu" class="h5 text-primary border-bottom border-primary pb-2 mt-4">{{ 'ehm.manual-v2-section-2' | translate }}</h4>
+          <div class="manual-shot">
+            <img src="assets/manual/new-02-menu.png" alt="Main menu" class="img-fluid"/>
+          </div>
+          <ul class="manual-legend">
+            <li><strong>(9)</strong> {{ 'ehm.manual-v2-item-9' | translate }}</li>
+            <li><strong>(10)</strong> {{ 'ehm.manual-v2-item-10' | translate }}</li>
+            <li><strong>(11)</strong> {{ 'ehm.manual-v2-item-11' | translate }}</li>
+            <li><strong>(12)</strong> {{ 'ehm.manual-v2-item-12' | translate }}</li>
+            <li><strong>(13)</strong> {{ 'ehm.manual-v2-item-13' | translate }}</li>
+            <li><strong>(14)</strong> {{ 'ehm.manual-v2-item-14' | translate }}</li>
+            <li><strong>(15)</strong> {{ 'ehm.manual-v2-item-15' | translate }}</li>
+            <li><strong>(16)</strong> {{ 'ehm.manual-v2-item-16' | translate }}</li>
+            <li><strong>(17)</strong> {{ 'ehm.manual-v2-item-17' | translate }}</li>
+          </ul>
 
-              <h3 id="manage-projects" class="h3 text-primary border-bottom border-primary pb-2 mt-4 text-uppercase fw-bold">{{ 'ehm.manage-projects' | translate | firstCapitalize }}</h3>
-              <p>{{ 'ehm.manual-1620' | translate | firstCapitalize }}<br/>
-                {{ 'ehm.manual-1630' | translate | firstCapitalize }}<br/>
-                {{ 'ehm.manual-1640' | translate | firstCapitalize }}<br/>
-                {{ 'ehm.manual-1650' | translate | firstCapitalize }}<br/>
-                {{ 'ehm.manual-1660' | translate }}<br/>
-                {{ 'ehm.manual-1670' | translate | firstCapitalize }}
-              </p>
-              <img id="img04" src="assets/manual/04.png" alt="" class="img-fluid my-3"/>
-              <ul>
-                <li><strong>(17) {{ 'ehm.manual-1680' | translate | firstCapitalize }}</strong>: {{ 'ehm.manual-1681' | translate | firstCapitalize }}</li>
-                <li><strong>(18) {{ 'ehm.manual-1690' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-1700' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-1710' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-1720' | translate | firstCapitalize }} <a href="/manual/#project">{{ 'ehm.manual-1090' | translate | firstCapitalize }}</a>.<br/>
-                <li><strong>(19) {{ 'ehm.manual-1730' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-1740' | translate | firstCapitalize }}</li>
-                <li><strong>(20) {{ 'ehm.manual-1750' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-1760' | translate | firstCapitalize }}</li>
-                <li><strong>(21) {{ 'ehm.manual-1770' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-1780' | translate | firstCapitalize }}</li>
-                <li><strong>(22) {{ 'ehm.manual-1790' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-1800' | translate | firstCapitalize }}</li>
-                <li><strong>(23) {{ 'ehm.manual-1810' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-1820' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-1830' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-1840' | translate | firstCapitalize }}
-                </li>
-                <li><strong>(24) {{ 'ehm.manual-1850' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-1860' | translate | firstCapitalize }}</li>
-                <li><strong>(25) {{ 'ehm.manual-1870' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-1880' | translate | firstCapitalize }}</li>
-                <li><strong>(26) {{ 'ehm.manual-1890' | translate | firstCapitalize }}: </strong> {{ 'ehm.manual-1900' | translate | firstCapitalize }}</li>
-                <li><strong>(27) {{ 'ehm.manual-1910' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-1920' | translate | firstCapitalize }}</li>
-              </ul>
+          <h4 id="main-sort" class="h5 text-primary border-bottom border-primary pb-2 mt-4">{{ 'ehm.manual-v2-section-3' | translate }}</h4>
+          <div class="manual-shot">
+            <img src="assets/manual/new-03-sort.png" alt="Player sorting" class="img-fluid"/>
+          </div>
+          <ul class="manual-legend">
+            <li><strong>(18)</strong> {{ 'ehm.manual-v2-item-18' | translate }}</li>
+            <li><strong>(19)</strong> {{ 'ehm.manual-v2-item-19' | translate }}</li>
+            <li><strong>(20)</strong> {{ 'ehm.manual-v2-item-20' | translate }}</li>
+          </ul>
 
-              <h3 id="sort" class="h3 text-primary border-bottom border-primary pb-2 mt-4 text-uppercase fw-bold">{{ 'ehm.manual-1060' | translate | firstCapitalize }}</h3>
-              <p>
-                {{ 'ehm.manual-1930' | translate | firstCapitalize }}<br/>
-                {{ 'ehm.manual-1940' | translate | firstCapitalize }}
-              </p>
-              <img id="img05" src="assets/manual/05.png" alt="" class="img-fluid my-3"/>
-              <ul>
-                <li><strong>(28) {{ 'ehm.manual-1950' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-1960' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-1970' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-1980' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-1990' | translate | firstCapitalize }}<br/>
-                </li>
-                <li><strong>(29) {{ 'ehm.sort-criteria' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-2000' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-2010' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-2020' | translate | firstCapitalize }}
-                </li>
-              </ul>
+          <h4 id="main-filter" class="h5 text-primary border-bottom border-primary pb-2 mt-4">{{ 'ehm.manual-v2-section-4' | translate }}</h4>
+          <div class="manual-shot">
+            <img src="assets/manual/new-04-filter.png" alt="Player filtering" class="img-fluid"/>
+          </div>
+          <ul class="manual-legend">
+            <li><strong>(21)</strong> {{ 'ehm.manual-v2-item-21' | translate }}</li>
+            <li><strong>(22)</strong> {{ 'ehm.manual-v2-item-22' | translate }}</li>
+            <li><strong>(23)</strong> {{ 'ehm.manual-v2-item-23' | translate }}</li>
+            <li><strong>(24)</strong> {{ 'ehm.manual-v2-item-24' | translate }}</li>
+          </ul>
 
-              <h3 id="filter" class="h3 text-primary border-bottom border-primary pb-2 mt-4 text-uppercase fw-bold">{{ 'ehm.manual-1070' | translate | firstCapitalize }}</h3>
-              <p>
-                {{ 'ehm.manual-2030' | translate | firstCapitalize }}<br/>
-                {{ 'ehm.manual-2040' | translate | firstCapitalize }}
-              </p>
-              <img id="img06" src="assets/manual/06.png" alt="" class="img-fluid my-3"/>
-              <ul>
-                <li><strong>(30) {{ 'ehm.manual-2050' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-2060' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-2070' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-2080' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-2090' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-2100' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-2110' | translate | firstCapitalize }}
-                </li>
-                <li><strong>(31) {{ 'ehm.list-players' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-2120' | translate | firstCapitalize }}<br/>
-                </li>
-              </ul>
+          <h4 id="main-planner" class="h5 text-primary border-bottom border-primary pb-2 mt-4">{{ 'ehm.manual-v2-section-5' | translate }}</h4>
+          <div class="manual-shot">
+            <img src="assets/manual/new-05-planner.png" alt="Training planner" class="img-fluid"/>
+          </div>
+          <ul class="manual-legend">
+            <li><strong>(25)</strong> {{ 'ehm.manual-v2-item-25' | translate }}</li>
+            <li><strong>(26)</strong> {{ 'ehm.manual-v2-item-26' | translate }}</li>
+            <li><strong>(27)</strong> {{ 'ehm.manual-v2-item-27' | translate }}</li>
+            <li><strong>(28)</strong> {{ 'ehm.manual-v2-item-28' | translate }}</li>
+            <li><strong>(29)</strong> {{ 'ehm.manual-v2-item-29' | translate }}</li>
+            <li><strong>(30)</strong> {{ 'ehm.manual-v2-item-30' | translate }}</li>
+            <li><strong>(31)</strong> {{ 'ehm.manual-v2-item-31' | translate }}</li>
+            <li><strong>(32)</strong> {{ 'ehm.manual-v2-item-32' | translate }}</li>
+            <li><strong>(33)</strong> {{ 'ehm.manual-v2-item-33' | translate }}</li>
+          </ul>
 
-              <h3 id="season-week" class="h3 text-primary border-bottom border-primary pb-2 mt-4 text-uppercase fw-bold">{{ 'ehm.manual-1080' | translate | firstCapitalize }}</h3>
-              <p>
-                {{ 'ehm.manual-2130' | translate | firstCapitalize }}
-              </p>
-              <img id="img07" src="assets/manual/07.png" alt="" class="img-fluid my-3"/>
-              <ul>
-                <li><strong>(32) {{ 'ehm.manual-2140' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-2150' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-2160' | translate | firstCapitalize }}
-                </li>
-                <li><strong>(33) {{ 'ehm.manual-2170' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-2180' | translate | firstCapitalize }}</li>
-                <li><strong>(34) -1 {{ 'ehm.season' | translate }}: </strong> {{ 'ehm.manual-2190' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-2200' | translate }}
-                </li>
-                <li><strong>(35) -1 {{ 'ehm.week' | translate }}: </strong> {{ 'ehm.manual-2210' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-2220' | translate | firstCapitalize }}
-                </li>
-                <li><strong>(36) +1 {{ 'ehm.week' | translate }}: </strong> {{ 'ehm.manual-2230' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-2240' | translate | firstCapitalize }}
-                </li>
-                <li><strong>(37) +1 {{ 'ehm.season' | translate }}: </strong> {{ 'ehm.manual-2250' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-2260' | translate }}
-                </li>
-                <li><strong>(38) {{ 'ehm.manual-2270' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-2280' | translate | firstCapitalize }}</li>
-              </ul>
+          <h5 class="h6 text-primary border-bottom border-primary-subtle pb-2 mt-3">{{ 'ehm.manual-v2-subsection-5b' | translate }}</h5>
+          <div class="manual-shot">
+            <img src="assets/manual/new-08-planner-lineup.png" alt="Planner lineup and prime moment" class="img-fluid"/>
+          </div>
+          <ul class="manual-legend">
+            <li><strong>(34)</strong> {{ 'ehm.manual-v2-item-34' | translate }}</li>
+            <li><strong>(35)</strong> {{ 'ehm.manual-v2-item-35' | translate }}</li>
+            <li><strong>(36)</strong> {{ 'ehm.manual-v2-item-36' | translate }}</li>
+            <li><strong>(37)</strong> {{ 'ehm.manual-v2-item-37' | translate }}</li>
+            <li><strong>(38)</strong> {{ 'ehm.manual-v2-item-38' | translate }}</li>
+          </ul>
 
-              <h3 id="project" class="h3 text-primary border-bottom border-primary pb-2 mt-4 text-uppercase fw-bold">{{ 'ehm.manual-1090' | translate | firstCapitalize }}</h3>
-              <p>
-                {{ 'ehm.manual-2290' | translate | firstCapitalize }}<br/>
-              </p>
-              <img id="img08" src="assets/manual/08.png" alt="" class="img-fluid my-3"/>
-              <ul>
-                <li><strong>(39) {{ 'ehm.manual-2300' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-2310' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-2320' | translate }}
-                </li>
-                <li><strong>(40) {{ 'ehm.list-projects' | translate | firstCapitalize }}:</strong> {{ 'ehm.manual-2330' | translate | firstCapitalize }}<br/>
-                  {{ 'ehm.manual-2340' | translate }} <a href="/manual/#manage-projects">{{ 'ehm.manage-projects' | translate | firstCapitalize }}</a>.
-                </li>
-              </ul>
-            </div>
+          <h4 id="main-projects" class="h5 text-primary border-bottom border-primary pb-2 mt-4">{{ 'ehm.manual-v2-section-6' | translate }}</h4>
+          <div class="manual-shot">
+            <img src="assets/manual/new-06-projects.png" alt="Project management" class="img-fluid"/>
+          </div>
+          <ul class="manual-legend">
+            <li><strong>(39)</strong> {{ 'ehm.manual-v2-item-39' | translate }}</li>
+            <li><strong>(40)</strong> {{ 'ehm.manual-v2-item-40' | translate }}</li>
+            <li><strong>(41)</strong> {{ 'ehm.manual-v2-item-41' | translate }}</li>
+            <li><strong>(42)</strong> {{ 'ehm.manual-v2-item-42' | translate }}</li>
+            <li><strong>(43)</strong> {{ 'ehm.manual-v2-item-43' | translate }}</li>
+            <li><strong>(44)</strong> {{ 'ehm.manual-v2-item-44' | translate }}</li>
+            <li><strong>(45)</strong> {{ 'ehm.manual-v2-item-45' | translate }}</li>
+          </ul>
+
+          <h4 id="main-player" class="h5 text-primary border-bottom border-primary pb-2 mt-4">{{ 'ehm.manual-v2-section-7' | translate }}</h4>
+          <div class="manual-shot">
+            <img src="assets/manual/new-07-player-detail.png" alt="Player detail" class="img-fluid"/>
+          </div>
+          <ul class="manual-legend">
+            <li><strong>(46)</strong> {{ 'ehm.manual-v2-item-46' | translate }}</li>
+            <li><strong>(47)</strong> {{ 'ehm.manual-v2-item-47' | translate }}</li>
+            <li><strong>(48)</strong> {{ 'ehm.manual-v2-item-48' | translate }}</li>
+            <li><strong>(49)</strong> {{ 'ehm.manual-v2-item-49' | translate }}</li>
+            <li><strong>(50)</strong> {{ 'ehm.manual-v2-item-50' | translate }}</li>
+          </ul>
+
+          <div class="alert alert-secondary mt-4 mb-0" role="alert">
+            {{ 'ehm.manual-v2-note' | translate }}
           </div>
         </div>
       </div>

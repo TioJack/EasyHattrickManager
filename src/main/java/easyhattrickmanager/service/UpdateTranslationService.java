@@ -734,6 +734,246 @@ public class UpdateTranslationService {
         addTranslation_EN_ES_CA("ehm.status-group", "status", "estado", "estat");
         addTranslation_EN_ES_CA("ehm.trainer-skills-group", "coach", "entrenador", "entrenador");
         addTranslation_EN_ES_CA("ehm.global-skills-group", "global", "global", "global");
+        addManualV2Translations();
+    }
+
+    private void addManualV2Translations() {
+        addTranslation_EN_ES_CA("ehm.manual-v2-title", "Easy Hattrick Manager Manual", "Manual de Easy Hattrick Manager", "Manual d'Easy Hattrick Manager");
+        addTranslation_EN_ES_CA("ehm.manual-v2-intro",
+            "Updated visual manual. Every block includes an English screenshot with numbered markers and a detailed explanation for each marker.",
+            "Manual visual actualizado. Cada bloque incluye una captura en inglés con marcadores numerados y una explicación detallada de cada marcador.",
+            "Manual visual actualitzat. Cada bloc inclou una captura en anglès amb marcadors numerats i una explicació detallada de cada marcador.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-index-title", "Index", "Índice", "Índex");
+
+        addTranslation_EN_ES_CA("ehm.manual-v2-index-1", "1. Home - overview", "1. Home - vista general", "1. Home - vista general");
+        addTranslation_EN_ES_CA("ehm.manual-v2-index-2", "2. Main menu and quick actions", "2. Menú principal y acciones rápidas", "2. Menú principal i accions ràpides");
+        addTranslation_EN_ES_CA("ehm.manual-v2-index-3", "3. Player sorting", "3. Orden de jugadores", "3. Ordenació de jugadors");
+        addTranslation_EN_ES_CA("ehm.manual-v2-index-4", "4. Player filtering", "4. Filtrado de jugadores", "4. Filtratge de jugadors");
+        addTranslation_EN_ES_CA("ehm.manual-v2-index-5", "5. Training Planner, player prime and lineup prime", "5. Training Planner, prime de jugador y prime de alineación", "5. Training Planner, prime de jugador i prime d'alineació");
+        addTranslation_EN_ES_CA("ehm.manual-v2-index-6", "6. Project management", "6. Gestión de proyectos", "6. Gestió de projectes");
+        addTranslation_EN_ES_CA("ehm.manual-v2-index-7", "7. Player historical detail", "7. Detalle histórico de jugador", "7. Detall històric de jugador");
+
+        addTranslation_EN_ES_CA("ehm.manual-v2-section-1", "1. Home - overview", "1. Home - vista general", "1. Home - vista general");
+        addTranslation_EN_ES_CA("ehm.manual-v2-section-2", "2. Main menu and quick actions", "2. Menú principal y acciones rápidas", "2. Menú principal i accions ràpides");
+        addTranslation_EN_ES_CA("ehm.manual-v2-section-3", "3. Player sorting", "3. Orden de jugadores", "3. Ordenació de jugadors");
+        addTranslation_EN_ES_CA("ehm.manual-v2-section-4", "4. Player filtering", "4. Filtrado de jugadores", "4. Filtratge de jugadors");
+        addTranslation_EN_ES_CA("ehm.manual-v2-section-5", "5. Training Planner, player prime and lineup prime", "5. Training Planner, prime de jugador y prime de alineación", "5. Training Planner, prime de jugador i prime d'alineació");
+        addTranslation_EN_ES_CA("ehm.manual-v2-subsection-5b", "5.2 Lineup and final-prime analysis", "5.2 Análisis de alineación y prime final", "5.2 Anàlisi d'alineació i prime final");
+        addTranslation_EN_ES_CA("ehm.manual-v2-section-6", "6. Project management", "6. Gestión de proyectos", "6. Gestió de projectes");
+        addTranslation_EN_ES_CA("ehm.manual-v2-section-7", "7. Player historical detail", "7. Detalle histórico de jugador", "7. Detall històric de jugador");
+
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-1",
+            "Active project selector. Changing project reloads the full workspace context, including project timeline, calculated values, and the saved player filter/sort configuration associated with that project.",
+            "Selector de proyecto activo. Al cambiar de proyecto se recarga todo el contexto de trabajo, incluyendo la línea temporal del proyecto, los valores calculados y la configuración guardada de filtro/orden de jugadores asociada a ese proyecto.",
+            "Selector de projecte actiu. En canviar de projecte es recarrega tot el context de treball, incloent la línia temporal del projecte, els valors calculats i la configuració desada de filtre/ordre de jugadors associada a aquest projecte.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-2",
+            "View-mode switch. It alternates between the operational players view (day-to-day monitoring) and the Training Planner simulation view (long-term planning and optimization).",
+            "Conmutador de modo de vista. Alterna entre la vista operativa de jugadores (seguimiento diario) y la vista de simulación de Training Planner (planificación y optimización a largo plazo).",
+            "Commutador de mode de vista. Alterna entre la vista operativa de jugadors (seguiment diari) i la vista de simulació de Training Planner (planificació i optimització a llarg termini).");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-3",
+            "Season/week navigator with quick jumps. Use it to move across the selected project timeline and compare past, current and projected states. Quick controls allow jump-to-start, jump-by-season and jump-to-end movements.",
+            "Navegador de temporada/semana con saltos rápidos. Úsalo para moverte por la línea temporal del proyecto seleccionado y comparar estados pasados, actuales y proyectados. Los controles rápidos permiten saltar al inicio, por temporada y al final.",
+            "Navegador de temporada/setmana amb salts ràpids. Fes-lo servir per moure't per la línia temporal del projecte seleccionat i comparar estats passats, actuals i projectats. Els controls ràpids permeten saltar a l'inici, per temporada i al final.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-4",
+            "Shortcut to open the player filtering panel. Filtering is applied instantly to visible player cards and is persisted per project so each project can keep its own focus group.",
+            "Acceso directo para abrir el panel de filtrado de jugadores. El filtrado se aplica al instante sobre las tarjetas visibles y se guarda por proyecto para que cada proyecto mantenga su propio grupo de enfoque.",
+            "Accés directe per obrir el panell de filtratge de jugadors. El filtratge s'aplica a l'instant sobre les targetes visibles i es desa per projecte perquè cada projecte mantingui el seu propi grup de focus.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-5",
+            "Shortcut to open the sorting panel. Sorting criterion and direction are applied in real time to the player list and are also persisted per project.",
+            "Acceso directo para abrir el panel de orden. El criterio y el sentido de ordenación se aplican en tiempo real sobre la lista de jugadores y también se guardan por proyecto.",
+            "Accés directe per obrir el panell d'ordenació. El criteri i el sentit d'ordenació s'apliquen en temps real sobre la llista de jugadors i també es desen per projecte.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-6",
+            "Main menu toggle. Opens the global settings and quick actions area: language, currency, date format, visibility options, data update/export and navigation links.",
+            "Conmutador del menú principal. Abre la zona de ajustes globales y acciones rápidas: idioma, moneda, formato de fecha, opciones de visibilidad, actualización/exportación de datos y enlaces de navegación.",
+            "Commutador del menú principal. Obre la zona d'ajustos globals i accions ràpides: idioma, moneda, format de data, opcions de visibilitat, actualització/exportació de dades i enllaços de navegació.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-7",
+            "Weekly summary cards. They aggregate team totals and averages (economy, age, form, stamina, etc.) plus contextual staff/training information for the currently selected week.",
+            "Tarjetas resumen semanales. Agregan totales y medias del equipo (economía, edad, forma, resistencia, etc.) junto con la información contextual de staff/entrenamiento para la semana actualmente seleccionada.",
+            "Targetes resum setmanals. Agreguen totals i mitjanes de l'equip (economia, edat, forma, resistència, etc.) juntament amb la informació contextual de staff/entrenament per a la setmana actualment seleccionada.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-8",
+            "Player cards grid. Each card combines personality/status data, key skill levels, HTMS indicators and direct links to historical player detail, enabling quick scouting and follow-up.",
+            "Rejilla de tarjetas de jugador. Cada tarjeta combina datos de personalidad/estado, niveles de habilidades clave, indicadores HTMS y enlaces directos al detalle histórico del jugador, facilitando scouting y seguimiento rápido.",
+            "Graella de targetes de jugador. Cada targeta combina dades de personalitat/estat, nivells d'habilitats clau, indicadors HTMS i enllaços directes al detall històric del jugador, facilitant scouting i seguiment ràpid.");
+
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-9",
+            "Main menu panel expanded. This visible state confirms you are editing account-wide preferences and running quick actions from a single central panel.",
+            "Panel del menú principal desplegado. Este estado visible confirma que estás editando preferencias globales y ejecutando acciones rápidas desde un panel central único.",
+            "Panell del menú principal desplegat. Aquest estat visible confirma que estàs editant preferències globals i executant accions ràpides des d'un panell central únic.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-10",
+            "Language selector. Changes UI labels and generated texts. If a translation key is missing in a specific language, English is used as fallback.",
+            "Selector de idioma. Cambia etiquetas de interfaz y textos generados. Si falta una clave de traducción en un idioma concreto, se usa inglés como fallback.",
+            "Selector d'idioma. Canvia etiquetes d'interfície i textos generats. Si falta una clau de traducció en un idioma concret, s'utilitza anglès com a fallback.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-11",
+            "Currency selector. Converts and displays financial values in the chosen currency to simplify budget comparison between projects and periods.",
+            "Selector de moneda. Convierte y muestra los valores financieros en la moneda elegida para simplificar comparativas de presupuesto entre proyectos y periodos.",
+            "Selector de moneda. Converteix i mostra els valors financers a la moneda triada per simplificar comparatives de pressupost entre projectes i períodes.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-12",
+            "Date format selector. Applies a consistent date style across the application, which is useful when comparing exports, screenshots or shared reports.",
+            "Selector de formato de fecha. Aplica un estilo de fecha consistente en toda la aplicación, útil al comparar exportaciones, capturas o informes compartidos.",
+            "Selector de format de data. Aplica un estil de data consistent a tota l'aplicació, útil en comparar exportacions, captures o informes compartits.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-13",
+            "Training-info visibility toggle. Enables or hides training-related indicators on player cards, including values that depend on minutes, position and training settings.",
+            "Interruptor de visibilidad de info de entrenamiento. Activa u oculta indicadores de entrenamiento en las tarjetas de jugador, incluyendo valores que dependen de minutos, posición y ajustes de entrenamiento.",
+            "Interruptor de visibilitat d'info d'entrenament. Activa o amaga indicadors d'entrenament a les targetes de jugador, incloent valors que depenen de minuts, posició i ajustos d'entrenament.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-14",
+            "Subskills visibility toggle. Shows or hides sublevel information for finer progression analysis and more precise interpretation of training impact.",
+            "Interruptor de visibilidad de subniveles. Muestra u oculta información de subniveles para un análisis más fino de progresión y una interpretación más precisa del impacto del entrenamiento.",
+            "Interruptor de visibilitat de subnivells. Mostra o amaga informació de subnivells per a una anàlisi més fina de progressió i una interpretació més precisa de l'impacte de l'entrenament.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-15",
+            "Project-management entry point. Opens the project editor where timeline windows are created and maintained without modifying raw imported data.",
+            "Entrada a gestión de proyectos. Abre el editor de proyectos donde se crean y mantienen ventanas temporales sin modificar los datos importados en bruto.",
+            "Entrada a gestió de projectes. Obre l'editor de projectes on es creen i mantenen finestres temporals sense modificar les dades importades en brut.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-16",
+            "Manual data update action. EHM already runs a scheduled weekly sync (with retry policy) a few hours after Hattrick's configured update, so this button is mainly for exceptional cases where data looks outdated. After running it, refresh the page to view newly imported values. To avoid duplicates, EHM stores at most one weekly snapshot per team, using the Hattrick training-update day as reference.",
+            "Acción de actualización manual de datos. EHM ya ejecuta una sincronización semanal programada (con política de reintentos) unas horas después de la actualización configurada en Hattrick, por lo que este botón se usa sobre todo en casos excepcionales donde los datos parecen desactualizados. Tras ejecutarlo, refresca la página para ver los nuevos valores importados. Para evitar duplicados, EHM guarda como máximo un snapshot semanal por equipo, usando como referencia el día de actualización de entrenamiento de Hattrick.",
+            "Acció d'actualització manual de dades. EHM ja executa una sincronització setmanal programada (amb política de reintents) unes hores després de l'actualització configurada a Hattrick, de manera que aquest botó s'utilitza principalment en casos excepcionals on les dades semblen desactualitzades. Després d'executar-lo, refresca la pàgina per veure els nous valors importats. Per evitar duplicats, EHM desa com a màxim un snapshot setmanal per equip, usant com a referència el dia d'actualització d'entrenament de Hattrick.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-17",
+            "Data export action. Downloads a JSON file containing all collected team/project data currently loaded by EHM. It is recommended to save this file periodically as a backup and restore point before major project edits or experimental planning changes.",
+            "Acción de exportación de datos. Descarga un archivo JSON con todos los datos de equipo/proyecto recopilados y actualmente cargados por EHM. Se recomienda guardarlo periódicamente como copia de seguridad y punto de restauración antes de hacer cambios grandes en proyectos o simulaciones.",
+            "Acció d'exportació de dades. Descarrega un fitxer JSON amb totes les dades d'equip/projecte recopilades i actualment carregades per EHM. Es recomana desar-lo periòdicament com a còpia de seguretat i punt de restauració abans de fer canvis grans en projectes o simulacions.");
+
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-18",
+            "Sorting-panel trigger in header. It opens ordering controls on top of the current page, so you can re-order cards without navigating away.",
+            "Disparador del panel de orden en cabecera. Abre los controles de orden encima de la página actual, para reordenar tarjetas sin salir de la vista.",
+            "Disparador del panell d'ordre a capçalera. Obre els controls d'ordre sobre la pàgina actual, per reordenar targetes sense sortir de la vista.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-19",
+            "Order-direction selector. Choose ascending or descending mode depending on whether you need to prioritize low values or high values.",
+            "Selector de dirección de orden. Elige modo ascendente o descendente según necesites priorizar valores bajos o valores altos.",
+            "Selector de direcció d'ordre. Tria mode ascendent o descendent segons necessitis prioritzar valors baixos o valors alts.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-20",
+            "Sorting-criteria selector. Supports identity, economy, skill, HTMS and training metrics. If several players share the same value, player ID is used as deterministic tie-breaker.",
+            "Selector de criterio de orden. Soporta métricas de identidad, economía, habilidades, HTMS y entrenamiento. Si varios jugadores comparten valor, se usa el ID de jugador como desempate determinista.",
+            "Selector de criteri d'ordre. Suporta mètriques d'identitat, economia, habilitats, HTMS i entrenament. Si diversos jugadors comparteixen valor, s'utilitza l'ID de jugador com a desempat determinista.");
+
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-21",
+            "Filtering-panel trigger in header. Opens inclusion/exclusion controls and immediately applies the result to the visible player set.",
+            "Disparador del panel de filtrado en cabecera. Abre controles de inclusión/exclusión y aplica inmediatamente el resultado sobre el conjunto visible de jugadores.",
+            "Disparador del panell de filtratge a capçalera. Obre controls d'inclusió/exclusió i aplica immediatament el resultat sobre el conjunt visible de jugadors.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-22",
+            "Filter-mode selector. Inclusive mode keeps only checked players; exclusive mode hides checked players and keeps the rest.",
+            "Selector de modo de filtro. El modo incluyente conserva solo los jugadores marcados; el modo excluyente oculta los marcados y deja el resto.",
+            "Selector de mode de filtre. El mode inclusiu conserva només els jugadors marcats; el mode excloent oculta els marcats i deixa la resta.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-23",
+            "Player checklist used by the filter. The list includes all players in project scope and is intended for quick tactical subsets (for example, trainees or transfer candidates).",
+            "Checklist de jugadores usada por el filtro. La lista incluye todos los jugadores en el alcance del proyecto y está pensada para subconjuntos tácticos rápidos (por ejemplo, entrenables o candidatos de mercado).",
+            "Checklist de jugadors usada pel filtre. La llista inclou tots els jugadors dins l'abast del projecte i està pensada per a subconjunts tàctics ràpids (per exemple, entrenables o candidats de mercat).");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-24",
+            "Bulk quick actions. Select all, clear all and invert selection greatly reduce setup time when working with large squads.",
+            "Acciones masivas rápidas. Seleccionar todo, limpiar todo e invertir selección reducen mucho el tiempo de configuración en plantillas grandes.",
+            "Accions massives ràpides. Seleccionar-ho tot, netejar-ho tot i invertir selecció redueixen molt el temps de configuració en plantilles grans.");
+
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-25",
+            "Training Planner mode switch. Enters simulation mode where you can define staged training plans and evaluate projected skill and lineup evolution.",
+            "Conmutador a modo Training Planner. Entra en modo simulación, donde puedes definir planes de entrenamiento por etapas y evaluar la evolución proyectada de habilidades y alineación.",
+            "Commutador a mode Training Planner. Entra en mode simulació, on pots definir plans d'entrenament per etapes i avaluar l'evolució projectada d'habilitats i alineació.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-26",
+            "Stage-builder form. In this manual example there are exactly two stages and each one spans 48 weeks (3 seasons): first playmaking, then defending.",
+            "Formulario constructor de etapas. En este ejemplo del manual hay exactamente dos etapas y cada una abarca 48 semanas (3 temporadas): primero jugadas y después defensa.",
+            "Formulari constructor d'etapes. En aquest exemple del manual hi ha exactament dues etapes i cadascuna abasta 48 setmanes (3 temporades): primer jugades i després defensa.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-27",
+            "Stage timeline with controls. It shows configured segments and lets you adjust order, edit parameters or remove stages before recalculating projections.",
+            "Línea temporal de etapas con controles. Muestra los segmentos configurados y permite ajustar orden, editar parámetros o eliminar etapas antes de recalcular proyecciones.",
+            "Línia temporal d'etapes amb controls. Mostra els segments configurats i permet ajustar ordre, editar paràmetres o eliminar etapes abans de recalcular projeccions.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-28",
+            "Plan summary panel. Displays end season/week and accumulated figures (for example total wage, weeks and seasons) expected at the end of the configured plan.",
+            "Panel resumen del plan. Muestra temporada/semana final y magnitudes acumuladas (por ejemplo salario total, semanas y temporadas) esperadas al final del plan configurado.",
+            "Panell resum del pla. Mostra temporada/setmana final i magnituds acumulades (per exemple salari total, setmanes i temporades) esperades al final del pla configurat.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-29",
+            "Players-block toggle. Collapsing players is useful when you need to focus on lineup ratings, prime windows and tactical comparisons.",
+            "Conmutador del bloque de jugadores. Plegar jugadores es útil cuando necesitas centrarte en ratings de alineación, ventanas prime y comparativas tácticas.",
+            "Commutador del bloc de jugadors. Plegar jugadors és útil quan necessites centrar-te en ratings d'alineació, finestres prime i comparatives tàctiques.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-30",
+            "Per-player stage sliders. They distribute training participation per stage and directly affect projected development for the selected player.",
+            "Sliders por jugador y etapa. Distribuyen participación de entrenamiento por etapa y afectan directamente a la proyección de desarrollo del jugador seleccionado.",
+            "Sliders per jugador i etapa. Distribueixen participació d'entrenament per etapa i afecten directament la projecció de desenvolupament del jugador seleccionat.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-31",
+            "Initial compact player card. Represents the baseline snapshot before applying the full plan so you can compare starting vs projected state.",
+            "Tarjeta compacta inicial del jugador. Representa el snapshot base antes de aplicar el plan completo para comparar estado inicial vs proyectado.",
+            "Targeta compacta inicial del jugador. Representa el snapshot base abans d'aplicar el pla complet per comparar estat inicial vs projectat.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-32",
+            "Projected compact player card. Represents the expected state after all configured stages are applied.",
+            "Tarjeta compacta proyectada del jugador. Representa el estado esperado tras aplicar todas las etapas configuradas.",
+            "Targeta compacta projectada del jugador. Representa l'estat esperat després d'aplicar totes les etapes configurades.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-33",
+            "Player-level prime marker. The star highlights the personal best point for that player inside the simulated horizon, helping decide timing and role planning.",
+            "Marcador de prime a nivel de jugador. La estrella resalta el mejor punto personal del jugador dentro del horizonte simulado, ayudando a decidir timing y planificación de rol.",
+            "Marcador de prime a nivell de jugador. L'estrella ressalta el millor punt personal del jugador dins l'horitzó simulat, ajudant a decidir timing i planificació de rol.");
+
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-34",
+            "Players panel collapsed state in lineup view. This layout maximizes vertical space for tactical charts and rating analysis.",
+            "Estado plegado del panel de jugadores en vista de alineación. Este layout maximiza el espacio vertical para gráficos tácticos y análisis de ratings.",
+            "Estat plegat del panell de jugadors en vista d'alineació. Aquest layout maximitza l'espai vertical per a gràfics tàctics i anàlisi de ratings.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-35",
+            "Lineup/ratings section expanded. It exposes the evolution curve, best-week marker and tactical outputs for final lineup assessment.",
+            "Sección de alineación/ratings desplegada. Expone curva de evolución, marcador de mejor semana y salidas tácticas para evaluar la alineación final.",
+            "Secció d'alineació/ratings desplegada. Exposa corba d'evolució, marcador de millor setmana i sortides tàctiques per avaluar l'alineació final.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-36",
+            "Final-lineup prime range. The highlighted band indicates the optimum time window where the projected team performance peaks.",
+            "Rango prime de la alineación final. La banda resaltada indica la ventana temporal óptima donde el rendimiento proyectado del equipo alcanza su pico.",
+            "Rang prime de l'alineació final. La banda ressaltada indica la finestra temporal òptima on el rendiment projectat de l'equip arriba al seu pic.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-37",
+            "Best-week marker for final lineup. It points to the exact week selected as the top tactical point inside the prime range.",
+            "Marcador de mejor semana para la alineación final. Señala la semana exacta seleccionada como punto táctico máximo dentro del rango prime.",
+            "Marcador de millor setmana per a l'alineació final. Assenyala la setmana exacta seleccionada com a punt tàctic màxim dins el rang prime.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-38",
+            "Final lineup and ratings pitches. Left field shows positional distribution of the best lineup, right field shows rating sectors (defense/midfield/attack by zone).",
+            "Campos de alineación final y ratings. El campo izquierdo muestra la distribución posicional de la mejor alineación; el derecho muestra sectores de rating (defensa/medio/ataque por zona).",
+            "Camps d'alineació final i ratings. El camp esquerre mostra la distribució posicional de la millor alineació; el dret mostra sectors de rating (defensa/mig/atac per zona).");
+
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-39",
+            "Existing projects list. A project is a display/planning time window for a specific team, and multiple projects can overlap without altering stored historical data. At registration, EHM creates one default project per team (starting that same week, no end date).",
+            "Lista de proyectos existentes. Un proyecto es una ventana temporal de visualización/planificación para un equipo concreto, y varios proyectos pueden solaparse sin alterar los datos históricos guardados. Al registrarse, EHM crea un proyecto por equipo (inicio esa misma semana y sin fecha de fin).",
+            "Llista de projectes existents. Un projecte és una finestra temporal de visualització/planificació per a un equip concret, i diversos projectes es poden solapar sense alterar les dades històriques desades. En registrar-se, EHM crea un projecte per equip (inici aquella mateixa setmana i sense data de fi).");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-40",
+            "Project editor table. This is the main configuration area: each row is one project, with editable name, team selector, start week and optional end week. The order defined here is the same order used later in the project selector.",
+            "Tabla de edición de proyectos. Esta es la zona principal de configuración: cada fila es un proyecto, con nombre editable, selector de equipo, semana de inicio y semana de fin opcional. El orden definido aquí es el mismo orden que luego se usa en el selector de proyectos.",
+            "Taula d'edició de projectes. Aquesta és la zona principal de configuració: cada fila és un projecte, amb nom editable, selector d'equip, setmana d'inici i setmana de fi opcional. L'ordre definit aquí és el mateix que després s'utilitza al selector de projectes.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-41",
+            "Delete row action. Removes the selected project row from the editable configuration. This does not delete imported player/team data from the system; it only removes that project definition.",
+            "Acción de borrar fila. Elimina la fila de proyecto seleccionada de la configuración editable. Esto no borra datos importados de jugadores/equipos del sistema; solo elimina esa definición de proyecto.",
+            "Acció d'esborrar fila. Elimina la fila de projecte seleccionada de la configuració editable. Això no esborra dades importades de jugadors/equips del sistema; només elimina aquesta definició de projecte.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-42",
+            "Return without saving. Leaves the project editor and discards every pending modification made in this session.",
+            "Volver sin guardar. Sale del editor de proyectos y descarta todas las modificaciones pendientes hechas en esta sesión.",
+            "Tornar sense desar. Surt de l'editor de projectes i descarta totes les modificacions pendents fetes en aquesta sessió.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-43",
+            "Save and return. Persists the entire project-table configuration and then goes back to home with the updated setup available.",
+            "Guardar y volver. Persiste la configuración completa de la tabla de proyectos y vuelve a home con el nuevo setup disponible.",
+            "Desar i tornar. Persisteix la configuració completa de la taula de projectes i torna a home amb el nou setup disponible.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-44",
+            "End-week enable checkbox. For active/current projects this is usually disabled (open-ended project so new weekly data keeps appearing). For historical/closed projects, enable it and choose an explicit end week to freeze the timeline.",
+            "Checkbox de habilitación de semana final. En proyectos activos/actuales normalmente se deja desactivado (proyecto abierto para que sigan entrando semanas nuevas). En proyectos históricos/cerrados, actívalo y elige una semana final explícita para cerrar la línea temporal.",
+            "Checkbox d'habilitació de setmana final. En projectes actius/actuals normalment es deixa desactivat (projecte obert perquè continuïn entrant setmanes noves). En projectes històrics/tancats, activa'l i tria una setmana final explícita per tancar la línia temporal.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-45",
+            "Add new row action (+). Appends a new project line in the table so you can define another scenario (team + date window) without touching existing ones.",
+            "Acción de añadir fila (+). Añade una nueva línea de proyecto en la tabla para definir otro escenario (equipo + ventana temporal) sin tocar los existentes.",
+            "Acció d'afegir fila (+). Afegeix una nova línia de projecte a la taula per definir un altre escenari (equip + finestra temporal) sense tocar els existents.");
+
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-46",
+            "Player header and context area. Identifies the analyzed player and anchors the historical chart to that specific profile.",
+            "Cabecera y área de contexto del jugador. Identifica al jugador analizado y ancla el gráfico histórico a ese perfil concreto.",
+            "Capçalera i àrea de context del jugador. Identifica el jugador analitzat i ancora el gràfic històric a aquest perfil concret.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-47",
+            "Historical chart plotting area. It contains complete week-by-week time series across the selected period, enabling longitudinal progression analysis.",
+            "Zona de trazado del gráfico histórico. Contiene series temporales completas semana a semana en el periodo seleccionado, permitiendo análisis longitudinal de progresión.",
+            "Zona de traçat del gràfic històric. Conté sèries temporals completes setmana a setmana en el període seleccionat, permetent anàlisi longitudinal de progressió.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-48",
+            "Right-side grouped legend. It controls visibility of skills, status variables, coach/global metrics and training-related indicators for cleaner comparisons.",
+            "Leyenda agrupada en lateral derecho. Controla la visibilidad de habilidades, variables de estado, métricas globales/de entrenador e indicadores de entrenamiento para comparativas más limpias.",
+            "Llegenda agrupada al lateral dret. Controla la visibilitat d'habilitats, variables d'estat, mètriques globals/d'entrenador i indicadors d'entrenament per a comparatives més netes.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-49",
+            "Central trend-reading zone. Useful for comparing slopes, plateaus and breakpoints between multiple metrics over time.",
+            "Zona central de lectura de tendencias. Útil para comparar pendientes, mesetas y puntos de ruptura entre múltiples métricas a lo largo del tiempo.",
+            "Zona central de lectura de tendències. Útil per comparar pendents, altiplans i punts de ruptura entre múltiples mètriques al llarg del temps.");
+        addTranslation_EN_ES_CA("ehm.manual-v2-item-50",
+            "Upper high-impact area. This region usually concentrates breakthrough jumps and strategic milestones, making it ideal for fast visual diagnosis.",
+            "Zona superior de alto impacto. Esta región suele concentrar saltos relevantes e hitos estratégicos, por lo que es ideal para diagnóstico visual rápido.",
+            "Zona superior d'alt impacte. Aquesta regió sol concentrar salts rellevants i fites estratègiques, de manera que és ideal per a diagnòstic visual ràpid.");
+
+        addTranslation_EN_ES_CA("ehm.manual-v2-note",
+            "Texts and values can vary by language, currency, active project, selected week and source data freshness.",
+            "Los textos y valores pueden variar según idioma, moneda, proyecto activo, semana seleccionada y frescura de los datos de origen.",
+            "Els textos i valors poden variar segons idioma, moneda, projecte actiu, setmana seleccionada i frescor de les dades d'origen.");
     }
 
     private void addTranslation_EN_ES_CA(String key, String en, String es, String ca) {
