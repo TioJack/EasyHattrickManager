@@ -11,6 +11,13 @@ server:
 management:
   server:
     port: 1999
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: always
   health:
     mail:
       enabled: false
