@@ -679,6 +679,7 @@ public class UpdateTranslationService {
         addTranslation_EN_ES_CA("ehm.lineup-ratings", "lineup / ratings", "alineación / calificaciones", "alineació / qualificacions");
         addTranslation_EN_ES_CA("ehm.lineup-parameters", "lineup parameters", "parámetros alineación", "paràmetres alineació");
         addTranslation_EN_ES_CA("ehm.calculate-best-lineup", "calculate best lineup", "calcular mejor alineación", "calcular millor alineació");
+        addTranslation_EN_ES_CA("ehm.auto-refresh", "auto refresh", "auto refresco", "autorefresc");
         addTranslation_EN_ES_CA("ehm.best-lineup-criteria", "best lineup criteria", "criterio mejor alineación", "criteri millor alineació");
         addTranslation_EN_ES_CA("ehm.formation", "formation", "formación", "formació");
         addTranslation_EN_ES_CA("ehm.automatic", "automatic", "automática", "automàtica");

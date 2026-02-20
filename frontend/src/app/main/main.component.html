@@ -18,7 +18,7 @@
 
   <ng-template #plannerView>
     <div class="planner-overlay-root" [attr.aria-busy]="isTeamTrainingLoading">
-      <fieldset class="planner-busy-fieldset" [disabled]="isTeamTrainingLoading">
+      <fieldset class="planner-busy-fieldset">
         <div class="row g-3 p-3 w-100 align-items-stretch">
       <div class="col-12">
         <div class="planner-row align-items-stretch">
@@ -259,7 +259,8 @@
                           max="100"
                           [style.accentColor]="trainingTypeColor(plan.typeId)"
                           [ngModel]="getPlanPercent(player.id, i)"
-                          (ngModelChange)="setPlanPercent(player.id, i, $event)">
+                          (ngModelChange)="setPlanPercent(player.id, i, $event)"
+                          (change)="onPlanPercentCommit()">
                         <div class="planner-slider-value text-nowrap">
                           {{ getPlanPercent(player.id, i) }}%
                         </div>
@@ -336,21 +337,35 @@
           <div class="planner-ratings-form-card card">
             <div class="card-body">
               <div class="planner-ratings-form">
+                <div class="planner-ratings-fields mb-3">
+                  <div class="planner-field d-flex flex-row align-items-center gap-2">
+                    <button
+                      class="btn btn-sm btn-primary w-100"
+                      type="button"
+                      (click)="calculateBestFormationOnDemand()"
+                      [disabled]="isTeamTrainingLoading || trainingPlans.length === 0">
+                      {{ 'ehm.calculate-best-lineup' | translate | firstCapitalize }}
+                    </button>
+                  </div>
+                  <div class="planner-field d-flex flex-row align-items-center gap-2">
+                    <span class="planner-field-label mb-0 d-inline-flex align-items-center gap-1">
+                      <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
+                      <span>{{ 'ehm.auto-refresh' | translate | firstCapitalize }}</span>
+                    </span>
+                    <input
+                      class="form-check-input m-0"
+                      type="checkbox"
+                      [(ngModel)]="autoRefreshBestFormation"
+                      (ngModelChange)="onAutoRefreshBestFormationChanged()">
+                  </div>
+                </div>
                 <div class="planner-ratings-title">
                   {{ 'ehm.lineup-parameters' | translate | firstCapitalize }}
                 </div>
                 <div class="planner-ratings-fields">
-                  <div class="planner-field d-flex flex-row align-items-center gap-2">
-                    <span class="planner-field-label mb-0">{{ 'ehm.calculate-best-lineup' | translate | firstCapitalize }}</span>
-                    <input
-                      class="form-check-input m-0"
-                      type="checkbox"
-                      [(ngModel)]="calculateBestFormation"
-                      (ngModelChange)="onRatingsInputChanged()">
-                  </div>
                   <label class="planner-field">
                     <span class="planner-field-label">{{ 'ehm.best-lineup-criteria' | translate | firstCapitalize }}</span>
-                    <select class="form-select form-select-sm" [disabled]="!calculateBestFormation" [(ngModel)]="bestFormationCriteria" (ngModelChange)="onRatingsInputChanged()">
+                    <select class="form-select form-select-sm" [(ngModel)]="bestFormationCriteria" (ngModelChange)="onRatingsInputChanged()">
                       <option *ngFor="let criteria of bestFormationCriteriaOptions" [ngValue]="criteria">
                         {{ getCriteriaLabel(criteria) }}
                       </option>
@@ -358,7 +373,7 @@
                   </label>
                   <label class="planner-field">
                     <span class="planner-field-label">{{ 'ehm.formation' | translate | firstCapitalize }}</span>
-                    <select class="form-select form-select-sm" [disabled]="!calculateBestFormation" [(ngModel)]="fixedFormationCode" (ngModelChange)="onRatingsInputChanged()">
+                    <select class="form-select form-select-sm" [(ngModel)]="fixedFormationCode" (ngModelChange)="onRatingsInputChanged()">
                       <option [ngValue]="null">{{ 'ehm.automatic' | translate | firstCapitalize }}</option>
                       <option *ngFor="let option of fixedFormationOptions" [ngValue]="option.code">
                         {{ getFixedFormationOptionLabel(option) }}
@@ -367,7 +382,7 @@
                   </label>
                   <label class="planner-field">
                     <span class="planner-field-label">{{ 'ht.tactic-types' | translate | firstCapitalize }}</span>
-                    <select class="form-select form-select-sm" [disabled]="!calculateBestFormation" [(ngModel)]="matchDetail.tactic" (ngModelChange)="onRatingsInputChanged()">
+                    <select class="form-select form-select-sm" [(ngModel)]="matchDetail.tactic" (ngModelChange)="onRatingsInputChanged()">
                       <option *ngFor="let tactic of tacticOptions" [ngValue]="tactic">
                         {{ getTacticTranslationKey(tactic) | translate | firstCapitalize }}
                       </option>
@@ -375,7 +390,7 @@
                   </label>
                   <label class="planner-field">
                     <span class="planner-field-label">{{ 'ht.team-attitude' | translate | firstCapitalize }}</span>
-                    <select class="form-select form-select-sm" [disabled]="!calculateBestFormation" [(ngModel)]="matchDetail.teamAttitude" (ngModelChange)="onRatingsInputChanged()">
+                    <select class="form-select form-select-sm" [(ngModel)]="matchDetail.teamAttitude" (ngModelChange)="onRatingsInputChanged()">
                       <option *ngFor="let attitude of teamAttitudeOptions" [ngValue]="attitude">
                         {{ getTeamAttitudeTranslationKey(attitude) | translate | firstCapitalize }}
                       </option>
@@ -383,7 +398,7 @@
                   </label>
                   <label class="planner-field">
                     <span class="planner-field-label">{{ 'ht.team-spirit' | translate | firstCapitalize }}</span>
-                    <select class="form-select form-select-sm" [disabled]="!calculateBestFormation" [(ngModel)]="matchDetail.teamSpirit" (ngModelChange)="onRatingsInputChanged()">
+                    <select class="form-select form-select-sm" [(ngModel)]="matchDetail.teamSpirit" (ngModelChange)="onRatingsInputChanged()">
                       <option *ngFor="let spirit of teamSpiritOptions" [ngValue]="spirit">
                         {{ getTeamSpiritTranslationKey(spirit) | translate | firstCapitalize }}
                       </option>
@@ -391,7 +406,7 @@
                   </label>
                   <label class="planner-field">
                     <span class="planner-field-label">{{ 'ehm.team-spirit-sublevel' | translate | firstCapitalize }}</span>
-                    <select class="form-select form-select-sm" [disabled]="!calculateBestFormation" [(ngModel)]="matchDetail.teamSubSpirit" (ngModelChange)="onRatingsInputChanged()">
+                    <select class="form-select form-select-sm" [(ngModel)]="matchDetail.teamSubSpirit" (ngModelChange)="onRatingsInputChanged()">
                       <option *ngFor="let value of subSpiritOptions" [ngValue]="value">
                         {{ value }}
                       </option>
@@ -399,7 +414,7 @@
                   </label>
                   <label class="planner-field">
                     <span class="planner-field-label">{{ 'ehm.team-confidence' | translate | firstCapitalize }}</span>
-                    <select class="form-select form-select-sm" [disabled]="!calculateBestFormation" [(ngModel)]="matchDetail.teamConfidence" (ngModelChange)="onRatingsInputChanged()">
+                    <select class="form-select form-select-sm" [(ngModel)]="matchDetail.teamConfidence" (ngModelChange)="onRatingsInputChanged()">
                       <option *ngFor="let confidence of teamConfidenceOptions" [ngValue]="confidence">
                         {{ getTeamConfidenceTranslationKey(confidence) | translate | firstCapitalize }}
                       </option>
@@ -407,7 +422,7 @@
                   </label>
                   <label class="planner-field">
                     <span class="planner-field-label">{{ 'ehm.team-confidence-sublevel' | translate | firstCapitalize }}</span>
-                    <select class="form-select form-select-sm" [disabled]="!calculateBestFormation" [(ngModel)]="matchDetail.teamSubConfidence" (ngModelChange)="onRatingsInputChanged()">
+                    <select class="form-select form-select-sm" [(ngModel)]="matchDetail.teamSubConfidence" (ngModelChange)="onRatingsInputChanged()">
                       <option *ngFor="let value of subSpiritOptions" [ngValue]="value">
                         {{ value }}
                       </option>
@@ -415,7 +430,7 @@
                   </label>
                   <label class="planner-field">
                     <span class="planner-field-label">{{ 'ehm.stadium' | translate | firstCapitalize }}</span>
-                    <select class="form-select form-select-sm" [disabled]="!calculateBestFormation" [(ngModel)]="matchDetail.sideMatch" (ngModelChange)="onRatingsInputChanged()">
+                    <select class="form-select form-select-sm" [(ngModel)]="matchDetail.sideMatch" (ngModelChange)="onRatingsInputChanged()">
                       <option *ngFor="let side of sideMatchOptions" [ngValue]="side">
                         {{ getSideMatchLabel(side) }}
                       </option>
@@ -423,7 +438,7 @@
                   </label>
                   <label class="planner-field">
                     <span class="planner-field-label">{{ 'ehm.style-of-play' | translate | firstCapitalize }}</span>
-                    <select class="form-select form-select-sm" [disabled]="!calculateBestFormation" [(ngModel)]="matchDetail.styleOfPlay" (ngModelChange)="onRatingsInputChanged()">
+                    <select class="form-select form-select-sm" [(ngModel)]="matchDetail.styleOfPlay" (ngModelChange)="onRatingsInputChanged()">
                       <option *ngFor="let value of styleOfPlayOptions" [ngValue]="value">
                         {{ getStyleOfPlayLabel(value) }}
                       </option>

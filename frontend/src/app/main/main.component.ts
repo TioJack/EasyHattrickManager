@@ -113,7 +113,7 @@ export class MainComponent implements OnInit {
   staminaOptions = Array.from({length: 101}, (_, i) => i);
   trainingTypes = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   trainingTypeColor = trainingTypeColor;
-  calculateBestFormation = true;
+  autoRefreshBestFormation = false;
   bestFormationCriteria: BestFormationCriteria = 'HATSTATS';
   fixedFormationCode: string | null = null;
   matchDetail: MatchDetail = {
@@ -250,6 +250,7 @@ export class MainComponent implements OnInit {
   showPlannerRatings = true;
   isTeamTrainingLoading = false;
   private plannerRequestTimer: number | null = null;
+  private scheduledCalculateBestFormation = false;
   private teamTrainingRequestToken = 0;
   private teamTrainingRequestSub: Subscription | null = null;
   private inFlightTeamTrainingRequestKey: string | null = null;
@@ -442,12 +443,28 @@ export class MainComponent implements OnInit {
       this.trainingPlanPercents[playerId] = [];
     }
     this.trainingPlanPercents[playerId][index] = Math.max(0, Math.min(100, Number(value)));
+  }
+
+  onPlanPercentCommit(): void {
     this.scheduleTeamTrainingRequest();
   }
 
   onRatingsInputChanged(): void {
     this.ensureVisibleBestFormationCriteria();
-    this.scheduleTeamTrainingRequest();
+    if (this.autoRefreshBestFormation) {
+      this.scheduleTeamTrainingRequest(true);
+    }
+  }
+
+  onAutoRefreshBestFormationChanged(): void {
+    if (this.autoRefreshBestFormation) {
+      this.scheduleTeamTrainingRequest(true);
+    }
+  }
+
+  calculateBestFormationOnDemand(): void {
+    this.ensureVisibleBestFormationCriteria();
+    this.requestTeamTraining(true);
   }
 
   private ensurePlayerPlans(): void {
@@ -519,7 +536,7 @@ export class MainComponent implements OnInit {
     this.showPlannerRatings = !this.showPlannerRatings;
   }
 
-  private requestTeamTraining(): void {
+  private requestTeamTraining(calculateBestFormation = this.autoRefreshBestFormation): void {
     if (!this.players.length || !this.trainingPlans.length) {
       this.teamTrainingRequestSub?.unsubscribe();
       this.teamTrainingRequestSub = null;
@@ -527,7 +544,7 @@ export class MainComponent implements OnInit {
       this.isTeamTrainingLoading = false;
       return;
     }
-    const request = this.buildTeamTrainingRequest();
+    const request = this.buildTeamTrainingRequest(calculateBestFormation);
     if (!request) {
       this.teamTrainingRequestSub?.unsubscribe();
       this.teamTrainingRequestSub = null;
@@ -570,13 +587,16 @@ export class MainComponent implements OnInit {
     });
   }
 
-  private scheduleTeamTrainingRequest(): void {
+  private scheduleTeamTrainingRequest(calculateBestFormation = this.autoRefreshBestFormation): void {
+    this.scheduledCalculateBestFormation = this.scheduledCalculateBestFormation || calculateBestFormation;
     if (this.plannerRequestTimer !== null) {
       clearTimeout(this.plannerRequestTimer);
     }
     this.plannerRequestTimer = window.setTimeout(() => {
       this.plannerRequestTimer = null;
-      this.requestTeamTraining();
+      const shouldCalculateBestFormation = this.scheduledCalculateBestFormation;
+      this.scheduledCalculateBestFormation = false;
+      this.requestTeamTraining(shouldCalculateBestFormation);
     }, 250);
   }
 
@@ -585,6 +605,7 @@ export class MainComponent implements OnInit {
       clearTimeout(this.plannerRequestTimer);
       this.plannerRequestTimer = null;
     }
+    this.scheduledCalculateBestFormation = false;
     this.teamTrainingRequestSub?.unsubscribe();
     this.teamTrainingRequestSub = null;
     this.teamTrainingRequestToken++;
@@ -603,7 +624,7 @@ export class MainComponent implements OnInit {
     this.onBestFormationTimelineLeave();
   }
 
-  private buildTeamTrainingRequest(): TeamTrainingRequest | null {
+  private buildTeamTrainingRequest(calculateBestFormation: boolean): TeamTrainingRequest | null {
     const stages: TrainingStage[] = this.trainingPlans.map((plan, index) => {
       const training = this.mapTrainingTypeToStage(plan.typeId);
       return {
@@ -639,7 +660,7 @@ export class MainComponent implements OnInit {
       players,
       stages,
       participations,
-      calculateBestFormation: this.calculateBestFormation,
+      calculateBestFormation,
       bestFormationCriteria: this.bestFormationCriteria,
       fixedFormationCode: this.fixedFormationCode,
       matchDetail: this.matchDetail

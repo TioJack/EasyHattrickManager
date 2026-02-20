@@ -375,7 +375,7 @@ public class TeamTrainingService {
     }
 
     private boolean shouldCalculateBestFormation(TeamTrainingRequest teamTrainingRequest) {
-        return teamTrainingRequest.getCalculateBestFormation() == null || teamTrainingRequest.getCalculateBestFormation();
+        return Boolean.TRUE.equals(teamTrainingRequest.getCalculateBestFormation());
     }
 
     private Map<Integer, FormationRating> calculateWeekFormationRatings(final Map<Integer, List<PlayerInfo>> weekPlayers,
