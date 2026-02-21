@@ -3,7 +3,7 @@ import {map, Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {Currency, DataResponse, Language, PlayerInfo, UserConfig} from './model/data-response';
 import {PlayerDataResponse} from './model/player-data-response';
-import {TeamTrainingRequest, TeamTrainingResponse} from './model/team-training';
+import {TeamTrainingProgressResponse, TeamTrainingRequest, TeamTrainingResponse} from './model/team-training';
 
 @Injectable({
   providedIn: 'root'
@@ -93,6 +93,10 @@ export class DataService {
 
   teamTraining(request: TeamTrainingRequest): Observable<TeamTrainingResponse> {
     return this.http.post<TeamTrainingResponse>(`${this.apiUrl}/teamTraining`, request);
+  }
+
+  teamTrainingProgress(request: TeamTrainingRequest): Observable<TeamTrainingProgressResponse> {
+    return this.http.post<TeamTrainingProgressResponse>(`${this.apiUrl}/teamTraining/progress`, request);
   }
 
 }

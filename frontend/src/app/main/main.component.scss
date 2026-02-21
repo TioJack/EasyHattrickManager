@@ -25,18 +25,45 @@
 }
 
 .planner-loading-box {
-  min-width: 200px;
+  min-width: 320px;
   padding: 0.85rem 1rem;
   border-radius: 10px;
   background: rgba(15, 23, 42, 0.92);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.7rem;
+}
+
+.planner-loading-content {
+  display: flex;
+  flex-direction: column;
+  min-width: 220px;
+  gap: 0.25rem;
 }
 
 .planner-loading-text {
   font-weight: 700;
   color: #f8fafc;
+}
+
+.planner-loading-progress-text {
+  color: #cbd5e1;
+  font-size: 0.83rem;
+}
+
+.planner-loading-progress-track {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.3);
+  overflow: hidden;
+}
+
+.planner-loading-progress-value {
+  height: 100%;
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+  border-radius: 999px;
+  transition: width 0.2s ease;
 }
 
 .planner-row {

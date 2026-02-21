@@ -145,14 +145,14 @@
                         </select>
                       </div>
                       <div class="d-flex align-items-center gap-2 flex-nowrap">
-                        <select class="form-select form-select-sm flex-grow-1" [(ngModel)]="plan.intensity" (ngModelChange)="onStageUpdated()">
+                        <select class="form-select form-select-sm flex-grow-1" [(ngModel)]="plan.intensity" (ngModelChange)="onStageLoadUpdated()">
                           <option *ngFor="let intensity of intensityOptions" [ngValue]="intensity">
                             {{ intensity }}
                           </option>
                         </select>
                       </div>
                       <div class="d-flex align-items-center gap-2 flex-nowrap">
-                        <select class="form-select form-select-sm flex-grow-1" [(ngModel)]="plan.stamina" (ngModelChange)="onStageUpdated()">
+                        <select class="form-select form-select-sm flex-grow-1" [(ngModel)]="plan.stamina" (ngModelChange)="onStageLoadUpdated()">
                           <option *ngFor="let stamina of staminaOptions" [ngValue]="stamina">
                             {{ stamina }}
                           </option>
@@ -633,7 +633,15 @@
       <div *ngIf="isTeamTrainingLoading" class="planner-loading-overlay" role="status" aria-live="polite" [attr.aria-label]="'ehm.calculating-training-plan' | translate">
         <div class="planner-loading-box">
           <div class="spinner-border text-warning" role="presentation" aria-hidden="true"></div>
-          <div class="planner-loading-text">{{ 'ehm.calculating-training-plan' | translate }}</div>
+          <div class="planner-loading-content">
+            <div class="planner-loading-text">{{ 'ehm.calculating-training-plan' | translate }}</div>
+            <div class="planner-loading-progress-text">
+              {{ teamTrainingProgressCalculatedWeeks }} / {{ teamTrainingProgressTotalWeeks }} {{ 'ehm.weeks' | translate }} ({{ teamTrainingProgressPercent }}%)
+            </div>
+            <div class="planner-loading-progress-track" aria-hidden="true">
+              <div class="planner-loading-progress-value" [style.width.%]="teamTrainingProgressPercent"></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

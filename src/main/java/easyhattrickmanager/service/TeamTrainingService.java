@@ -18,6 +18,7 @@ import easyhattrickmanager.service.model.teamtraining.SideMatch;
 import easyhattrickmanager.service.model.teamtraining.Tactic;
 import easyhattrickmanager.service.model.teamtraining.TeamAttitude;
 import easyhattrickmanager.service.model.teamtraining.TeamConfidence;
+import easyhattrickmanager.service.model.teamtraining.TeamTrainingProgressResponse;
 import easyhattrickmanager.service.model.teamtraining.TeamSpirit;
 import easyhattrickmanager.service.model.teamtraining.TeamTrainingPlayer;
 import easyhattrickmanager.service.model.teamtraining.TeamTrainingRequest;
@@ -43,6 +44,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
@@ -59,6 +61,7 @@ public class TeamTrainingService {
         .expireAfterWrite(Duration.ofHours(1))
         .build();
     private final Map<String, CompletableFuture<TeamTrainingResponse>> inFlightRequests = new ConcurrentHashMap<>();
+    private final Map<String, ProgressState> inFlightProgress = new ConcurrentHashMap<>();
 
     private final ObjectMapper objectMapper;
     private final PlayerTrainingService playerTrainingService;
@@ -80,8 +83,10 @@ public class TeamTrainingService {
             log.debug("teamTraining joined in-flight full request");
             return existingFuture.join();
         }
+        final int totalWeeks = this.getTotalWeeks(teamTrainingRequest.getStages(), teamTrainingRequest.getStages() == null ? 0 : teamTrainingRequest.getStages().size());
+        this.inFlightProgress.put(requestCacheKey, new ProgressState(totalWeeks, 0));
         try {
-            final TeamTrainingResponse response = this.computeTeamTraining(teamTrainingRequest);
+            final TeamTrainingResponse response = this.computeTeamTraining(teamTrainingRequest, requestCacheKey);
             this.responseCache.put(requestCacheKey, response);
             inFlightFuture.complete(response);
             return response;
@@ -93,10 +98,37 @@ public class TeamTrainingService {
             throw err;
         } finally {
             this.inFlightRequests.remove(requestCacheKey, inFlightFuture);
+            this.inFlightProgress.remove(requestCacheKey);
         }
     }
 
-    private TeamTrainingResponse computeTeamTraining(final TeamTrainingRequest teamTrainingRequest) {
+    public TeamTrainingProgressResponse getTeamTrainingProgress(final TeamTrainingRequest teamTrainingRequest) {
+        final String requestCacheKey = this.toCacheKey(teamTrainingRequest);
+        final TeamTrainingResponse cachedResponse = this.responseCache.getIfPresent(requestCacheKey);
+        final int totalWeeks = this.getTotalWeeks(teamTrainingRequest.getStages(), teamTrainingRequest.getStages() == null ? 0 : teamTrainingRequest.getStages().size());
+        if (cachedResponse != null) {
+            return TeamTrainingProgressResponse.builder()
+                .totalWeeks(totalWeeks)
+                .calculatedWeeks(totalWeeks)
+                .percent(100.0)
+                .inFlight(false)
+                .done(true)
+                .build();
+        }
+        final ProgressState progressState = this.inFlightProgress.get(requestCacheKey);
+        if (progressState == null) {
+            return TeamTrainingProgressResponse.builder()
+                .totalWeeks(totalWeeks)
+                .calculatedWeeks(0)
+                .percent(0.0)
+                .inFlight(false)
+                .done(false)
+                .build();
+        }
+        return progressState.toResponse(this.inFlightRequests.containsKey(requestCacheKey));
+    }
+
+    private TeamTrainingResponse computeTeamTraining(final TeamTrainingRequest teamTrainingRequest, final String requestCacheKey) {
         final List<TrainingStage> stages = teamTrainingRequest.getStages();
         final PrefixReuseState prefixReuseState = this.findCachedPrefixState(teamTrainingRequest, stages);
         if (prefixReuseState.consumedStageCount() > 0) {
@@ -115,6 +147,7 @@ public class TeamTrainingService {
         final BestFormationCriteria criteria = calculateBestFormation ? getBestFormationCriteria(teamTrainingRequest.getBestFormationCriteria()) : null;
         final Comparator<FormationRating> criteriaComparator = calculateBestFormation ? criteria.getFormationRatingComparator() : null;
         final Formation fixedFormation = calculateBestFormation ? getFixedFormation(teamTrainingRequest.getFixedFormationCode()) : null;
+        this.updateInFlightProgress(requestCacheKey, prefixReuseState.consumedWeeks());
 
         int currentWeek = prefixReuseState.consumedWeeks();
         int totalWeeks = prefixReuseState.consumedWeeks();
@@ -137,6 +170,9 @@ public class TeamTrainingService {
                     coefficientsBySkill);
                 weekPlayers.put(currentWeek, players);
                 previousWeekPlayers = players;
+                if (!calculateBestFormation) {
+                    this.updateInFlightProgress(requestCacheKey, currentWeek);
+                }
             }
         }
 
@@ -150,7 +186,8 @@ public class TeamTrainingService {
                 matchDetail,
                 criteria,
                 fixedFormation,
-                criteriaComparator);
+                criteriaComparator,
+                requestCacheKey);
             final Map.Entry<Integer, FormationRating> bestWeekRating = this.getBestWeekRating(weekFormationRatings, criteriaComparator);
             bestFormationRating = bestWeekRating != null ? bestWeekRating.getValue() : null;
             bestWeek = bestWeekRating != null ? bestWeekRating.getKey() : 0;
@@ -168,6 +205,7 @@ public class TeamTrainingService {
             .bestWeek(bestWeek)
             .endWeek(endWeek)
             .build();
+        this.updateInFlightProgress(requestCacheKey, totalWeeks);
         return response;
     }
 
@@ -356,6 +394,9 @@ public class TeamTrainingService {
     }
 
     private int getTotalWeeks(final List<TrainingStage> stages, final int stageCount) {
+        if (stages == null || stages.isEmpty() || stageCount <= 0) {
+            return 0;
+        }
         int weeks = 0;
         for (int i = 0; i < stageCount && i < stages.size(); i++) {
             weeks += stages.get(i).getDuration();
@@ -383,14 +424,21 @@ public class TeamTrainingService {
                                                                         final MatchDetail matchDetail,
                                                                         final BestFormationCriteria criteria,
                                                                         final Formation fixedFormation,
-                                                                        final Comparator<FormationRating> criteriaComparator) {
+                                                                        final Comparator<FormationRating> criteriaComparator,
+                                                                        final String requestCacheKey) {
         final int consumedWeeks = prefixReuseState.consumedWeeks();
         final Map<Integer, FormationRating> cachedPrefixRatings = new LinkedHashMap<>(prefixReuseState.weekFormationRatings());
+        final AtomicInteger progressWeeks = new AtomicInteger(consumedWeeks);
+        this.updateInFlightProgress(requestCacheKey, progressWeeks.get());
         final Map<Integer, FormationRating> calculated = weekPlayers.entrySet().parallelStream()
             .filter(entry -> entry.getKey() > consumedWeeks || !cachedPrefixRatings.containsKey(entry.getKey()))
             .collect(Collectors.toConcurrentMap(
                 Map.Entry::getKey,
-                entry -> this.formationRatingService.getRatings(entry.getValue(), matchDetail, criteria, fixedFormation)));
+                entry -> {
+                    final FormationRating rating = this.formationRatingService.getRatings(entry.getValue(), matchDetail, criteria, fixedFormation);
+                    this.updateInFlightProgress(requestCacheKey, progressWeeks.incrementAndGet());
+                    return rating;
+                }));
 
         final Map<Integer, FormationRating> adjusted = new LinkedHashMap<>(weekPlayers.size());
         if (!cachedPrefixRatings.isEmpty()) {
@@ -418,6 +466,14 @@ public class TeamTrainingService {
             previousWeekFormationRating = currentWeekFormationRating;
         }
         return adjusted;
+    }
+
+    private void updateInFlightProgress(final String requestCacheKey, final int calculatedWeeks) {
+        final ProgressState progressState = this.inFlightProgress.get(requestCacheKey);
+        if (progressState == null) {
+            return;
+        }
+        progressState.update(calculatedWeeks);
     }
 
     private boolean shouldTryPreviousWeekLineup(final List<PlayerInfo> currentWeekPlayers,
@@ -465,6 +521,33 @@ public class TeamTrainingService {
             return Formation.valueOf(fixedFormationCode.trim());
         } catch (IllegalArgumentException ignored) {
             return null;
+        }
+    }
+
+    private static final class ProgressState {
+        private final int totalWeeks;
+        private final AtomicInteger calculatedWeeks;
+
+        private ProgressState(final int totalWeeks, final int initialCalculatedWeeks) {
+            this.totalWeeks = Math.max(0, totalWeeks);
+            this.calculatedWeeks = new AtomicInteger(Math.max(0, Math.min(initialCalculatedWeeks, this.totalWeeks)));
+        }
+
+        private void update(final int weeks) {
+            final int bounded = Math.max(0, Math.min(weeks, this.totalWeeks));
+            this.calculatedWeeks.updateAndGet(current -> Math.max(current, bounded));
+        }
+
+        private TeamTrainingProgressResponse toResponse(final boolean inFlight) {
+            final int doneWeeks = this.calculatedWeeks.get();
+            final double percent = this.totalWeeks <= 0 ? 100.0 : (100.0 * doneWeeks) / this.totalWeeks;
+            return TeamTrainingProgressResponse.builder()
+                .totalWeeks(this.totalWeeks)
+                .calculatedWeeks(doneWeeks)
+                .percent(percent)
+                .inFlight(inFlight)
+                .done(this.totalWeeks <= 0 || doneWeeks >= this.totalWeeks)
+                .build();
         }
     }
 

@@ -9,6 +9,7 @@ import easyhattrickmanager.service.UpdateService;
 import easyhattrickmanager.service.model.dataresponse.CurrencyInfo;
 import easyhattrickmanager.service.model.dataresponse.LanguageInfo;
 import easyhattrickmanager.service.model.dataresponse.UserConfig;
+import easyhattrickmanager.service.model.teamtraining.TeamTrainingProgressResponse;
 import easyhattrickmanager.service.model.teamtraining.TeamTrainingRequest;
 import easyhattrickmanager.service.model.teamtraining.TeamTrainingResponse;
 import java.util.List;
@@ -75,5 +76,10 @@ public class DataController {
     @PostMapping("/teamTraining")
     public TeamTrainingResponse teamTraining(@RequestBody TeamTrainingRequest teamTrainingRequest) {
         return this.teamTrainingService.getTeamTraining(teamTrainingRequest);
+    }
+
+    @PostMapping("/teamTraining/progress")
+    public TeamTrainingProgressResponse teamTrainingProgress(@RequestBody TeamTrainingRequest teamTrainingRequest) {
+        return this.teamTrainingService.getTeamTrainingProgress(teamTrainingRequest);
     }
 }

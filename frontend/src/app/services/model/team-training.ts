@@ -41,6 +41,14 @@ export interface TeamTrainingResponse {
   bestWeek?: number;
 }
 
+export interface TeamTrainingProgressResponse {
+  totalWeeks: number;
+  calculatedWeeks: number;
+  percent: number;
+  inFlight: boolean;
+  done: boolean;
+}
+
 export type BestFormationCriteria =
   'HATSTATS' | 'RIGHT_DEFENSE' | 'CENTRAL_DEFENSE' | 'LEFT_DEFENSE' | 'DEFENSE' | 'MIDFIELD' | 'MIDFIELD3'
   | 'RIGHT_ATTACK' | 'CENTRAL_ATTACK' | 'LEFT_ATTACK' | 'ATTACK' | 'PEASO_STATS';

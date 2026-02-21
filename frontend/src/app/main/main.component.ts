@@ -17,6 +17,7 @@ import {
   FormationRating,
   MatchDetail,
   StagePlayerParticipation,
+  TeamTrainingProgressResponse,
   TeamTrainingRequest,
   TeamTrainingResponse,
   TrainingStage
@@ -249,10 +250,15 @@ export class MainComponent implements OnInit {
   showPlannerPlayers = true;
   showPlannerRatings = true;
   isTeamTrainingLoading = false;
+  teamTrainingProgressTotalWeeks = 0;
+  teamTrainingProgressCalculatedWeeks = 0;
+  teamTrainingProgressPercent = 0;
   private plannerRequestTimer: number | null = null;
   private scheduledCalculateBestFormation = false;
   private teamTrainingRequestToken = 0;
   private teamTrainingRequestSub: Subscription | null = null;
+  private teamTrainingProgressSub: Subscription | null = null;
+  private teamTrainingProgressTimer: number | null = null;
   private inFlightTeamTrainingRequestKey: string | null = null;
   private lastSuccessfulTeamTrainingRequestKey: string | null = null;
   private readonly plannerFallbackDate = new Date().toISOString();
@@ -421,6 +427,10 @@ export class MainComponent implements OnInit {
     this.scheduleTeamTrainingRequest();
   }
 
+  onStageLoadUpdated(): void {
+    this.scheduleTeamTrainingRequest(true);
+  }
+
   onStageTypeChanged(index: number): void {
     const plan = this.trainingPlans[index];
     if (!plan) {
@@ -540,6 +550,7 @@ export class MainComponent implements OnInit {
     if (!this.players.length || !this.trainingPlans.length) {
       this.teamTrainingRequestSub?.unsubscribe();
       this.teamTrainingRequestSub = null;
+      this.stopTeamTrainingProgressPolling(true);
       this.inFlightTeamTrainingRequestKey = null;
       this.isTeamTrainingLoading = false;
       return;
@@ -548,6 +559,7 @@ export class MainComponent implements OnInit {
     if (!request) {
       this.teamTrainingRequestSub?.unsubscribe();
       this.teamTrainingRequestSub = null;
+      this.stopTeamTrainingProgressPolling(true);
       this.inFlightTeamTrainingRequestKey = null;
       this.isTeamTrainingLoading = false;
       return;
@@ -559,6 +571,7 @@ export class MainComponent implements OnInit {
     const requestToken = ++this.teamTrainingRequestToken;
     this.inFlightTeamTrainingRequestKey = requestKey;
     this.isTeamTrainingLoading = true;
+    this.startTeamTrainingProgressPolling(request);
     this.teamTrainingRequestSub = this.dataService.teamTraining(request).subscribe({
       next: response => {
         if (requestToken !== this.teamTrainingRequestToken) {
@@ -568,6 +581,7 @@ export class MainComponent implements OnInit {
         this.inFlightTeamTrainingRequestKey = null;
         this.teamTrainingRequestSub = null;
         this.applyTeamTrainingResponse(response);
+        this.stopTeamTrainingProgressPolling(false);
         this.isTeamTrainingLoading = false;
       },
       error: error => {
@@ -582,6 +596,7 @@ export class MainComponent implements OnInit {
         this.endWeekInfo = null;
         this.resetPlannerCaches();
         this.onBestFormationTimelineLeave();
+        this.stopTeamTrainingProgressPolling(true);
         this.isTeamTrainingLoading = false;
       }
     });
@@ -608,6 +623,7 @@ export class MainComponent implements OnInit {
     this.scheduledCalculateBestFormation = false;
     this.teamTrainingRequestSub?.unsubscribe();
     this.teamTrainingRequestSub = null;
+    this.stopTeamTrainingProgressPolling(true);
     this.teamTrainingRequestToken++;
     this.inFlightTeamTrainingRequestKey = null;
     this.lastSuccessfulTeamTrainingRequestKey = null;
@@ -680,6 +696,62 @@ export class MainComponent implements OnInit {
     this.plannerResultByPlayerId = this.buildPlannerResultMap(response);
     this.buildPlannerCaches(response);
     this.endWeekInfo = response.endWeek ?? null;
+  }
+
+  private startTeamTrainingProgressPolling(request: TeamTrainingRequest): void {
+    this.stopTeamTrainingProgressPolling(false);
+    this.updateTeamTrainingProgressFromRequest(request);
+    this.teamTrainingProgressTimer = window.setInterval(() => {
+      if (!this.isTeamTrainingLoading) {
+        this.stopTeamTrainingProgressPolling(false);
+        return;
+      }
+      if (this.teamTrainingProgressSub) {
+        return;
+      }
+      this.teamTrainingProgressSub = this.dataService.teamTrainingProgress(request).subscribe({
+        next: progress => {
+          this.applyTeamTrainingProgress(progress);
+        },
+        error: () => {
+          this.teamTrainingProgressSub = null;
+        },
+        complete: () => {
+          this.teamTrainingProgressSub = null;
+        }
+      });
+    }, 350);
+  }
+
+  private stopTeamTrainingProgressPolling(resetProgress: boolean): void {
+    if (this.teamTrainingProgressTimer !== null) {
+      clearInterval(this.teamTrainingProgressTimer);
+      this.teamTrainingProgressTimer = null;
+    }
+    this.teamTrainingProgressSub?.unsubscribe();
+    this.teamTrainingProgressSub = null;
+    if (resetProgress) {
+      this.teamTrainingProgressTotalWeeks = 0;
+      this.teamTrainingProgressCalculatedWeeks = 0;
+      this.teamTrainingProgressPercent = 0;
+      return;
+    }
+    this.teamTrainingProgressCalculatedWeeks = this.teamTrainingProgressTotalWeeks;
+    this.teamTrainingProgressPercent = this.teamTrainingProgressTotalWeeks > 0 ? 100 : 0;
+  }
+
+  private updateTeamTrainingProgressFromRequest(request: TeamTrainingRequest): void {
+    const totalWeeks = (request.stages ?? []).reduce((sum, stage) => sum + (stage.duration ?? 0), 0);
+    this.teamTrainingProgressTotalWeeks = Math.max(0, totalWeeks);
+    this.teamTrainingProgressCalculatedWeeks = 0;
+    this.teamTrainingProgressPercent = 0;
+  }
+
+  private applyTeamTrainingProgress(progress: TeamTrainingProgressResponse): void {
+    this.teamTrainingProgressTotalWeeks = Math.max(0, progress.totalWeeks ?? 0);
+    this.teamTrainingProgressCalculatedWeeks = Math.max(0, Math.min(progress.calculatedWeeks ?? 0, this.teamTrainingProgressTotalWeeks));
+    const rawPercent = Number.isFinite(progress.percent) ? progress.percent : 0;
+    this.teamTrainingProgressPercent = Math.max(0, Math.min(100, Math.round(rawPercent)));
   }
 
   private buildPlannerResultMap(response: TeamTrainingResponse): Record<number, PlayerInfo> {
