@@ -256,26 +256,3 @@ CREATE TABLE user_config (
     config JSON NOT NULL,
     CONSTRAINT `user_config_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `sim_ali` (
-    `keeper` int(11) NOT NULL,
-    `defender` int(11) NOT NULL,
-    `playmaker` int(11) NOT NULL,
-    `winger` int(11) NOT NULL,
-    `passing` int(11) NOT NULL,
-    `scorer` int(11) NOT NULL,
-    `set_pieces` int(11) NOT NULL,
-    `loyalty` int(11) NOT NULL,
-    `form` int(11) NOT NULL,
-    `stamina` int(11) NOT NULL,
-    `positionId` int(11) NOT NULL,
-    `behaviour` int(11) NOT NULL,
-    `defence_right` int(11) NOT NULL,
-    `defence_center` int(11) NOT NULL,
-    `defence_left` int(11) NOT NULL,
-    `midfield` int(11) NOT NULL,
-    `attack_right` int(11) NOT NULL,
-    `attack_center` int(11) NOT NULL,
-    `attack_left` int(11) NOT NULL,
-    PRIMARY KEY (`keeper`, `defender`, `playmaker`, `winger`, `passing`, `scorer`, `set_pieces`, `loyalty`, `form`, `stamina`, `positionId`, `behaviour`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
