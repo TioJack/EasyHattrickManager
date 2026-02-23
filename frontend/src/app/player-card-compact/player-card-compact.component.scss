@@ -1,3 +1,9 @@
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
 .card-body {
   line-height: 1.2;
 }

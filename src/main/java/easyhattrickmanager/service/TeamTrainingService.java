@@ -13,14 +13,14 @@ import easyhattrickmanager.service.model.teamtraining.BestFormationCriteria;
 import easyhattrickmanager.service.model.teamtraining.Formation;
 import easyhattrickmanager.service.model.teamtraining.FormationRating;
 import easyhattrickmanager.service.model.teamtraining.MatchDetail;
-import easyhattrickmanager.service.model.teamtraining.StagePlayerParticipation;
 import easyhattrickmanager.service.model.teamtraining.SideMatch;
+import easyhattrickmanager.service.model.teamtraining.StagePlayerParticipation;
 import easyhattrickmanager.service.model.teamtraining.Tactic;
 import easyhattrickmanager.service.model.teamtraining.TeamAttitude;
 import easyhattrickmanager.service.model.teamtraining.TeamConfidence;
-import easyhattrickmanager.service.model.teamtraining.TeamTrainingProgressResponse;
 import easyhattrickmanager.service.model.teamtraining.TeamSpirit;
 import easyhattrickmanager.service.model.teamtraining.TeamTrainingPlayer;
+import easyhattrickmanager.service.model.teamtraining.TeamTrainingProgressResponse;
 import easyhattrickmanager.service.model.teamtraining.TeamTrainingRequest;
 import easyhattrickmanager.service.model.teamtraining.TeamTrainingResponse;
 import easyhattrickmanager.service.model.teamtraining.TrainingStage;
@@ -33,8 +33,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.EnumMap;
-import java.util.HashSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -350,7 +350,7 @@ public class TeamTrainingService {
     }
 
     private List<StagePlayerParticipation> normalizeParticipations(final List<StagePlayerParticipation> participations,
-                                                                   final Map<Integer, Integer> normalizedStageIdByOriginal) {
+        final Map<Integer, Integer> normalizedStageIdByOriginal) {
         if (participations == null || participations.isEmpty() || normalizedStageIdByOriginal.isEmpty()) {
             return List.of();
         }
@@ -410,6 +410,7 @@ public class TeamTrainingService {
                                     List<PlayerInfo> previousWeekPlayers,
                                     Map<Integer, FormationRating> weekFormationRatings,
                                     FormationRating previousWeekFormationRating) {
+
         private static PrefixReuseState empty() {
             return new PrefixReuseState(0, 0, Map.of(), List.of(), Map.of(), null);
         }
@@ -420,12 +421,12 @@ public class TeamTrainingService {
     }
 
     private Map<Integer, FormationRating> calculateWeekFormationRatings(final Map<Integer, List<PlayerInfo>> weekPlayers,
-                                                                        final PrefixReuseState prefixReuseState,
-                                                                        final MatchDetail matchDetail,
-                                                                        final BestFormationCriteria criteria,
-                                                                        final Formation fixedFormation,
-                                                                        final Comparator<FormationRating> criteriaComparator,
-                                                                        final String requestCacheKey) {
+        final PrefixReuseState prefixReuseState,
+        final MatchDetail matchDetail,
+        final BestFormationCriteria criteria,
+        final Formation fixedFormation,
+        final Comparator<FormationRating> criteriaComparator,
+        final String requestCacheKey) {
         final int consumedWeeks = prefixReuseState.consumedWeeks();
         final Map<Integer, FormationRating> cachedPrefixRatings = new LinkedHashMap<>(prefixReuseState.weekFormationRatings());
         final AtomicInteger progressWeeks = new AtomicInteger(consumedWeeks);
@@ -477,9 +478,9 @@ public class TeamTrainingService {
     }
 
     private boolean shouldTryPreviousWeekLineup(final List<PlayerInfo> currentWeekPlayers,
-                                                final FormationRating currentWeekFormationRating,
-                                                final FormationRating previousWeekFormationRating,
-                                                final Comparator<FormationRating> criteriaComparator) {
+        final FormationRating currentWeekFormationRating,
+        final FormationRating previousWeekFormationRating,
+        final Comparator<FormationRating> criteriaComparator) {
         if (currentWeekPlayers == null || currentWeekPlayers.isEmpty() || currentWeekFormationRating == null || previousWeekFormationRating == null) {
             return false;
         }
@@ -487,7 +488,7 @@ public class TeamTrainingService {
     }
 
     private Map.Entry<Integer, FormationRating> getBestWeekRating(final Map<Integer, FormationRating> weekFormationRatings,
-                                                                  final Comparator<FormationRating> criteriaComparator) {
+        final Comparator<FormationRating> criteriaComparator) {
         return weekFormationRatings.entrySet().stream()
             .min((left, right) -> criteriaComparator.compare(left.getValue(), right.getValue()))
             .orElse(null);
@@ -525,6 +526,7 @@ public class TeamTrainingService {
     }
 
     private static final class ProgressState {
+
         private final int totalWeeks;
         private final AtomicInteger calculatedWeeks;
 

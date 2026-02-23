@@ -39,4 +39,9 @@ export class PlayerCardCompactComponent implements OnInit {
     const [whole, decimal] = formatted.split('.');
     return {whole, decimal: decimal ?? ''};
   }
+
+  getPlayerFullName(player: PlayerInfo): string {
+    const nickname = player.nickName ? ` '${player.nickName}'` : '';
+    return `${player.firstName}${nickname} ${player.lastName}`.trim();
+  }
 }

@@ -2,7 +2,11 @@
   <div class="card-body p-2">
     <div class="fw-bold mb-2 text-start fw-bold fs-6 player-name-row">
       <span *ngIf="player.playerNumber" class="player-name-number">{{ player.playerNumber }}. </span>
-      <a class="player-name-link" target="_blank" href="http://hattrick.org/goto.ashx?path=/Club/Players/Player.aspx?playerId={{ player.id }}">
+      <a
+        class="player-name-link"
+        target="_blank"
+        [attr.title]="getPlayerFullName(player)"
+        href="http://hattrick.org/goto.ashx?path=/Club/Players/Player.aspx?playerId={{ player.id }}">
         <span class="player-name-text">
           {{ player.firstName }}
           <span *ngIf="player.nickName">'{{ player.nickName }}'</span>

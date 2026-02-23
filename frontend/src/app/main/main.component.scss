@@ -67,13 +67,28 @@
 }
 
 .planner-row {
+  --planner-player-col-width: 240px;
   display: flex;
   gap: 1rem;
   width: 100%;
 }
 
 .planner-side {
-  flex: 0 0 240px;
+  flex: 0 0 var(--planner-player-col-width);
+  width: var(--planner-player-col-width);
+  max-width: var(--planner-player-col-width);
+  min-width: 0;
+}
+
+.planner-side > app-player-card-compact {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+.planner-side .card {
+  width: 100%;
+  min-width: 0;
 }
 
 .planner-center {
