@@ -4,6 +4,7 @@ import {PlayerInfo, PlayerTrainingInfo, Project, StaffInfo, TeamExtendedInfo, Tr
 import {TrainingStats} from './model/training-stats';
 import {PlayerStats} from './model/player-stats';
 import {WeekInfo} from '../player/model/week-info';
+import {UserConfigService} from './user-config.service';
 
 export type ViewMode = 'players' | 'training-planner';
 
@@ -38,8 +39,16 @@ export class PlayService {
   playerStats$ = this.playerStatsSubject.asObservable();
   viewMode$ = this.viewModeSubject.asObservable();
 
+  constructor(private userConfigService: UserConfigService) {
+  }
+
   selectProject(project: Project): void {
     this.selectedProjectSubject.next(project);
+  }
+
+  updateSelectedProject(project: Project): void {
+    this.selectedProjectSubject.next(project);
+    this.refreshCurrentSelection();
   }
 
   setViewMode(mode: ViewMode): void {
@@ -283,9 +292,27 @@ export class PlayService {
   }
 
   update() {
+    this.syncSelectedProjectWithUserConfig();
+    this.refreshCurrentSelection();
+  }
+
+  private syncSelectedProjectWithUserConfig(): void {
+    const selectedProject = this.selectedProjectSubject.value;
+    const currentConfig = this.userConfigService.getUserConfig();
+    if (!selectedProject || !currentConfig) {
+      return;
+    }
+
+    const updatedProject = currentConfig.projects.find(project => project.name === selectedProject.name);
+    if (updatedProject && updatedProject !== selectedProject) {
+      this.selectedProjectSubject.next(updatedProject);
+    }
+  }
+
+  private refreshCurrentSelection(): void {
     const currentSeason = this.selectedSeasonSubject.value;
     const currentWeek = this.selectedWeekSubject.value;
-    if (currentSeason && currentWeek) {
+    if (currentSeason != null && currentWeek != null) {
       this.selectSeasonAndWeek(currentSeason, currentWeek);
     }
   }

@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {FirstCapitalizePipe} from '../pipes/first-capitalize.pipe';
 import {TranslatePipe} from '@ngx-translate/core';
-import {PlayerSort} from '../services/model/data-response';
+import {PlayerSort, Project} from '../services/model/data-response';
 import {PlayService} from '../services/play.service';
 import {UserConfigService} from '../services/user-config.service';
 import {FormsModule} from '@angular/forms';
@@ -41,41 +41,61 @@ export class PlayerSortComponent implements OnInit {
   }
 
   onSortModeChange(newMode: string): void {
+    this.sort.mode = newMode;
     const currentConfig = this.userConfigService.getUserConfig();
     if (currentConfig) {
-      const updatedConfig = {...currentConfig};
-      const activeProject = updatedConfig.projects.find(
-        project => project.name === this.projectName
-      );
-      if (activeProject) {
-        if (!activeProject.sort) {
-          activeProject.sort = {mode: newMode, criteria: 'id'};
-        } else {
-          activeProject.sort.mode = newMode;
-        }
+      let selectedProject: Project | null = null;
+      const updatedConfig = {
+        ...currentConfig,
+        projects: currentConfig.projects.map(project => {
+          if (project.name !== this.projectName) {
+            return project;
+          }
+          selectedProject = {
+            ...project,
+            sort: {
+              mode: newMode,
+              criteria: project.sort?.criteria || 'id'
+            }
+          };
+          return selectedProject;
+        })
+      };
+      if (selectedProject) {
+        this.userConfigService.setUserConfig(updatedConfig);
+        this.playService.updateSelectedProject(selectedProject);
+        this.userConfigService.saveUserConfig(updatedConfig);
       }
-      this.userConfigService.setAndSaveUserConfig(updatedConfig);
-      this.playService.update();
     }
   }
 
   onCriteriaChange(event: Event): void {
     const newCriteria = (event.target as HTMLInputElement).value || 'id';
+    this.sort.criteria = newCriteria;
     const currentConfig = this.userConfigService.getUserConfig();
     if (currentConfig) {
-      const updatedConfig = {...currentConfig};
-      const activeProject = updatedConfig.projects.find(
-        project => project.name === this.projectName
-      );
-      if (activeProject) {
-        if (!activeProject.sort) {
-          activeProject.sort = {mode: 'asc', criteria: newCriteria};
-        } else {
-          activeProject.sort.criteria = newCriteria;
-        }
+      let selectedProject: Project | null = null;
+      const updatedConfig = {
+        ...currentConfig,
+        projects: currentConfig.projects.map(project => {
+          if (project.name !== this.projectName) {
+            return project;
+          }
+          selectedProject = {
+            ...project,
+            sort: {
+              mode: project.sort?.mode || 'asc',
+              criteria: newCriteria
+            }
+          };
+          return selectedProject;
+        })
+      };
+      if (selectedProject) {
+        this.userConfigService.setUserConfig(updatedConfig);
+        this.playService.updateSelectedProject(selectedProject);
+        this.userConfigService.saveUserConfig(updatedConfig);
       }
-      this.userConfigService.setAndSaveUserConfig(updatedConfig);
-      this.playService.update();
     }
   }
 
