@@ -64,6 +64,7 @@ CREATE TABLE IF NOT EXISTS `user_ehm_user` (
 
 CREATE TABLE IF NOT EXISTS `player` (
     id INT PRIMARY KEY,
+    gender_id INT NOT NULL DEFAULT 1,
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     agreeability INT NOT NULL,

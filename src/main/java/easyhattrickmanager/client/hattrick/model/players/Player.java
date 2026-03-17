@@ -109,6 +109,9 @@ public class Player {
     @JacksonXmlProperty(localName = "CountryID")
     private int countryId;
 
+    @JacksonXmlProperty(localName = "GenderID")
+    private int genderId;
+
     @JacksonXmlProperty(localName = "Caps")
     private int caps;
 
@@ -149,4 +152,3 @@ public class Player {
     private int playerCategoryId;
 
 }
-

@@ -104,6 +104,7 @@ public class UpdateService {
         int adjustmentDays = getAdjustmentDays(teamId);
         String seasonWeek = convertToSeasonWeek(ZonedDateTime.now().plusDays(adjustmentDays));
         Players players = hattrickService.getPlayers(teamId);
+        boolean femaleTeam = isFemaleTeam(players);
         List<PlayerData> playerDatas = new ArrayList<>();
         players.getTeam().getPlayers()
             .forEach(playerHT -> {
@@ -119,14 +120,29 @@ public class UpdateService {
         Stafflist staff = hattrickService.getStaff(teamId);
         trainerDAO.insert(getTrainer(teamId, staff.getStaffList().getTrainer(), seasonWeek));
         staff.getStaffList().getStaffs().forEach(staffHT -> staffMemberDAO.insert(getStaffMember(teamId, staffHT, seasonWeek)));
-        saveAvatars(hattrickService.getAvatars(teamId));
-        saveStaffAvatars(hattrickService.getStaffAvatars(teamId));
+        if (!femaleTeam) {
+            saveAvatars(hattrickService.getAvatars(teamId));
+            saveStaffAvatars(hattrickService.getStaffAvatars(teamId));
+        }
         List<PlayerTraining> playerTrainings = trainingPercentageService.calculateTrainingPercentage(seasonWeek, teamId, training, getTrainerLevel(staff), getAssistantsLevel(staff));
         playerTrainings.forEach(playerTrainingDAO::insert);
         List<PlayerSubSkill> playerSubSkills = playerTrainingService.calculateSubSkillTraining(seasonWeek, teamId, training, getTrainerLevel(staff), getAssistantsLevel(staff), playerDatas, playerTrainings);
         playerSubSkills.forEach(playerSubSkillDAO::insert);
         List<PlayerForm> playerForms = playerTrainingService.calculatePlayerForm(seasonWeek, teamId, playerDatas, playerSubSkills);
         playerForms.forEach(playerFormDAO::insert);
+    }
+
+    private boolean isFemaleTeam(Players players) {
+        List<easyhattrickmanager.client.hattrick.model.players.Player> teamPlayers = players.getTeam().getPlayers();
+        if (isEmpty(teamPlayers)) {
+            throw new IllegalStateException("Team has no players, cannot determine gender");
+        }
+        int teamGenderId = teamPlayers.get(0).getGenderId();
+        boolean mixedGender = teamPlayers.stream().anyMatch(player -> player.getGenderId() != teamGenderId);
+        if (mixedGender) {
+            throw new IllegalStateException("Team players have inconsistent genderId values");
+        }
+        return teamGenderId == 2;
     }
 
     private int getTrainerLevel(Stafflist staff) {
@@ -185,6 +201,7 @@ public class UpdateService {
             .honesty(playerHT.getHonesty())
             .specialty(playerHT.getSpecialty())
             .countryId(playerHT.getCountryId())
+            .genderId(playerHT.getGenderId())
             .build();
     }
 

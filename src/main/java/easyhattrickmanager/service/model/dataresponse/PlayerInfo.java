@@ -17,6 +17,7 @@ public class PlayerInfo {
     int honesty;
     int specialty;
     int countryId;
+    int genderId;
     Integer playerNumber;
     int age;
     int ageDays;

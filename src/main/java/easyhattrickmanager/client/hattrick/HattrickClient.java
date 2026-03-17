@@ -74,7 +74,7 @@ public class HattrickClient {
 
     public Players getPlayers(OAuth1AccessToken accessToken, int teamId) {
         try {
-            String xml = this.getXML(accessToken, "players&version=2.7&actionType=view&teamID=" + teamId);
+            String xml = this.getXML(accessToken, "players&version=2.8&actionType=view&teamID=" + teamId);
             Players players = XMLMAPPER.readValue(xml, Players.class);
             return players;
         } catch (JsonProcessingException e) {

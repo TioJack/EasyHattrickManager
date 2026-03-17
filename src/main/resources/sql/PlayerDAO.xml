@@ -4,7 +4,7 @@
 
   <insert id="insert">
     INSERT
-    IGNORE INTO player (id, first_name, last_name, agreeability, aggressiveness, honesty, specialty, country_id)
+    INTO player (id, first_name, last_name, agreeability, aggressiveness, honesty, specialty, country_id, gender_id)
     VALUES (
     #{player.id},
     #{player.firstName},
@@ -13,8 +13,18 @@
     #{player.aggressiveness},
     #{player.honesty},
     #{player.specialty},
-    #{player.countryId}
-    );
+    #{player.countryId},
+    #{player.genderId}
+    )
+    ON DUPLICATE KEY UPDATE
+    first_name = VALUES(first_name),
+    last_name = VALUES(last_name),
+    agreeability = VALUES(agreeability),
+    aggressiveness = VALUES(aggressiveness),
+    honesty = VALUES(honesty),
+    specialty = VALUES(specialty),
+    country_id = VALUES(country_id),
+    gender_id = VALUES(gender_id);
   </insert>
 
   <select id="get" resultType="easyhattrickmanager.repository.model.Player">
@@ -25,7 +35,8 @@
                     p.aggressiveness,
                     p.honesty,
                     p.specialty,
-                    p.country_id
+                    p.country_id,
+                    p.gender_id
     FROM player p
            JOIN player_data pd ON pd.id = p.id
     WHERE pd.team_id = #{teamId};
@@ -39,7 +50,8 @@
            p.aggressiveness,
            p.honesty,
            p.specialty,
-           p.country_id
+           p.country_id,
+           p.gender_id
     FROM player p
     WHERE p.id = #{playerId};
   </select>

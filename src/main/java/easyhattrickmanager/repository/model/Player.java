@@ -15,4 +15,5 @@ public class Player {
     int honesty;
     int specialty;
     int countryId;
+    int genderId;
 }
