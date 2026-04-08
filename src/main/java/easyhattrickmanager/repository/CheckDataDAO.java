@@ -13,5 +13,9 @@ public interface CheckDataDAO {
 
     List<Integer> checkTrainer(@Param("seasonWeek") String seasonWeek);
 
-    boolean checkStartProjects();
+    List<Integer> checkStartProjects();
+
+    String getFirstTrainingSeasonWeek(@Param("teamId") int teamId);
+
+    boolean existsTraining(@Param("teamId") int teamId, @Param("seasonWeek") String seasonWeek);
 }

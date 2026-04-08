@@ -16,6 +16,7 @@ import easyhattrickmanager.client.hattrick.model.stafflist.Staff;
 import easyhattrickmanager.client.hattrick.model.stafflist.Stafflist;
 import easyhattrickmanager.client.hattrick.model.worlddetails.WorldDetails;
 import easyhattrickmanager.configuration.AssetsConfiguration;
+import easyhattrickmanager.repository.CheckDataDAO;
 import easyhattrickmanager.repository.CountryDAO;
 import easyhattrickmanager.repository.LeagueDAO;
 import easyhattrickmanager.repository.PlayerDAO;
@@ -42,6 +43,7 @@ import easyhattrickmanager.repository.model.Trainer;
 import easyhattrickmanager.repository.model.Training;
 import easyhattrickmanager.repository.model.User;
 import easyhattrickmanager.service.model.HTMS;
+import easyhattrickmanager.service.model.dataresponse.ProjectInfo;
 import easyhattrickmanager.service.model.dataresponse.UserConfig;
 import easyhattrickmanager.utils.SeasonWeekUtils;
 import java.awt.Graphics2D;
@@ -77,6 +79,7 @@ public class UpdateService {
     private final UserDAO userDAO;
     private final AssetsConfiguration assetsConfiguration;
     private final UserConfigDAO userConfigDAO;
+    private final CheckDataDAO checkDataDAO;
     private final TrainingPercentageService trainingPercentageService;
     private final PlayerTrainingService playerTrainingService;
 
@@ -135,9 +138,9 @@ public class UpdateService {
 
     private int getAssistantsLevel(Stafflist staff) {
         return isEmpty(staff.getStaffList().getStaffs()) ? 0 : staff.getStaffList().getStaffs().stream()
-            .filter(stf -> stf.getStaffType() == 1)
-            .map(Staff::getStaffLevel)
-            .reduce(0, Integer::sum);
+                                                               .filter(stf -> stf.getStaffType() == 1)
+                                                               .map(Staff::getStaffLevel)
+                                                               .reduce(0, Integer::sum);
     }
 
     public int getActualWeek(int teamId) {
@@ -440,6 +443,47 @@ public class UpdateService {
                 System.err.printf("Error updateUserConfig %s. %s%n", user.getId(), e.getMessage());
             }
         });
+    }
+
+    public void completeStartProjects(int teamId) {
+        try {
+            Team team = teamDAO.get(teamId);
+            if (Objects.isNull(team)) {
+                return;
+            }
+            String firstTrainingSeasonWeek = checkDataDAO.getFirstTrainingSeasonWeek(teamId);
+            if (Objects.isNull(firstTrainingSeasonWeek)) {
+                return;
+            }
+            League league = leagueDAO.get(team.getLeagueId()).orElseThrow();
+            String config = userConfigDAO.get(team.getUserId());
+            if (Objects.isNull(config)) {
+                return;
+            }
+            UserConfig userConfig = new ObjectMapper().readValue(config, UserConfig.class);
+            if (Objects.isNull(userConfig) || Objects.isNull(userConfig.getProjects())) {
+                return;
+            }
+            int firstIniSeason = Integer.parseInt(firstTrainingSeasonWeek.substring(1, 4)) + league.getSeasonOffset();
+            int firstIniWeek = Integer.parseInt(firstTrainingSeasonWeek.substring(5, 7));
+            boolean updated = false;
+            for (ProjectInfo project : userConfig.getProjects()) {
+                if (project.getTeamId() != teamId) {
+                    continue;
+                }
+                String projectSeasonWeek = String.format("S%03dW%02d", project.getIniSeason() - league.getSeasonOffset(), project.getIniWeek());
+                if (!checkDataDAO.existsTraining(teamId, projectSeasonWeek)) {
+                    project.setIniSeason(firstIniSeason);
+                    project.setIniWeek(firstIniWeek);
+                    updated = true;
+                }
+            }
+            if (updated) {
+                userConfigDAO.update(team.getUserId(), new ObjectMapper().writeValueAsString(userConfig));
+            }
+        } catch (Exception e) {
+            System.err.printf("Error completeStartProjects %s. %s%n", teamId, e.getMessage());
+        }
     }
 
 }
