@@ -1,4 +1,5 @@
 import {PlayerInfo} from './data-response';
+import type {DataResponse, StaffInfo, TrainingInfo} from './data-response';
 import {WeekInfo} from '../../player/model/week-info';
 
 export interface TeamTrainingRequest {
@@ -47,6 +48,35 @@ export interface TeamTrainingProgressResponse {
   percent: number;
   inFlight: boolean;
   done: boolean;
+}
+
+export interface TeamTrainingFollowUpRequest {
+  teamId: number;
+  dataResponse: DataResponse;
+  teamTrainingRequest: TeamTrainingRequest;
+  teamTrainingResponse: TeamTrainingResponse;
+}
+
+export interface WeekTraining {
+  training: TrainingInfo;
+  staff: StaffInfo;
+}
+
+export interface TeamTrainingFollowUpResponse {
+  iniWeek: WeekInfo;
+  actualWeek: WeekInfo;
+  endWeek: WeekInfo;
+  initialPlayers: PlayerInfo[];
+  weekInfoPlanned: Record<number, WeekInfo>;
+  weekInfo: Record<number, WeekInfo>;
+  weekTrainingPlanned: Record<number, WeekTraining>;
+  weekTraining: Record<number, WeekTraining>;
+  weekPlayersPlanned: Record<number, PlayerInfo[]>;
+  weekPlayers: Record<number, PlayerInfo[]>;
+  weekPlayersPlannedFromActual: Record<number, PlayerInfo[]>;
+  weekParticipationPlanned: Record<number, Record<number, number>>;
+  weekParticipationExpected: Record<number, Record<number, number>>;
+  weekPlayerIndicators: Record<number, Record<number, string>>;
 }
 
 export type BestFormationCriteria =

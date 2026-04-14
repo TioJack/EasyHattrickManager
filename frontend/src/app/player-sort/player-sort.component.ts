@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {FirstCapitalizePipe} from '../pipes/first-capitalize.pipe';
 import {TranslatePipe} from '@ngx-translate/core';
-import {PlayerSort, Project} from '../services/model/data-response';
-import {PlayService} from '../services/play.service';
+import {PlayerSort, Project, ProjectTrainingPlanner} from '../services/model/data-response';
+import {PlayService, ViewMode} from '../services/play.service';
 import {UserConfigService} from '../services/user-config.service';
 import {FormsModule} from '@angular/forms';
 
@@ -18,6 +18,7 @@ import {FormsModule} from '@angular/forms';
 export class PlayerSortComponent implements OnInit {
   projectName: string = '';
   sort: PlayerSort = {mode: 'asc', criteria: 'id'};
+  viewMode: ViewMode = 'players';
 
   constructor(
     private playService: PlayService,
@@ -25,17 +26,14 @@ export class PlayerSortComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.playService.viewMode$.subscribe(mode => {
+      this.viewMode = mode;
+      this.loadSortFromSelection();
+    });
     this.playService.selectedProject$.subscribe(project => {
       if (project) {
         this.projectName = project.name;
-        if (!project.sort) {
-          this.sort = {mode: 'asc', criteria: 'id'};
-        } else {
-          this.sort = project.sort;
-          if (!this.sort.mode) {
-            this.sort.mode = 'asc';
-          }
-        }
+        this.loadSortFromSelection();
       }
     });
   }
@@ -48,15 +46,28 @@ export class PlayerSortComponent implements OnInit {
       const updatedConfig = {
         ...currentConfig,
         projects: currentConfig.projects.map(project => {
-          if (project.name !== this.projectName) {
+          if (project.name !== this.projectName || project.teamId !== this.playService.getSelectedProject()?.teamId) {
             return project;
           }
+          const planner = this.ensurePlanner(project.planner);
           selectedProject = {
             ...project,
-            sort: {
-              mode: newMode,
-              criteria: project.sort?.criteria || 'id'
-            }
+            ...(this.viewMode === 'training-planner'
+              ? {
+                  planner: {
+                    ...planner,
+                    sort: {
+                      mode: newMode,
+                      criteria: project.planner?.sort?.criteria || project.sort?.criteria || 'id'
+                    }
+                  }
+                }
+              : {
+                  sort: {
+                    mode: newMode,
+                    criteria: project.sort?.criteria || 'id'
+                  }
+                })
           };
           return selectedProject;
         })
@@ -78,15 +89,28 @@ export class PlayerSortComponent implements OnInit {
       const updatedConfig = {
         ...currentConfig,
         projects: currentConfig.projects.map(project => {
-          if (project.name !== this.projectName) {
+          if (project.name !== this.projectName || project.teamId !== this.playService.getSelectedProject()?.teamId) {
             return project;
           }
+          const planner = this.ensurePlanner(project.planner);
           selectedProject = {
             ...project,
-            sort: {
-              mode: project.sort?.mode || 'asc',
-              criteria: newCriteria
-            }
+            ...(this.viewMode === 'training-planner'
+              ? {
+                  planner: {
+                    ...planner,
+                    sort: {
+                      mode: project.planner?.sort?.mode || project.sort?.mode || 'asc',
+                      criteria: newCriteria
+                    }
+                  }
+                }
+              : {
+                  sort: {
+                    mode: project.sort?.mode || 'asc',
+                    criteria: newCriteria
+                  }
+                })
           };
           return selectedProject;
         })
@@ -97,6 +121,39 @@ export class PlayerSortComponent implements OnInit {
         this.userConfigService.saveUserConfig(updatedConfig);
       }
     }
+  }
+
+  private loadSortFromSelection(): void {
+    const project = this.playService.getSelectedProject();
+    if (!project) {
+      return;
+    }
+    const activeSort = this.viewMode === 'training-planner'
+      ? project.planner?.sort
+      : project.sort;
+    this.sort = {
+      mode: activeSort?.mode || 'asc',
+      criteria: activeSort?.criteria || 'id'
+    };
+  }
+
+  private ensurePlanner(planner?: ProjectTrainingPlanner): ProjectTrainingPlanner {
+    return planner ?? {
+      trainingPlans: [],
+      trainingPlanPercents: {},
+      autoRefreshBestFormation: false,
+      bestFormationCriteria: 'HATSTATS',
+      matchDetail: {
+        tactic: 'NORMAL',
+        teamAttitude: 'PIN',
+        teamSpirit: 'CALM',
+        teamSubSpirit: 0.5,
+        teamConfidence: 'STRONG',
+        teamSubConfidence: 0.5,
+        sideMatch: 'AWAY',
+        styleOfPlay: 0
+      }
+    };
   }
 
 }

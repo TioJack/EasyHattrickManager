@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
-import {PlayerInfo, PlayerTrainingInfo, Project, StaffInfo, TeamExtendedInfo, TrainingInfo} from './model/data-response';
+import {BehaviorSubject, Subject} from 'rxjs';
+import {PlayerFilter, PlayerInfo, PlayerSort, PlayerTrainingInfo, Project, StaffInfo, TeamExtendedInfo, TrainingInfo} from './model/data-response';
 import {TrainingStats} from './model/training-stats';
 import {PlayerStats} from './model/player-stats';
 import {WeekInfo} from '../player/model/week-info';
 import {UserConfigService} from './user-config.service';
 
-export type ViewMode = 'players' | 'training-planner';
+export type ViewMode = 'players' | 'training-planner' | 'training-plan-viewer';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +26,13 @@ export class PlayService {
   private trainingStatsSubject = new BehaviorSubject<TrainingStats | null>(null);
   private playerStatsSubject = new BehaviorSubject<PlayerStats | null>(null);
   private viewModeSubject = new BehaviorSubject<ViewMode>('players');
+  private plannerDirtySubject = new BehaviorSubject<boolean>(false);
+  private plannerCanSaveSubject = new BehaviorSubject<boolean>(false);
+  private plannerCanClearSubject = new BehaviorSubject<boolean>(false);
+  private plannerSaveRequestSubject = new Subject<void>();
+  private plannerClearRequestSubject = new Subject<void>();
+  private plannerReloadRequestSubject = new Subject<void>();
+  private playersViewWeekInfo: WeekInfo | null = null;
 
   selectedProject$ = this.selectedProjectSubject.asObservable();
   selectedTeam$ = this.selectedTeamSubject.asObservable();
@@ -38,11 +45,20 @@ export class PlayService {
   trainingStats$ = this.trainingStatsSubject.asObservable();
   playerStats$ = this.playerStatsSubject.asObservable();
   viewMode$ = this.viewModeSubject.asObservable();
+  plannerDirty$ = this.plannerDirtySubject.asObservable();
+  plannerCanSave$ = this.plannerCanSaveSubject.asObservable();
+  plannerCanClear$ = this.plannerCanClearSubject.asObservable();
+  plannerSaveRequest$ = this.plannerSaveRequestSubject.asObservable();
+  plannerClearRequest$ = this.plannerClearRequestSubject.asObservable();
+  plannerReloadRequest$ = this.plannerReloadRequestSubject.asObservable();
 
   constructor(private userConfigService: UserConfigService) {
   }
 
   selectProject(project: Project): void {
+    this.setPlannerDirty(false);
+    this.setPlannerCanSave(false);
+    this.setPlannerCanClear(false);
     this.selectedProjectSubject.next(project);
   }
 
@@ -51,9 +67,35 @@ export class PlayService {
     this.refreshCurrentSelection();
   }
 
+  getSelectedProject(): Project | null {
+    return this.selectedProjectSubject.value;
+  }
+
   setViewMode(mode: ViewMode): void {
+    if (mode === 'training-planner' && this.viewModeSubject.value === 'players') {
+      this.playersViewWeekInfo = this.getCurrentWeekInfo();
+    }
     this.viewModeSubject.next(mode);
     this.update();
+  }
+
+  restorePlayersViewWeek(): void {
+    if (!this.playersViewWeekInfo) {
+      return;
+    }
+    this.goToSeasonAndWeek(this.playersViewWeekInfo.season, this.playersViewWeekInfo.week);
+  }
+
+  goToSeasonAndWeek(season: number, week: number): void {
+    const team = this.selectedTeamSubject.value;
+    if (!team || !Number.isFinite(season) || !Number.isFinite(week)) {
+      return;
+    }
+    const matchingWeek = team.weeklyData.find(data => data.season === season && data.week === week);
+    if (!matchingWeek) {
+      return;
+    }
+    this.selectSeasonAndWeek(season, week);
   }
 
   selectTeam(team: TeamExtendedInfo): void {
@@ -83,7 +125,7 @@ export class PlayService {
         data => data.season === season && data.week === week
       );
       if (matchingWeek) {
-        const filter = this.selectedProjectSubject.value?.filter;
+        const filter = this.getActiveFilter();
         let filteredPlayers = matchingWeek.players;
         if (filter) {
           const filterIds = new Set(filter.playerIds ?? []);
@@ -93,7 +135,7 @@ export class PlayService {
             filteredPlayers = filteredPlayers.filter(player => !filterIds.has(player.id));
           }
         }
-        const sort = this.selectedProjectSubject.value?.sort;
+        const sort = this.getActiveSort();
         let sortedPlayers = filteredPlayers;
         if (sort) {
           sortedPlayers = [...filteredPlayers].sort((a, b) => {
@@ -157,6 +199,28 @@ export class PlayService {
     }
   }
 
+  private getActiveFilter(): PlayerFilter | undefined {
+    const project = this.selectedProjectSubject.value;
+    if (!project) {
+      return undefined;
+    }
+    if (this.viewModeSubject.value === 'training-planner' || this.viewModeSubject.value === 'training-plan-viewer') {
+      return project.planner?.filter;
+    }
+    return project.filter;
+  }
+
+  private getActiveSort(): PlayerSort | undefined {
+    const project = this.selectedProjectSubject.value;
+    if (!project) {
+      return undefined;
+    }
+    if (this.viewModeSubject.value === 'training-planner' || this.viewModeSubject.value === 'training-plan-viewer') {
+      return project.planner?.sort;
+    }
+    return project.sort;
+  }
+
   private getMaxTrainingValue(trainingInfo: PlayerTrainingInfo): number {
     const values = Object.values(trainingInfo);
     return Math.max(...values);
@@ -173,6 +237,34 @@ export class PlayService {
   clearAll(): void {
     this.selectedTeamSubject.next(null);
     this.clearSeasonWeek();
+    this.playersViewWeekInfo = null;
+    this.setPlannerDirty(false);
+    this.setPlannerCanSave(false);
+    this.setPlannerCanClear(false);
+  }
+
+  setPlannerDirty(isDirty: boolean): void {
+    this.plannerDirtySubject.next(isDirty);
+  }
+
+  setPlannerCanSave(canSave: boolean): void {
+    this.plannerCanSaveSubject.next(canSave);
+  }
+
+  setPlannerCanClear(canClear: boolean): void {
+    this.plannerCanClearSubject.next(canClear);
+  }
+
+  requestPlannerSave(): void {
+    this.plannerSaveRequestSubject.next();
+  }
+
+  requestPlannerClear(): void {
+    this.plannerClearRequestSubject.next();
+  }
+
+  requestPlannerReload(): void {
+    this.plannerReloadRequestSubject.next();
   }
 
   onFirstWeek() {

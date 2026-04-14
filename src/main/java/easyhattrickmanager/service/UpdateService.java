@@ -5,7 +5,6 @@ import static easyhattrickmanager.utils.HTMSUtils.calculateHTMS;
 import static easyhattrickmanager.utils.SeasonWeekUtils.convertToSeasonWeek;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import easyhattrickmanager.client.hattrick.model.avatars.Avatar;
 import easyhattrickmanager.client.hattrick.model.avatars.Avatars;
 import easyhattrickmanager.client.hattrick.model.avatars.Layer;
@@ -28,7 +27,6 @@ import easyhattrickmanager.repository.StaffMemberDAO;
 import easyhattrickmanager.repository.TeamDAO;
 import easyhattrickmanager.repository.TrainerDAO;
 import easyhattrickmanager.repository.TrainingDAO;
-import easyhattrickmanager.repository.UserConfigDAO;
 import easyhattrickmanager.repository.UserDAO;
 import easyhattrickmanager.repository.model.Country;
 import easyhattrickmanager.repository.model.League;
@@ -78,11 +76,10 @@ public class UpdateService {
     private final TeamDAO teamDAO;
     private final UserDAO userDAO;
     private final AssetsConfiguration assetsConfiguration;
-    private final UserConfigDAO userConfigDAO;
+    private final UserConfigStorageService userConfigStorageService;
     private final CheckDataDAO checkDataDAO;
     private final TrainingPercentageService trainingPercentageService;
     private final PlayerTrainingService playerTrainingService;
-
     private List<String> images = new ArrayList<>();
 
     public void update() {
@@ -436,9 +433,12 @@ public class UpdateService {
     public void updateUserConfig() {
         userDAO.getAllUsers().forEach(user -> {
             try {
-                UserConfig userConfig = new ObjectMapper().readValue(userConfigDAO.get(user.getId()), UserConfig.class);
+                UserConfig userConfig = userConfigStorageService.getUserConfig(user.getId());
+                if (Objects.isNull(userConfig)) {
+                    return;
+                }
                 userConfig.setShowSubSkills(true);
-                userConfigDAO.update(user.getId(), new ObjectMapper().writeValueAsString(userConfig));
+                userConfigStorageService.saveUserConfig(user.getId(), userConfig);
             } catch (Exception e) {
                 System.err.printf("Error updateUserConfig %s. %s%n", user.getId(), e.getMessage());
             }
@@ -456,11 +456,7 @@ public class UpdateService {
                 return;
             }
             League league = leagueDAO.get(team.getLeagueId()).orElseThrow();
-            String config = userConfigDAO.get(team.getUserId());
-            if (Objects.isNull(config)) {
-                return;
-            }
-            UserConfig userConfig = new ObjectMapper().readValue(config, UserConfig.class);
+            UserConfig userConfig = userConfigStorageService.getUserConfig(team.getUserId());
             if (Objects.isNull(userConfig) || Objects.isNull(userConfig.getProjects())) {
                 return;
             }
@@ -479,7 +475,7 @@ public class UpdateService {
                 }
             }
             if (updated) {
-                userConfigDAO.update(team.getUserId(), new ObjectMapper().writeValueAsString(userConfig));
+                userConfigStorageService.saveUserConfig(team.getUserId(), userConfig);
             }
         } catch (Exception e) {
             System.err.printf("Error completeStartProjects %s. %s%n", teamId, e.getMessage());

@@ -1,5 +1,5 @@
 <main class="flex-grow-1 d-flex flex-column justify-content-center align-items-center text-center">
-  <div *ngIf="viewMode === 'players'; else plannerView">
+  <div *ngIf="viewMode === 'players'; else nonPlayersView">
     <div class="row g-3 p-3 align-items-stretch">
       <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-4 d-flex">
         <app-player-stats class="flex-fill w-100"></app-player-stats>
@@ -16,7 +16,8 @@
     </div>
   </div>
 
-  <ng-template #plannerView>
+  <ng-template #nonPlayersView>
+    <ng-container *ngIf="viewMode === 'training-planner'; else viewerView">
     <div class="planner-overlay-root" [attr.aria-busy]="isTeamTrainingLoading">
       <fieldset class="planner-busy-fieldset">
         <div class="row g-3 p-3 w-100 align-items-stretch">
@@ -641,6 +642,389 @@
             <div class="planner-loading-progress-track" aria-hidden="true">
               <div class="planner-loading-progress-value" [style.width.%]="teamTrainingProgressPercent"></div>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </ng-container>
+  </ng-template>
+
+  <ng-template #viewerView>
+    <div class="planner-overlay-root" [attr.aria-busy]="isViewerLoading">
+      <div *ngIf="!isViewerLoading" class="row g-3 p-3 w-100 align-items-stretch">
+        <div class="col-12">
+          <div class="planner-row viewer-top-row align-items-stretch">
+            <div class="planner-side d-flex viewer-top-row__summary">
+              <div class="card w-100">
+                <div class="card-body p-3 viewer-summary-card">
+                  <div class="viewer-summary-title">{{ 'ehm.plan-follow-up' | translate | firstCapitalize }}</div>
+                  <div class="viewer-progress-value">{{ getViewerCompletedPercent() }}%</div>
+                  <div class="viewer-progress-text">{{ getViewerProgressText() }}</div>
+                  <div class="viewer-progress-track">
+                    <div class="viewer-progress-track__value" [style.width.%]="getViewerCompletedPercent()"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="planner-center d-flex viewer-top-row__center">
+              <div class="viewer-player-results viewer-player-results--center">
+                <div class="card w-100 viewer-player-results__empty viewer-player-results__empty--center viewer-player-results__empty--meta">
+                  <div class="card-body p-2 viewer-stage-card viewer-player-stage-meta">
+                    <div
+                      *ngIf="getViewerSelectedComparison() as selectedComparison"
+                      class="viewer-player-stage-meta__line">
+                      <span class="viewer-player-stage-meta__week">{{ 'ehm.week' | translate | firstCapitalize }} {{ selectedComparison.offsetWeek }}</span>
+                      <span class="viewer-player-stage-meta__season-week" *ngIf="getViewerSelectedPlannedWeekInfo() as plannedWeekInfo">
+                        {{ 'ehm.season' | translate }} {{ plannedWeekInfo.season }}
+                        {{ 'ehm.week' | translate }} {{ plannedWeekInfo.week }}
+                      </span>
+                      <span class="viewer-player-stage-meta__date" *ngIf="getViewerSelectedPlannedWeekInfo()?.date">
+                        {{ getViewerSelectedPlannedWeekInfo()?.date | date:DEFAULT_DATE_FORMAT }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card w-100 viewer-player-results__empty viewer-player-results__empty--center viewer-player-results__empty--planned">
+                  <div class="card-body viewer-stage-card viewer-player-stage-plan viewer-player-stage-plan--planned">
+                    <div *ngIf="viewerStageComparisons.length === 0" class="text-muted">
+                      {{ 'ehm.no-saved-plan-to-compare' | translate | firstCapitalize }}
+                    </div>
+                    <div *ngIf="viewerStageComparisons.length > 0" class="viewer-stage-timelines">
+                      <div class="viewer-stage-timelines__weeks">
+                        <div
+                          class="viewer-stage-timeline__grid viewer-stage-timeline__grid--plan"
+                          [style.grid-template-columns]="getViewerTimelineGridColumns()"
+                          (mousemove)="onViewerPlanTimelineMove($event)"
+                          (mouseleave)="onViewerTimelineLeave()">
+                          <div
+                            *ngFor="let plan of viewerPlannedSegments; trackBy: trackByStageIndex"
+                            class="planner-timeline-segment viewer-stage-timeline__segment viewer-player-stage-plan__segment viewer-player-stage-plan__segment--planned"
+                            [style.grid-column]="getViewerPlanStageGridColumn(plan)"
+                            [style.backgroundColor]="trainingTypeColor(plan.typeId)"
+                            [style.color]="getTrainingTextColor(plan.typeId)">
+                            <span class="viewer-player-stage-plan__label viewer-player-stage-plan__label--planned">
+                              {{ ('ht.training-type-' + plan.typeId) | translate | firstCapitalize }}
+                            </span>
+                          </div>
+                        </div>
+                        <div class="viewer-stage-selection-layer viewer-stage-selection-layer--top-plan">
+                          <div
+                            *ngIf="getViewerSelectedWeek() != null"
+                            class="viewer-stage-timelines__selected-week viewer-stage-timelines__selected-week--player"
+                            [style.left.%]="getViewerSelectedWeekLeftPercent()"
+                            [style.width.%]="getViewerSelectedWeekWidthPercent()">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card w-100 viewer-player-results__empty viewer-player-results__empty--center">
+                  <div class="card-body viewer-stage-card viewer-player-stage-plan viewer-player-stage-plan--real">
+                    <div *ngIf="viewerStageComparisons.length === 0" class="text-muted">
+                      {{ 'ehm.no-saved-plan-to-compare' | translate | firstCapitalize }}
+                    </div>
+                    <div *ngIf="viewerStageComparisons.length > 0" class="viewer-stage-timelines">
+                      <div class="viewer-stage-timelines__weeks">
+                        <div
+                          class="viewer-stage-warning-row viewer-stage-warning-row--player-real"
+                          [style.grid-template-columns]="getViewerTimelineGridColumns()">
+                          <ng-container *ngFor="let comparison of viewerStageComparisons">
+                            <i
+                              class="bi bi-exclamation-triangle-fill viewer-stage-warning-row__icon"
+                              [class.viewer-stage-warning-row__icon--hidden]="comparison.actualTypeId == null || comparison.matches"
+                              aria-hidden="true">
+                            </i>
+                          </ng-container>
+                        </div>
+                        <div
+                          class="viewer-stage-timeline__grid viewer-stage-timeline__grid--real viewer-stage-timeline__grid--player-real"
+                          [style.grid-template-columns]="getViewerTimelineGridColumns()"
+                          (mousemove)="onViewerRealTimelineMove($event)"
+                          (mouseleave)="onViewerTimelineLeave()">
+                          <div
+                            *ngFor="let comparison of viewerStageComparisons"
+                            class="planner-timeline-segment viewer-stage-timeline__segment viewer-player-stage-plan__segment viewer-player-stage-plan__segment--real"
+                            [style.grid-column]="'span 1'"
+                            [style.backgroundColor]="comparison.actualTypeId != null ? trainingTypeColor(comparison.actualTypeId) : null"
+                            [style.color]="comparison.actualTypeId != null ? getTrainingTextColor(comparison.actualTypeId) : null"
+                            [class.viewer-stage-timeline__segment--pending]="comparison.actualTypeId == null">
+                            <span class="viewer-player-stage-plan__label viewer-player-stage-plan__label--real">
+                              <ng-container *ngIf="comparison.actualTypeId != null; else pendingTopTraining">
+                                <span class="viewer-player-stage-plan__type">
+                                  {{ ('ht.training-type-' + comparison.actualTypeId) | translate | firstCapitalize }}
+                                </span>
+                              </ng-container>
+                              <ng-template #pendingTopTraining>{{ 'ehm.pending' | translate | firstCapitalize }}</ng-template>
+                            </span>
+                          </div>
+                        </div>
+                        <div class="viewer-stage-selection-layer viewer-stage-selection-layer--top-real">
+                          <div
+                            *ngIf="getViewerSelectedWeek() != null"
+                            class="viewer-stage-timelines__selected-week viewer-stage-timelines__selected-week--player"
+                            [style.left.%]="getViewerSelectedWeekLeftPercent()"
+                            [style.width.%]="getViewerSelectedWeekWidthPercent()">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="planner-side d-flex viewer-top-row__results">
+              <div class="viewer-player-results viewer-player-results--side-by-side">
+                <div class="card w-100">
+                  <ng-container *ngIf="getViewerSelectedPlannedStage() as plannedStage">
+                    <div class="viewer-info-panel__section viewer-info-panel__section--planned">
+                      <div class="viewer-info-panel__section-header">
+                        <div class="viewer-info-panel__caption">{{ 'ehm.training-planned' | translate | firstCapitalize }}</div>
+                      </div>
+                      <div
+                        class="viewer-info-panel__section-body"
+                        [style.backgroundColor]="trainingTypeColor(plannedStage.typeId)"
+                        [style.color]="getTrainingTextColor(plannedStage.typeId)">
+                        <div class="viewer-info-panel__title">
+                          {{ ('ht.training-type-' + plannedStage.typeId) | translate | firstCapitalize }}
+                        </div>
+                        <div class="viewer-info-panel__kv">
+                          <span class="viewer-info-panel__kv-label">{{ 'ehm.coach' | translate | firstCapitalize }}:</span>
+                          <span class="viewer-info-panel__kv-value">{{ plannedStage.coach }}</span>
+                        </div>
+                        <div class="viewer-info-panel__kv">
+                          <span class="viewer-info-panel__kv-label">{{ 'ehm.assistants' | translate | firstCapitalize }}:</span>
+                          <span class="viewer-info-panel__kv-value">{{ plannedStage.assistants }}</span>
+                        </div>
+                        <div class="viewer-info-panel__kv">
+                          <span class="viewer-info-panel__kv-label">{{ 'ehm.intensity' | translate | firstCapitalize }}:</span>
+                          <span class="viewer-info-panel__kv-value">{{ plannedStage.intensity }}</span>
+                        </div>
+                        <div class="viewer-info-panel__kv">
+                          <span class="viewer-info-panel__kv-label">{{ 'ehm.stamina' | translate | firstCapitalize }}:</span>
+                          <span class="viewer-info-panel__kv-value">{{ plannedStage.stamina }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-container>
+                </div>
+
+                <div class="card w-100">
+                  <ng-container *ngIf="getViewerSelectedRealWeekData() as realWeekData; else noTopViewerRealInfoPanel">
+                    <div class="viewer-info-panel__section viewer-info-panel__section--real">
+                      <div class="viewer-info-panel__section-header">
+                        <div class="viewer-info-panel__caption">{{ 'ehm.training-received' | translate | firstCapitalize }}</div>
+                      </div>
+                      <div
+                        class="viewer-info-panel__section-body"
+                        [class.viewer-info-panel__section-body--warning]="isViewerHoverMismatch()"
+                        [style.backgroundColor]="trainingTypeColor(realWeekData.training.trainingType)"
+                        [style.color]="getTrainingTextColor(realWeekData.training.trainingType)">
+                        <div class="viewer-info-panel__title">
+                          {{ ('ht.training-type-' + realWeekData.training.trainingType) | translate | firstCapitalize }}
+                        </div>
+                        <div class="viewer-info-panel__kv">
+                          <span class="viewer-info-panel__kv-label">{{ 'ehm.coach' | translate | firstCapitalize }}:</span>
+                          <span class="viewer-info-panel__kv-value">{{ realWeekData.staff.trainer.skillLevel }}</span>
+                        </div>
+                        <div class="viewer-info-panel__kv">
+                          <span class="viewer-info-panel__kv-label">{{ 'ehm.assistants' | translate | firstCapitalize }}:</span>
+                          <span class="viewer-info-panel__kv-value">{{ getViewerSelectedAssistantsLevel(realWeekData) }}</span>
+                        </div>
+                        <div class="viewer-info-panel__kv">
+                          <span class="viewer-info-panel__kv-label">{{ 'ehm.intensity' | translate | firstCapitalize }}:</span>
+                          <span class="viewer-info-panel__kv-value">{{ realWeekData.training.trainingLevel }}</span>
+                        </div>
+                        <div class="viewer-info-panel__kv">
+                          <span class="viewer-info-panel__kv-label">{{ 'ehm.stamina' | translate | firstCapitalize }}:</span>
+                          <span class="viewer-info-panel__kv-value">{{ realWeekData.training.staminaTrainingPart }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-container>
+                  <ng-template #noTopViewerRealInfoPanel>
+                    <div class="viewer-info-panel__section viewer-info-panel__section--real viewer-info-panel__section--pending">
+                      <div class="viewer-info-panel__section-header">
+                        <div class="viewer-info-panel__caption">{{ 'ehm.training-received' | translate | firstCapitalize }}</div>
+                      </div>
+                      <div class="viewer-info-panel__section-body">
+                        <div class="viewer-info-panel__title">{{ 'ehm.pending' | translate | firstCapitalize }}</div>
+                        <div class="viewer-info-panel__kv">
+                          <span class="viewer-info-panel__kv-label">{{ 'ehm.coach' | translate | firstCapitalize }}:</span>
+                          <span class="viewer-info-panel__kv-value">-</span>
+                        </div>
+                        <div class="viewer-info-panel__kv">
+                          <span class="viewer-info-panel__kv-label">{{ 'ehm.assistants' | translate | firstCapitalize }}:</span>
+                          <span class="viewer-info-panel__kv-value">-</span>
+                        </div>
+                        <div class="viewer-info-panel__kv">
+                          <span class="viewer-info-panel__kv-label">{{ 'ehm.intensity' | translate | firstCapitalize }}:</span>
+                          <span class="viewer-info-panel__kv-value">-</span>
+                        </div>
+                        <div class="viewer-info-panel__kv">
+                          <span class="viewer-info-panel__kv-label">{{ 'ehm.stamina' | translate | firstCapitalize }}:</span>
+                          <span class="viewer-info-panel__kv-value">-</span>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-template>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="viewerPlayerRows.length === 0" class="col-12 text-muted">
+          {{ 'ehm.no-players-in-saved-plan' | translate | firstCapitalize }}
+        </div>
+
+        <div *ngFor="let row of viewerPlayerRows; trackBy: trackByViewerPlayerRow" class="col-12">
+          <div class="planner-row viewer-player-row align-items-stretch">
+            <div class="planner-side d-flex viewer-player-row__initial">
+              <app-player-card-compact class="flex-fill w-100" [player]="row.initialPlayer"></app-player-card-compact>
+            </div>
+            <div class="planner-center d-flex viewer-player-row__center">
+              <div class="viewer-player-results viewer-player-results--center">
+                <div class="card w-100 viewer-player-results__empty viewer-player-results__empty--center viewer-player-results__empty--meta">
+                  <div class="card-body p-2 viewer-stage-card viewer-player-stage-meta">
+                    <div *ngIf="getViewerPlayerSelectedWeekInfo(row.initialPlayer.id) as selectedWeekInfo" class="viewer-player-stage-meta__line">
+                      <span class="viewer-player-stage-meta__week">{{ 'ehm.week' | translate | firstCapitalize }} {{ selectedWeekInfo.offsetWeek }}</span>
+                      <span class="viewer-player-stage-meta__season-week">
+                        {{ 'ehm.season' | translate }} {{ selectedWeekInfo.season }}
+                        {{ 'ehm.week' | translate }} {{ selectedWeekInfo.week }}
+                      </span>
+                      <span class="viewer-player-stage-meta__date" *ngIf="selectedWeekInfo.date">{{ selectedWeekInfo.date | date:DEFAULT_DATE_FORMAT }}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="card w-100 viewer-player-results__empty viewer-player-results__empty--center viewer-player-results__empty--planned">
+                  <div class="card-body viewer-stage-card viewer-player-stage-plan viewer-player-stage-plan--planned">
+                    <div class="viewer-stage-timelines">
+                      <div class="viewer-stage-timelines__weeks">
+                        <div
+                        class="viewer-stage-timeline__grid viewer-stage-timeline__grid--plan"
+                        [style.grid-template-columns]="getViewerTimelineGridColumns()"
+                        (mousemove)="onViewerPlayerTimelineMove($event, row.initialPlayer.id)"
+                        (mouseleave)="onViewerPlayerTimelineLeave(row.initialPlayer.id)">
+                        <div
+                            *ngFor="let plan of viewerPlannedSegments; let i = index; trackBy: trackByStageIndex"
+                            class="planner-timeline-segment viewer-stage-timeline__segment viewer-player-stage-plan__segment viewer-player-stage-plan__segment--planned"
+                            [style.grid-column]="getViewerPlanStageGridColumn(plan)"
+                            [style.backgroundColor]="trainingTypeColor(plan.typeId)"
+                            [style.color]="getTrainingTextColor(plan.typeId)">
+                            <span class="viewer-player-stage-plan__label viewer-player-stage-plan__label--planned">
+                              {{ ('ht.training-type-' + plan.typeId) | translate | firstCapitalize }} {{ row.plannedPercents[i] | number:'1.0-0' }}%
+                            </span>
+                          </div>
+                        </div>
+                        <div class="viewer-stage-selection-layer viewer-stage-selection-layer--player-plan">
+                          <div
+                            *ngIf="getViewerPlayerSelectedWeek(row.initialPlayer.id) != null"
+                            class="viewer-stage-timelines__selected-week viewer-stage-timelines__selected-week--player"
+                            [style.left.%]="getViewerPlayerSelectedWeekLeftPercent(row.initialPlayer.id)"
+                            [style.width.%]="getViewerPlayerSelectedWeekWidthPercent()">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="card w-100 viewer-player-results__empty viewer-player-results__empty--center">
+                  <div class="card-body viewer-stage-card viewer-player-stage-plan viewer-player-stage-plan--real">
+                    <div class="viewer-stage-timelines">
+                      <div class="viewer-stage-timelines__weeks">
+                        <div
+                          class="viewer-stage-warning-row viewer-stage-warning-row--player-real"
+                          [style.grid-template-columns]="getViewerTimelineGridColumns()">
+                          <ng-container *ngFor="let comparison of viewerStageComparisons; let i = index">
+                            <i
+                              *ngIf="isViewerPlayerWeekWarning(row, comparison, i); else playerPositiveIndicator"
+                              class="bi bi-exclamation-triangle-fill viewer-stage-warning-row__icon"
+                              aria-hidden="true">
+                            </i>
+                            <ng-template #playerPositiveIndicator>
+                              <i
+                                class="bi viewer-stage-warning-row__icon"
+                                [class.bi-arrow-up-circle-fill]="isViewerPlayerWeekPositive(row, comparison, i)"
+                                [class.viewer-stage-warning-row__icon--positive]="isViewerPlayerWeekPositive(row, comparison, i)"
+                                [class.viewer-stage-warning-row__icon--hidden]="!isViewerPlayerWeekPositive(row, comparison, i)"
+                                aria-hidden="true">
+                              </i>
+                            </ng-template>
+                          </ng-container>
+                        </div>
+                        <div
+                          class="viewer-stage-timeline__grid viewer-stage-timeline__grid--real viewer-stage-timeline__grid--player-real"
+                          [style.grid-template-columns]="getViewerTimelineGridColumns()"
+                          (mousemove)="onViewerPlayerTimelineMove($event, row.initialPlayer.id)"
+                          (mouseleave)="onViewerPlayerTimelineLeave(row.initialPlayer.id)">
+                          <div
+                            *ngFor="let comparison of viewerStageComparisons; let i = index"
+                            class="planner-timeline-segment viewer-stage-timeline__segment viewer-player-stage-plan__segment viewer-player-stage-plan__segment--real"
+                            [style.grid-column]="'span 1'"
+                            [style.backgroundColor]="comparison.actualTypeId != null ? trainingTypeColor(comparison.actualTypeId) : null"
+                            [style.color]="comparison.actualTypeId != null ? getTrainingTextColor(comparison.actualTypeId) : null"
+                            [class.viewer-stage-timeline__segment--pending]="comparison.actualTypeId == null">
+                            <span class="viewer-player-stage-plan__label viewer-player-stage-plan__label--real">
+                              <ng-container *ngIf="comparison.actualTypeId != null; else pendingPlayerTraining">
+                                <span class="viewer-player-stage-plan__type">
+                                  {{ ('ht.training-type-' + comparison.actualTypeId) | translate | firstCapitalize }}
+                                </span>
+                                <span class="viewer-player-stage-plan__percent">
+                                  {{ row.realPercents[i] ?? 0 | number:'1.0-0' }}%
+                                </span>
+                              </ng-container>
+                              <ng-template #pendingPlayerTraining>{{ 'ehm.pending' | translate | firstCapitalize }}</ng-template>
+                            </span>
+                          </div>
+                        </div>
+                        <div class="viewer-stage-selection-layer viewer-stage-selection-layer--player-real">
+                          <div
+                            *ngIf="getViewerPlayerSelectedWeek(row.initialPlayer.id) != null"
+                            class="viewer-stage-timelines__selected-week viewer-stage-timelines__selected-week--player"
+                            [style.left.%]="getViewerPlayerSelectedWeekLeftPercent(row.initialPlayer.id)"
+                            [style.width.%]="getViewerPlayerSelectedWeekWidthPercent()">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="planner-side d-flex viewer-player-row__results">
+              <div class="viewer-player-results viewer-player-results--side-by-side">
+                <ng-container *ngIf="getViewerPlannedComparablePlayer(row.initialPlayer.id) as plannedComparablePlayer; else noPlannedComparablePlayer">
+                  <app-player-card-compact class="flex-fill w-100 viewer-player-results__planned-card" [player]="plannedComparablePlayer"></app-player-card-compact>
+                </ng-container>
+                <ng-template #noPlannedComparablePlayer>
+                  <div class="card w-100 viewer-player-results__empty viewer-player-results__empty--planned"></div>
+                </ng-template>
+                <ng-container *ngIf="getViewerEstimatedComparablePlayer(row.initialPlayer.id) as estimatedComparablePlayer; else noEstimatedComparablePlayer">
+                  <app-player-card-compact
+                    class="flex-fill w-100"
+                    [class.viewer-player-results__estimated-card]="isViewerSelectedComparableEstimated(row.initialPlayer.id)"
+                    [player]="estimatedComparablePlayer">
+                  </app-player-card-compact>
+                </ng-container>
+                <ng-template #noEstimatedComparablePlayer>
+                  <div class="card w-100 viewer-player-results__empty"></div>
+                </ng-template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="isViewerLoading" class="planner-loading-overlay" role="status" aria-live="polite" [attr.aria-label]="'ehm.calculating-training-plan' | translate">
+        <div class="planner-loading-box">
+          <div class="spinner-border text-warning" role="presentation" aria-hidden="true"></div>
+          <div class="planner-loading-content">
+            <div class="planner-loading-text">{{ 'ehm.calculating-training-plan' | translate }}</div>
+            <div class="planner-loading-progress-text">{{ 'ehm.plan-follow-up' | translate | firstCapitalize }}</div>
           </div>
         </div>
       </div>

@@ -257,3 +257,9 @@ CREATE TABLE user_config (
     config JSON NOT NULL,
     CONSTRAINT `user_config_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE user_planner (
+    user_id INT PRIMARY KEY,
+    config JSON NOT NULL,
+    CONSTRAINT `user_planner_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

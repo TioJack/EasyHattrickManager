@@ -171,10 +171,10 @@ public class PlayerTrainingService {
             newSubSkill += getSkillTraining(rq);
         }
         newSubSkill -= getDropAge(skill, age);
-        return normalizeSubSkill(previousBaseSkill, currentBaseSkill, newSubSkill);
+        return normalizeSubSkill(previousBaseSkill, currentBaseSkill, previousSubSkill, newSubSkill);
     }
 
-    private double normalizeSubSkill(int previousBaseSkill, int currentBaseSkill, double value) {
+    private double normalizeSubSkill(int previousBaseSkill, int currentBaseSkill, double previousSubSkill, double value) {
         if (previousBaseSkill < currentBaseSkill) {
             if (value < 1) {
                 return 0;
@@ -188,8 +188,8 @@ public class PlayerTrainingService {
             }
         }
         if (value >= 1) {
-            value -= 1;
-            return value;
+            double wrapped = value - 1;
+            return wrapped < previousSubSkill ? 0.99 : wrapped;
         }
         if (value < 0) {
             return 0;

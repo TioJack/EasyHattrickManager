@@ -5,7 +5,6 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import easyhattrickmanager.controller.model.PlayerDataResponse;
 import easyhattrickmanager.repository.LeagueDAO;
 import easyhattrickmanager.repository.PlayerDAO;
@@ -14,7 +13,6 @@ import easyhattrickmanager.repository.PlayerFormDAO;
 import easyhattrickmanager.repository.PlayerSubSkillDAO;
 import easyhattrickmanager.repository.PlayerTrainingDAO;
 import easyhattrickmanager.repository.TeamDAO;
-import easyhattrickmanager.repository.UserConfigDAO;
 import easyhattrickmanager.repository.UserDAO;
 import easyhattrickmanager.repository.model.League;
 import easyhattrickmanager.repository.model.Player;
@@ -46,7 +44,7 @@ public class PlayerDataService {
     private final PlayerFormDAO playerFormDAO;
     private final PlayerSubSkillDAO playerSubSkillDAO;
     private final PlayerTrainingDAO playerTrainingDAO;
-    private final UserConfigDAO userConfigDAO;
+    private final UserConfigStorageService userConfigStorageService;
     private final PlayerInfoMapper playerInfoMapper;
 
     public PlayerDataResponse getPlayerData(String username, int playerId) {
@@ -98,12 +96,7 @@ public class PlayerDataService {
     }
 
     private UserConfig getUserConfig(int userId) {
-        try {
-            return new ObjectMapper().readValue(userConfigDAO.get(userId), UserConfig.class);
-        } catch (Exception e) {
-            System.err.printf("Error getUserConfig %s. %s%n", userId, e.getMessage());
-            return null;
-        }
+        return userConfigStorageService.getUserConfig(userId);
     }
 
     private List<PlayerWeeklyInfo> fillMissingSeasonWeeks(List<PlayerWeeklyInfo> in, League league) {

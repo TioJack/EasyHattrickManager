@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="easyhattrickmanager.repository.UserPlannerDAO">
+
+  <insert id="insert">
+    INSERT INTO user_planner (user_id, config)
+    VALUES (#{userId}, #{config});
+  </insert>
+
+  <insert id="update">
+    UPDATE user_planner
+    SET config = #{config}
+    WHERE user_id = #{userId};
+  </insert>
+
+  <select id="get" resultType="java.lang.String">
+    SELECT config
+    FROM user_planner
+    WHERE user_id = #{userId};
+  </select>
+
+</mapper>

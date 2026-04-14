@@ -1,6 +1,17 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {PlayService, ViewMode} from '../services/play.service';
-import {PlayerInfo, Project, StaffInfo, TrainingInfo, UserConfig} from '../services/model/data-response';
+import {
+  DataResponse,
+  PlayerInfo,
+  PlayerTrainingInfo,
+  Project,
+  ProjectTrainingPlanner,
+  ProjectTrainingStage,
+  StaffInfo,
+  TeamExtendedInfo,
+  TrainingInfo,
+  UserConfig
+} from '../services/model/data-response';
 import {DatePipe, DecimalPipe, LowerCasePipe, NgForOf, NgIf} from '@angular/common';
 import {PlayerCardComponent} from '../player-card/player-card.component';
 import {StaffComponent} from '../staff/staff.component';
@@ -17,6 +28,7 @@ import {
   FormationRating,
   MatchDetail,
   StagePlayerParticipation,
+  TeamTrainingFollowUpResponse,
   TeamTrainingProgressResponse,
   TeamTrainingRequest,
   TeamTrainingResponse,
@@ -63,6 +75,43 @@ interface HatStatsChartPoint {
   isHover: boolean;
 }
 
+interface ViewerStageComparison {
+  offsetWeek: number;
+  season: number | null;
+  week: number | null;
+  date: string | null;
+  expectedTypeId: number | null;
+  expectedCoach: number | null;
+  expectedAssistants: number | null;
+  expectedIntensity: number | null;
+  expectedStamina: number | null;
+  actualTypeId: number | null;
+  actualCoach: number | null;
+  actualAssistants: number | null;
+  actualIntensity: number | null;
+  actualStamina: number | null;
+  matches: boolean;
+}
+
+interface ViewerPlayerRow {
+  initialPlayer: PlayerInfo;
+  plannedPercents: number[];
+  realPercents: Array<number | null>;
+  plannedSeries: Array<number | null>;
+  realSeries: Array<number | null>;
+  maxHtms: number;
+}
+
+interface ViewerTrainingSegment {
+  startWeek: number;
+  weeks: number;
+  typeId: number;
+  coach: number | null;
+  assistants: number | null;
+  intensity: number | null;
+  stamina: number | null;
+}
+
 @Component({
   selector: 'app-main',
   standalone: true,
@@ -86,20 +135,14 @@ interface HatStatsChartPoint {
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.scss']
 })
-export class MainComponent implements OnInit {
+export class MainComponent implements OnInit, OnDestroy {
+  @Input() dataResponse: DataResponse | null = null;
   players: PlayerInfo[] = [];
   basePlayers: PlayerInfo[] = [];
   training: TrainingInfo | null = null;
   staff: StaffInfo | null = null;
   viewMode: ViewMode = 'players';
-  trainingPlans: Array<{
-    typeId: number;
-    weeks: number;
-    coach: number;
-    assistants: number;
-    intensity: number;
-    stamina: number;
-  }> = [];
+  trainingPlans: ProjectTrainingStage[] = [];
   trainingPlanPercents: Record<number, number[]> = {};
   newTrainingTypeId = 4;
   newTrainingWeeks = 16;
@@ -269,12 +312,31 @@ export class MainComponent implements OnInit {
   private plannerMaxHtmsRangesByPlayerId: Record<number, Array<{leftPercent: number; widthPercent: number}>> = {};
   private hoverWeekByPlayerId: Record<number, number> = {};
   private hoverTimelinePercentByPlayerId: Record<number, number> = {};
+  private viewerPlannedPlayersByWeek: Record<number, Record<number, PlayerInfo>> = {};
+  private viewerRealPlayersByWeek: Record<number, Record<number, PlayerInfo>> = {};
+  private viewerProjectedPlayersByWeek: Record<number, Record<number, PlayerInfo>> = {};
+  viewerPlannedSegments: ViewerTrainingSegment[] = [];
+  private viewerSelectedWeekByPlayerId: Record<number, number> = {};
+  private viewerFollowUpResponse: TeamTrainingFollowUpResponse | null = null;
+  private viewerFollowUpRequestToken = 0;
+  private viewerFollowUpSub: Subscription | null = null;
   bestFormationTimelineHoverWeek: number | null = null;
   bestFormationTimelineHoverPercent: number | null = null;
   private selectedProject: Project | null = null;
+  private selectedTeam: TeamExtendedInfo | null = null;
+  private savedPlannerSignature = '';
+  private hasRestoredPersistedTeamTraining = false;
   private readonly timelinePopupWidth = 240;
   private readonly lineupBandWidth = 8;
   private readonly lineupTriangleHeight = 11;
+  viewerStageComparisons: ViewerStageComparison[] = [];
+  viewerPlayerRows: ViewerPlayerRow[] = [];
+  viewerCompletedWeeks = 0;
+  viewerTotalWeeks = 0;
+  viewerMismatchWeeks = 0;
+  viewerHasSavedPlanner = false;
+  isViewerLoading = false;
+  viewerSelectedWeek: number | null = null;
   private readonly roleTrapByRole: Record<string, string> = {
     KEEPER: 't1',
     LEFT_BACK: 't6',
@@ -307,9 +369,10 @@ export class MainComponent implements OnInit {
       this.basePlayers = players;
       this.refreshPlayers();
       this.ensurePlayerPlans();
-      if (this.trainingPlans.length > 0) {
+      this.updatePlannerUiState();
+      if (this.trainingPlans.length > 0 && !this.hasRestoredPersistedTeamTraining) {
         this.scheduleTeamTrainingRequest();
-      } else {
+      } else if (this.trainingPlans.length === 0) {
         this.plannerResultByPlayerId = {};
       }
     })
@@ -317,7 +380,7 @@ export class MainComponent implements OnInit {
       this.staff = staff;
       this.newTrainingCoach = this.getDefaultCoach();
       this.newTrainingAssistants = this.getDefaultAssistants();
-      if (this.trainingPlans.length > 0) {
+      if (this.trainingPlans.length > 0 && !this.hasRestoredPersistedTeamTraining) {
         this.scheduleTeamTrainingRequest();
       }
     });
@@ -329,22 +392,65 @@ export class MainComponent implements OnInit {
       }
       this.newTrainingIntensity = this.training?.trainingLevel ?? 0;
       this.newTrainingStamina = this.training?.staminaTrainingPart ?? 0;
-      if (this.trainingPlans.length > 0) {
+      if (this.trainingPlans.length > 0 && !this.hasRestoredPersistedTeamTraining) {
         this.scheduleTeamTrainingRequest();
       }
     });
+    this.playService.selectedTeam$.subscribe(team => {
+      this.selectedTeam = team;
+      this.rebuildViewerState();
+    });
     this.playService.viewMode$.subscribe(mode => {
+      const modeChanged = this.viewMode !== mode;
       this.viewMode = mode;
+      if (mode === 'training-planner' && modeChanged) {
+        this.activatePlannerForCurrentProject();
+      }
+      if (mode === 'training-plan-viewer') {
+        this.rebuildViewerState();
+      }
     });
     this.playService.selectedProject$.subscribe(project => {
-      if (project?.name !== this.selectedProject?.name || project?.teamId !== this.selectedProject?.teamId) {
+      const projectChanged = !this.isSameProject(project, this.selectedProject);
+      if (projectChanged) {
         this.resetPlannerState();
       }
       this.selectedProject = project;
+      this.viewerHasSavedPlanner = !!project?.planner?.trainingPlans?.length;
+      this.rebuildViewerState();
+      if (projectChanged && project && this.viewMode === 'training-planner') {
+        this.activatePlannerForCurrentProject();
+      }
+    });
+    this.playService.plannerSaveRequest$.subscribe(() => {
+      this.savePlannerState();
+    });
+    this.playService.plannerClearRequest$.subscribe(() => {
+      this.clearPlannerState();
+    });
+    this.playService.plannerReloadRequest$.subscribe(() => {
+      if (this.viewMode === 'training-planner') {
+        this.activatePlannerForCurrentProject();
+      }
+      if (this.viewMode === 'training-plan-viewer') {
+        this.rebuildViewerState();
+      }
     });
     this.userConfigService.userConfig$.subscribe(config => {
       this.userConfig = config;
     });
+  }
+
+  ngOnDestroy(): void {
+    this.teamTrainingRequestSub?.unsubscribe();
+    this.teamTrainingRequestSub = null;
+    this.viewerFollowUpSub?.unsubscribe();
+    this.viewerFollowUpSub = null;
+    this.stopTeamTrainingProgressPolling(true);
+    if (this.plannerRequestTimer !== null) {
+      clearTimeout(this.plannerRequestTimer);
+      this.plannerRequestTimer = null;
+    }
   }
 
   addTrainingPlan(): void {
@@ -366,7 +472,7 @@ export class MainComponent implements OnInit {
     });
     const stageIndex = this.trainingPlans.length - 1;
     this.applyDefaultParticipationForStage(stageIndex, this.newTrainingTypeId);
-
+    this.updatePlannerUiState();
     this.requestTeamTraining();
   }
 
@@ -403,6 +509,7 @@ export class MainComponent implements OnInit {
         percents.splice(index, 1);
       }
     }
+    this.updatePlannerUiState();
     this.requestTeamTraining();
   }
 
@@ -420,14 +527,17 @@ export class MainComponent implements OnInit {
         percents.splice(targetIndex, 0, percent ?? 100);
       }
     }
+    this.updatePlannerUiState();
     this.requestTeamTraining();
   }
 
   onStageUpdated(): void {
+    this.updatePlannerUiState();
     this.scheduleTeamTrainingRequest();
   }
 
   onStageLoadUpdated(): void {
+    this.updatePlannerUiState();
     this.scheduleTeamTrainingRequest(true);
   }
 
@@ -437,6 +547,7 @@ export class MainComponent implements OnInit {
       return;
     }
     this.applyDefaultParticipationForStage(index, plan.typeId);
+    this.updatePlannerUiState();
     this.scheduleTeamTrainingRequest();
   }
 
@@ -456,17 +567,20 @@ export class MainComponent implements OnInit {
   }
 
   onPlanPercentCommit(): void {
+    this.updatePlannerUiState();
     this.scheduleTeamTrainingRequest();
   }
 
   onRatingsInputChanged(): void {
     this.ensureVisibleBestFormationCriteria();
+    this.updatePlannerUiState();
     if (this.autoRefreshBestFormation) {
       this.scheduleTeamTrainingRequest(true);
     }
   }
 
   onAutoRefreshBestFormationChanged(): void {
+    this.updatePlannerUiState();
     if (this.autoRefreshBestFormation) {
       this.scheduleTeamTrainingRequest(true);
     }
@@ -547,6 +661,7 @@ export class MainComponent implements OnInit {
   }
 
   private requestTeamTraining(calculateBestFormation = this.autoRefreshBestFormation): void {
+    this.hasRestoredPersistedTeamTraining = false;
     if (!this.players.length || !this.trainingPlans.length) {
       this.teamTrainingRequestSub?.unsubscribe();
       this.teamTrainingRequestSub = null;
@@ -564,7 +679,7 @@ export class MainComponent implements OnInit {
       this.isTeamTrainingLoading = false;
       return;
     }
-    const requestKey = JSON.stringify(request);
+    const requestKey = this.buildTeamTrainingRequestKey(request);
     if (requestKey === this.inFlightTeamTrainingRequestKey || requestKey === this.lastSuccessfulTeamTrainingRequestKey) {
       return;
     }
@@ -630,6 +745,10 @@ export class MainComponent implements OnInit {
     this.isTeamTrainingLoading = false;
     this.trainingPlans = [];
     this.trainingPlanPercents = {};
+    this.autoRefreshBestFormation = false;
+    this.bestFormationCriteria = 'HATSTATS';
+    this.fixedFormationCode = null;
+    this.matchDetail = this.createDefaultMatchDetail();
     this.teamTrainingResponse = null;
     this.endWeekInfo = null;
     this.plannerResultByPlayerId = {};
@@ -637,7 +756,222 @@ export class MainComponent implements OnInit {
     this.resetPlannerCaches();
     this.hoverWeekByPlayerId = {};
     this.hoverTimelinePercentByPlayerId = {};
+    this.hasRestoredPersistedTeamTraining = false;
+    this.savedPlannerSignature = this.getPlannerSignature(null);
+    this.playService.setPlannerDirty(false);
+    this.playService.setPlannerCanSave(false);
+    this.playService.setPlannerCanClear(false);
     this.onBestFormationTimelineLeave();
+  }
+
+  private loadPlannerState(project: Project): void {
+    const planner = project.planner;
+    if (!planner) {
+      return;
+    }
+    if (planner.iniSeason != null && planner.iniWeek != null) {
+      this.playService.goToSeasonAndWeek(planner.iniSeason, planner.iniWeek);
+    }
+    this.trainingPlans = JSON.parse(JSON.stringify(planner.trainingPlans ?? [])) as ProjectTrainingStage[];
+    this.trainingPlanPercents = JSON.parse(JSON.stringify(planner.trainingPlanPercents ?? {})) as Record<number, number[]>;
+    this.autoRefreshBestFormation = planner.autoRefreshBestFormation ?? false;
+    this.bestFormationCriteria = planner.bestFormationCriteria ?? 'HATSTATS';
+    this.fixedFormationCode = planner.fixedFormationCode ?? null;
+    this.matchDetail = planner.matchDetail
+      ? JSON.parse(JSON.stringify(planner.matchDetail)) as MatchDetail
+      : this.createDefaultMatchDetail();
+    this.ensureVisibleBestFormationCriteria();
+    this.ensurePlayerPlans();
+    this.savedPlannerSignature = this.getPlannerSignature(planner ?? null);
+    this.updatePlannerUiState();
+    if (!this.restorePersistedTeamTraining(planner) && this.players.length > 0 && this.trainingPlans.length > 0) {
+      this.scheduleTeamTrainingRequest(this.autoRefreshBestFormation);
+    }
+  }
+
+  private activatePlannerForCurrentProject(): void {
+    this.resetPlannerState();
+    if (this.selectedProject) {
+      this.loadPlannerState(this.selectedProject);
+    }
+  }
+
+  private savePlannerState(): void {
+    if (!this.selectedProject) {
+      return;
+    }
+    if (this.trainingPlans.length === 0) {
+      this.updatePlannerUiState();
+      return;
+    }
+    const currentConfig = this.userConfigService.getUserConfig();
+    if (!currentConfig) {
+      return;
+    }
+    const activeProject = currentConfig.projects.find(project =>
+      project.name === this.selectedProject?.name && project.teamId === this.selectedProject?.teamId
+    );
+    if (!activeProject) {
+      return;
+    }
+    const plannerState = this.buildProjectPlannerState();
+    activeProject.planner = this.isPlannerEmpty(plannerState) ? undefined : plannerState;
+    const updatedConfig = {...currentConfig};
+    this.userConfigService.setUserConfig(updatedConfig);
+    this.userConfigService.saveUserConfig(updatedConfig);
+    this.savedPlannerSignature = this.getPlannerSignature(activeProject.planner ?? null);
+    this.playService.updateSelectedProject(activeProject);
+    this.updatePlannerUiState();
+  }
+
+  private clearPlannerState(): void {
+    const currentConfig = this.userConfigService.getUserConfig();
+    const activeProject = currentConfig?.projects.find(project =>
+      project.name === this.selectedProject?.name && project.teamId === this.selectedProject?.teamId
+    );
+    const preservedPlannerFilter = activeProject?.planner?.filter
+      ? JSON.parse(JSON.stringify(activeProject.planner.filter))
+      : undefined;
+    const preservedPlannerSort = activeProject?.planner?.sort
+      ? JSON.parse(JSON.stringify(activeProject.planner.sort))
+      : undefined;
+    if (this.plannerRequestTimer !== null) {
+      clearTimeout(this.plannerRequestTimer);
+      this.plannerRequestTimer = null;
+    }
+    this.scheduledCalculateBestFormation = false;
+    this.trainingPlans = [];
+    this.trainingPlanPercents = {};
+    this.autoRefreshBestFormation = false;
+    this.bestFormationCriteria = 'HATSTATS';
+    this.fixedFormationCode = null;
+    this.matchDetail = this.createDefaultMatchDetail();
+    this.ensureVisibleBestFormationCriteria();
+    this.teamTrainingResponse = null;
+    this.endWeekInfo = null;
+    this.plannerResultByPlayerId = {};
+    this.latestResponseWeek = null;
+    this.resetPlannerCaches();
+    this.hoverWeekByPlayerId = {};
+    this.hoverTimelinePercentByPlayerId = {};
+    this.hasRestoredPersistedTeamTraining = false;
+    this.onBestFormationTimelineLeave();
+    this.teamTrainingRequestSub?.unsubscribe();
+    this.teamTrainingRequestSub = null;
+    this.stopTeamTrainingProgressPolling(true);
+    this.inFlightTeamTrainingRequestKey = null;
+    this.lastSuccessfulTeamTrainingRequestKey = null;
+    this.isTeamTrainingLoading = false;
+    if (activeProject && currentConfig) {
+      activeProject.planner = preservedPlannerFilter || preservedPlannerSort
+        ? {
+            trainingPlans: [],
+            trainingPlanPercents: {},
+            autoRefreshBestFormation: false,
+            bestFormationCriteria: 'HATSTATS',
+            matchDetail: this.createDefaultMatchDetail(),
+            ...(preservedPlannerFilter ? {filter: preservedPlannerFilter} : {}),
+            ...(preservedPlannerSort ? {sort: preservedPlannerSort} : {})
+          }
+        : undefined;
+      const updatedConfig = {...currentConfig};
+      this.userConfigService.setUserConfig(updatedConfig);
+      this.userConfigService.saveUserConfig(updatedConfig);
+      this.savedPlannerSignature = this.getPlannerSignature(null);
+      this.playService.updateSelectedProject(activeProject);
+    }
+    this.updatePlannerUiState();
+  }
+
+  private buildProjectPlannerState(): ProjectTrainingPlanner {
+    const currentWeekInfo = this.playService.getCurrentWeekInfo();
+    const hasTrainingPlans = this.trainingPlans.length > 0;
+    const persistedPlanner = this.selectedProject?.planner;
+    return {
+      iniSeason: hasTrainingPlans ? (currentWeekInfo?.season ?? this.selectedProject?.iniSeason) : undefined,
+      iniWeek: hasTrainingPlans ? (currentWeekInfo?.week ?? this.selectedProject?.iniWeek) : undefined,
+      filter: persistedPlanner?.filter ? JSON.parse(JSON.stringify(persistedPlanner.filter)) : undefined,
+      sort: persistedPlanner?.sort ? JSON.parse(JSON.stringify(persistedPlanner.sort)) : undefined,
+      trainingPlans: JSON.parse(JSON.stringify(this.trainingPlans)) as ProjectTrainingStage[],
+      trainingPlanPercents: JSON.parse(JSON.stringify(this.trainingPlanPercents)) as Record<number, number[]>,
+      autoRefreshBestFormation: this.autoRefreshBestFormation,
+      bestFormationCriteria: this.bestFormationCriteria,
+      fixedFormationCode: this.fixedFormationCode,
+      matchDetail: JSON.parse(JSON.stringify(this.matchDetail)) as MatchDetail,
+      ...this.buildPersistedTeamTrainingState()
+    };
+  }
+
+  private buildPersistedTeamTrainingState(): Pick<ProjectTrainingPlanner, 'teamTrainingRequest' | 'teamTrainingResponse'> {
+    const request = this.buildTeamTrainingRequest(this.autoRefreshBestFormation);
+    if (!request || !this.teamTrainingResponse) {
+      return {};
+    }
+    return {
+      teamTrainingRequest: JSON.parse(JSON.stringify(request)) as TeamTrainingRequest,
+      teamTrainingResponse: JSON.parse(JSON.stringify(this.teamTrainingResponse)) as TeamTrainingResponse
+    };
+  }
+
+  private isSameProject(projectA: Project | null, projectB: Project | null): boolean {
+    return projectA?.name === projectB?.name && projectA?.teamId === projectB?.teamId;
+  }
+
+  private updatePlannerUiState(): void {
+    const plannerState = this.buildProjectPlannerState();
+    this.playService.setPlannerCanSave(this.trainingPlans.length > 0);
+    this.playService.setPlannerDirty(this.getPlannerSignature(plannerState) !== this.savedPlannerSignature);
+    this.playService.setPlannerCanClear(!this.isPlannerEmpty(plannerState));
+  }
+
+  private isPlannerEmpty(planner: ProjectTrainingPlanner | null): boolean {
+    if (!planner) {
+      return true;
+    }
+    return this.getPlannerSignature(planner) === this.getPlannerSignature(null);
+  }
+
+  private getPlannerSignature(planner: ProjectTrainingPlanner | null): string {
+    const plannerState = planner ?? {
+      iniSeason: null,
+      iniWeek: null,
+      trainingPlans: [],
+      trainingPlanPercents: {},
+      autoRefreshBestFormation: false,
+      bestFormationCriteria: 'HATSTATS' as BestFormationCriteria,
+      fixedFormationCode: null,
+      matchDetail: this.createDefaultMatchDetail()
+    };
+    const trainingPlanPercents = (plannerState.trainingPlanPercents ?? {}) as Record<number, number[]>;
+    const sortedPercents = Object.keys(trainingPlanPercents)
+      .sort((a, b) => Number(a) - Number(b))
+      .reduce<Record<number, number[]>>((acc, playerId) => {
+        acc[Number(playerId)] = [...(trainingPlanPercents[Number(playerId)] ?? [])];
+        return acc;
+      }, {});
+    return JSON.stringify({
+      iniSeason: plannerState.iniSeason ?? null,
+      iniWeek: plannerState.iniWeek ?? null,
+      trainingPlans: plannerState.trainingPlans ?? [],
+      trainingPlanPercents: sortedPercents,
+      autoRefreshBestFormation: plannerState.autoRefreshBestFormation ?? false,
+      bestFormationCriteria: plannerState.bestFormationCriteria ?? 'HATSTATS',
+      fixedFormationCode: plannerState.fixedFormationCode ?? null,
+      matchDetail: plannerState.matchDetail ?? this.createDefaultMatchDetail()
+    });
+  }
+
+  private createDefaultMatchDetail(): MatchDetail {
+    return {
+      tactic: 'NORMAL',
+      teamAttitude: 'PIN',
+      teamSpirit: 'CALM',
+      teamSubSpirit: 0.5,
+      teamConfidence: 'STRONG',
+      teamSubConfidence: 0.5,
+      sideMatch: 'AWAY',
+      styleOfPlay: 0
+    };
   }
 
   private buildTeamTrainingRequest(calculateBestFormation: boolean): TeamTrainingRequest | null {
@@ -681,6 +1015,31 @@ export class MainComponent implements OnInit {
       fixedFormationCode: this.fixedFormationCode,
       matchDetail: this.matchDetail
     };
+  }
+
+  private buildTeamTrainingRequestKey(request: TeamTrainingRequest): string {
+    return JSON.stringify(request);
+  }
+
+  private restorePersistedTeamTraining(planner: ProjectTrainingPlanner): boolean {
+    const persistedRequest = planner.teamTrainingRequest;
+    const persistedResponse = planner.teamTrainingResponse;
+    if (!persistedRequest || !persistedResponse) {
+      return false;
+    }
+    if (this.plannerRequestTimer !== null) {
+      clearTimeout(this.plannerRequestTimer);
+      this.plannerRequestTimer = null;
+    }
+    this.scheduledCalculateBestFormation = false;
+    this.inFlightTeamTrainingRequestKey = null;
+    this.lastSuccessfulTeamTrainingRequestKey = this.buildTeamTrainingRequestKey(persistedRequest);
+    this.applyTeamTrainingResponse(JSON.parse(JSON.stringify(persistedResponse)) as TeamTrainingResponse);
+    this.stopTeamTrainingProgressPolling(true);
+    this.isTeamTrainingLoading = false;
+    this.hasRestoredPersistedTeamTraining = true;
+    this.onBestFormationTimelineLeave();
+    return true;
   }
 
   private getCurrentWeekInfo(): WeekInfo {
@@ -892,6 +1251,23 @@ export class MainComponent implements OnInit {
     delete this.hoverTimelinePercentByPlayerId[playerId];
   }
 
+  onViewerPlayerTimelineMove(event: MouseEvent, playerId: number): void {
+    if (this.viewerTotalWeeks <= 0) {
+      return;
+    }
+    const week = this.getViewerWeekFromTimelineEvent(event);
+    if (week != null) {
+      this.viewerSelectedWeekByPlayerId[playerId] = week;
+    }
+  }
+
+  onViewerPlayerTimelineLeave(playerId: number): void {
+    const currentWeek = this.viewerSelectedWeekByPlayerId[playerId];
+    if (currentWeek != null) {
+      this.viewerSelectedWeekByPlayerId[playerId] = currentWeek;
+    }
+  }
+
   onBestFormationTimelineMove(event: MouseEvent): void {
     const weekCount = this.getPlannerWeekCount();
     if (weekCount <= 0) {
@@ -968,22 +1344,16 @@ export class MainComponent implements OnInit {
     return player.id;
   }
 
+  trackByViewerPlayerRow(_index: number, row: ViewerPlayerRow): number {
+    return row.initialPlayer.id;
+  }
+
   trackByStageIndex(index: number): number {
     return index;
   }
 
   getTrainingTypeIdForWeek(week: number): number | null {
-    if (week <= 0 || this.trainingPlans.length === 0) {
-      return null;
-    }
-    let accumulated = 0;
-    for (const plan of this.trainingPlans) {
-      accumulated += plan.weeks;
-      if (week <= accumulated) {
-        return plan.typeId;
-      }
-    }
-    return this.trainingPlans[this.trainingPlans.length - 1]?.typeId ?? null;
+    return this.getTrainingStageForWeek(week, this.trainingPlans)?.typeId ?? null;
   }
 
   private getDefaultCoach(): number {
@@ -1020,6 +1390,594 @@ export class MainComponent implements OnInit {
 
   private refreshPlayers(): void {
     this.players = [...this.basePlayers];
+  }
+
+  private rebuildViewerState(): void {
+    this.viewerFollowUpSub?.unsubscribe();
+    this.viewerFollowUpSub = null;
+    this.viewerStageComparisons = [];
+    this.viewerPlayerRows = [];
+    this.viewerPlannedPlayersByWeek = {};
+    this.viewerRealPlayersByWeek = {};
+    this.viewerProjectedPlayersByWeek = {};
+    this.viewerPlannedSegments = [];
+    this.viewerSelectedWeekByPlayerId = {};
+    this.viewerCompletedWeeks = 0;
+    this.viewerTotalWeeks = 0;
+    this.viewerMismatchWeeks = 0;
+    this.viewerFollowUpResponse = null;
+    this.isViewerLoading = false;
+    this.viewerSelectedWeek = null;
+
+    if (this.viewMode !== 'training-plan-viewer') {
+      return;
+    }
+
+    const project = this.selectedProject;
+    const planner = project?.planner;
+    const trainingPlans = planner?.trainingPlans ?? [];
+    this.viewerHasSavedPlanner = !!trainingPlans.length;
+    if (!planner || !this.selectedTeam || !this.dataResponse || trainingPlans.length === 0) {
+      return;
+    }
+    const followUpState = this.getViewerFollowUpState(planner);
+    if (!followUpState) {
+      return;
+    }
+    this.isViewerLoading = true;
+    const requestToken = ++this.viewerFollowUpRequestToken;
+    this.viewerFollowUpSub = this.dataService.teamTrainingFollowUp({
+      teamId: this.selectedTeam.team.id,
+      dataResponse: this.buildViewerDataResponsePayload(),
+      teamTrainingRequest: followUpState.request,
+      teamTrainingResponse: followUpState.response
+    }).subscribe({
+      next: response => {
+        if (requestToken !== this.viewerFollowUpRequestToken) {
+          return;
+        }
+        this.isViewerLoading = false;
+        this.applyViewerFollowUpResponse(response, planner);
+      },
+      error: error => {
+        if (requestToken !== this.viewerFollowUpRequestToken) {
+          return;
+        }
+        this.isViewerLoading = false;
+        console.error('teamTraining follow-up request failed', error);
+      }
+    });
+  }
+
+  private getViewerFollowUpState(planner: ProjectTrainingPlanner): {request: TeamTrainingRequest; response: TeamTrainingResponse} | null {
+    const currentRequest = this.buildTeamTrainingRequest(this.autoRefreshBestFormation);
+    if (currentRequest && this.teamTrainingResponse) {
+      const currentRequestKey = this.buildTeamTrainingRequestKey(currentRequest);
+      if (currentRequestKey === this.lastSuccessfulTeamTrainingRequestKey) {
+        return {
+          request: currentRequest,
+          response: this.teamTrainingResponse
+        };
+      }
+    }
+    if (planner.teamTrainingRequest && planner.teamTrainingResponse) {
+      return {
+        request: planner.teamTrainingRequest,
+        response: planner.teamTrainingResponse
+      };
+    }
+    return null;
+  }
+
+  private applyViewerFollowUpResponse(response: TeamTrainingFollowUpResponse, planner: ProjectTrainingPlanner): void {
+    this.viewerFollowUpResponse = response;
+    this.viewerTotalWeeks = Math.max(...Object.keys(response.weekTrainingPlanned ?? {}).map(Number).filter(Number.isFinite), 0);
+    this.viewerCompletedWeeks = Math.max(...Object.keys(response.weekTraining ?? {}).map(Number).filter(Number.isFinite), 0);
+
+    this.viewerPlannedPlayersByWeek = this.mapViewerPlayersByWeek(response.weekPlayersPlanned);
+    this.viewerRealPlayersByWeek = this.mapViewerPlayersByWeek(response.weekPlayers);
+    this.viewerProjectedPlayersByWeek = this.mapViewerPlayersByWeek(response.weekPlayersPlannedFromActual);
+    this.viewerPlannedSegments = this.buildViewerPlannedSegments(response);
+
+    this.viewerStageComparisons = [];
+    for (let offsetWeek = 1; offsetWeek <= this.viewerTotalWeeks; offsetWeek++) {
+      const plannedWeekTraining = response.weekTrainingPlanned?.[offsetWeek];
+      const actualWeekTraining = response.weekTraining?.[offsetWeek];
+      const actualWeekInfo = response.weekInfo?.[offsetWeek];
+      const expectedTypeId = plannedWeekTraining?.training?.trainingType ?? null;
+      const expectedCoach = plannedWeekTraining?.staff?.trainer?.skillLevel ?? null;
+      const expectedAssistants = this.getViewerSelectedAssistantsLevel(plannedWeekTraining ?? null);
+      const expectedIntensity = plannedWeekTraining?.training?.trainingLevel ?? null;
+      const expectedStamina = plannedWeekTraining?.training?.staminaTrainingPart ?? null;
+      const actualTypeId = actualWeekTraining?.training?.trainingType ?? null;
+      const actualCoach = actualWeekTraining?.staff?.trainer?.skillLevel ?? null;
+      const actualAssistants = this.getViewerSelectedAssistantsLevel(actualWeekTraining ?? null);
+      const actualIntensity = actualWeekTraining?.training?.trainingLevel ?? null;
+      const actualStamina = actualWeekTraining?.training?.staminaTrainingPart ?? null;
+      const matches = actualTypeId != null
+        && expectedTypeId != null
+        && actualTypeId === expectedTypeId
+        && actualCoach === expectedCoach
+        && actualAssistants === expectedAssistants
+        && actualIntensity === expectedIntensity
+        && actualStamina === expectedStamina;
+      this.viewerStageComparisons.push({
+        offsetWeek,
+        season: actualWeekInfo?.season ?? null,
+        week: actualWeekInfo?.week ?? null,
+        date: actualWeekInfo?.date ?? null,
+        expectedTypeId,
+        expectedCoach,
+        expectedAssistants,
+        expectedIntensity,
+        expectedStamina,
+        actualTypeId,
+        actualCoach,
+        actualAssistants,
+        actualIntensity,
+        actualStamina,
+        matches
+      });
+    }
+
+    this.viewerMismatchWeeks = this.viewerStageComparisons.filter(comparison =>
+      comparison.actualTypeId != null && !comparison.matches
+    ).length;
+
+    const initialPlayers = response.initialPlayers ?? [];
+    this.viewerPlayerRows = initialPlayers.map(initialPlayer => {
+      const initialHtms = this.getPlayerHtmsValue(initialPlayer);
+      const plannedSeries: Array<number | null> = [];
+      const realSeries: Array<number | null> = [];
+      const realPercents: Array<number | null> = [];
+      let maxHtms = initialHtms ?? 0;
+
+      for (let offsetWeek = 1; offsetWeek <= this.viewerTotalWeeks; offsetWeek++) {
+        const plannedPlayer = this.viewerPlannedPlayersByWeek[offsetWeek]?.[initialPlayer.id] ?? null;
+        const plannedHtms = this.getPlayerHtmsValue(plannedPlayer);
+        plannedSeries.push(plannedHtms);
+        if (plannedHtms != null) {
+          maxHtms = Math.max(maxHtms, plannedHtms);
+        }
+
+        const realPlayer = this.viewerRealPlayersByWeek[offsetWeek]?.[initialPlayer.id] ?? null;
+        const actualTypeId = response.weekTraining?.[offsetWeek]?.training?.trainingType ?? null;
+        const realHtms = this.getPlayerHtmsValue(realPlayer);
+        realSeries.push(realHtms);
+        realPercents.push(realPlayer ? this.getViewerActualTrainingPercent(realPlayer, actualTypeId) : null);
+        if (realHtms != null) {
+          maxHtms = Math.max(maxHtms, realHtms);
+        }
+
+        const projectedHtms = this.getPlayerHtmsValue(this.viewerProjectedPlayersByWeek[offsetWeek]?.[initialPlayer.id] ?? null);
+        if (projectedHtms != null) {
+          maxHtms = Math.max(maxHtms, projectedHtms);
+        }
+      }
+
+      const plannedPercents = this.viewerPlannedSegments.map(segment =>
+        response.weekParticipationExpected?.[segment.startWeek]?.[initialPlayer.id] ?? response.weekParticipationPlanned?.[segment.startWeek]?.[initialPlayer.id] ?? 100
+      );
+
+      return {
+        initialPlayer,
+        plannedPercents,
+        realPercents,
+        plannedSeries,
+        realSeries,
+        maxHtms: maxHtms > 0 ? maxHtms : 1
+      };
+    });
+
+    const defaultWeek = this.getViewerDefaultSelectedWeek();
+    this.viewerSelectedWeek = defaultWeek > 0 ? defaultWeek : null;
+    for (const row of this.viewerPlayerRows) {
+      this.viewerSelectedWeekByPlayerId[row.initialPlayer.id] = defaultWeek;
+    }
+  }
+
+  private mapViewerPlayersByWeek(weekPlayers: Record<number, PlayerInfo[]> | undefined): Record<number, Record<number, PlayerInfo>> {
+    if (!weekPlayers) {
+      return {};
+    }
+    return Object.keys(weekPlayers)
+      .map(key => Number(key))
+      .filter(Number.isFinite)
+      .reduce<Record<number, Record<number, PlayerInfo>>>((acc, week) => {
+        acc[week] = {};
+        for (const player of weekPlayers[week] ?? []) {
+          acc[week][player.id] = player;
+        }
+        return acc;
+      }, {});
+  }
+
+  private buildViewerPlannedSegments(response: TeamTrainingFollowUpResponse): ViewerTrainingSegment[] {
+    const weeks = Object.keys(response.weekTrainingPlanned ?? {}).map(Number).filter(Number.isFinite).sort((a, b) => a - b);
+    const segments: ViewerTrainingSegment[] = [];
+    for (const week of weeks) {
+      const weekTraining = response.weekTrainingPlanned?.[week];
+      const typeId = weekTraining?.training?.trainingType ?? null;
+      const coach = weekTraining?.staff?.trainer?.skillLevel ?? null;
+      const assistants = this.getViewerSelectedAssistantsLevel(weekTraining ?? null);
+      const intensity = weekTraining?.training?.trainingLevel ?? null;
+      const stamina = weekTraining?.training?.staminaTrainingPart ?? null;
+      const lastSegment = segments[segments.length - 1];
+      const canMerge = !!lastSegment
+        && lastSegment.typeId === typeId
+        && lastSegment.coach === coach
+        && lastSegment.assistants === assistants
+        && lastSegment.intensity === intensity
+        && lastSegment.stamina === stamina
+        && lastSegment.startWeek + lastSegment.weeks === week;
+      if (canMerge) {
+        lastSegment.weeks += 1;
+        continue;
+      }
+      segments.push({
+        startWeek: week,
+        weeks: 1,
+        typeId: typeId ?? 0,
+        coach,
+        assistants,
+        intensity,
+        stamina
+      });
+    }
+    return segments;
+  }
+
+  private buildViewerDataResponsePayload(): DataResponse {
+    const payload = JSON.parse(JSON.stringify(this.dataResponse)) as DataResponse;
+    const selectedTeamId = this.selectedTeam?.team.id ?? null;
+    if (selectedTeamId != null) {
+      payload.teams = (payload.teams ?? []).filter(team => team.team?.id === selectedTeamId);
+    }
+    payload.teams?.forEach(team => {
+      team.weeklyData?.forEach(weekData => {
+        weekData.players?.forEach(player => {
+          delete (player as Partial<PlayerInfo> & {changes?: Record<string, number>}).changes;
+        });
+      });
+    });
+    return payload;
+  }
+
+  private getTrainingStageForWeek(week: number, plans: ProjectTrainingStage[]): ProjectTrainingStage | null {
+    if (week <= 0 || plans.length === 0) {
+      return null;
+    }
+    let accumulated = 0;
+    for (const plan of plans) {
+      accumulated += plan.weeks;
+      if (week <= accumulated) {
+        return plan;
+      }
+    }
+    return plans[plans.length - 1] ?? null;
+  }
+
+  private getViewerActualTrainingPercent(player: PlayerInfo | null, typeId: number | null): number | null {
+    if (!player?.playerTraining || typeId == null) {
+      return null;
+    }
+    const keys = this.getPlayerTrainingKeysForType(typeId);
+    if (keys.length === 0) {
+      return null;
+    }
+    const values = keys
+      .map(key => player.playerTraining?.[key] ?? 0)
+      .filter(value => Number.isFinite(value));
+    return values.length > 0 ? Math.max(...values) : null;
+  }
+
+  private getPlayerTrainingKeysForType(typeId: number): Array<keyof PlayerTrainingInfo> {
+    switch (typeId) {
+      case 2:
+        return ['setPieces'];
+      case 3:
+      case 11:
+        return ['defender'];
+      case 4:
+        return ['scorer'];
+      case 5:
+      case 12:
+        return ['winger'];
+      case 6:
+        return ['scorer', 'setPieces'];
+      case 7:
+      case 10:
+        return ['passing'];
+      case 8:
+        return ['playmaker'];
+      case 9:
+        return ['keeper'];
+      default:
+        return [];
+    }
+  }
+
+  private getPlayerHtmsValue(player: PlayerInfo | null | undefined): number | null {
+    return player?.playerSubSkill?.htms ?? player?.htms ?? null;
+  }
+
+  getViewerCompletedPercent(): number {
+    if (this.viewerTotalWeeks <= 0) {
+      return 0;
+    }
+    return Math.round((this.viewerCompletedWeeks / this.viewerTotalWeeks) * 100);
+  }
+
+  getViewerProgressText(): string {
+    return `${this.viewerCompletedWeeks}/${this.viewerTotalWeeks} ${this.translateService.instant('ehm.weeks')}`;
+  }
+
+  getViewerTimelineGridColumns(): string {
+    const totalWeeks = Math.max(1, this.viewerTotalWeeks);
+    return `repeat(${totalWeeks}, minmax(0, 1fr))`;
+  }
+
+  getViewerSelectedWeek(): number | null {
+    if (this.viewerSelectedWeek != null) {
+      return this.viewerSelectedWeek;
+    }
+    const defaultWeek = this.getViewerDefaultSelectedWeek();
+    return defaultWeek > 0 ? defaultWeek : null;
+  }
+
+  getViewerSelectedWeekLeftPercent(): number {
+    const week = this.getViewerSelectedWeek();
+    if (!week || this.viewerTotalWeeks <= 0) {
+      return 0;
+    }
+    return ((week - 1) / this.viewerTotalWeeks) * 100;
+  }
+
+  getViewerSelectedWeekWidthPercent(): number {
+    if (this.viewerTotalWeeks <= 0) {
+      return 0;
+    }
+    return 100 / this.viewerTotalWeeks;
+  }
+
+  getViewerSelectedComparison(): ViewerStageComparison | null {
+    const week = this.getViewerSelectedWeek();
+    return week != null ? this.getViewerComparisonForWeek(week) : null;
+  }
+
+  getViewerSelectedPlannedStage(): ViewerTrainingSegment | null {
+    const week = this.getViewerSelectedWeek();
+    if (week == null) {
+      return null;
+    }
+    const stageIndex = this.getViewerStageIndexForWeek(week);
+    return stageIndex != null ? (this.viewerPlannedSegments[stageIndex] ?? null) : null;
+  }
+
+  getViewerSelectedRealWeekData() {
+    const comparison = this.getViewerSelectedComparison();
+    if (!comparison) {
+      return null;
+    }
+    return this.viewerFollowUpResponse?.weekTraining?.[comparison.offsetWeek] ?? null;
+  }
+
+  getViewerSelectedPlannedWeekInfo(): {season: number; week: number; date: string | null} | null {
+    const comparison = this.getViewerSelectedComparison();
+    const weekInfo = comparison ? this.viewerFollowUpResponse?.weekInfoPlanned?.[comparison.offsetWeek] : null;
+    if (!weekInfo) {
+      return null;
+    }
+    return {season: weekInfo.season, week: weekInfo.week, date: weekInfo.date ?? null};
+  }
+
+  getViewerSelectedAssistantsLevel(weekData: {staff?: StaffInfo | null} | null): number {
+    return weekData?.staff?.staffMembers
+      ?.filter(member => member.type === 1)
+      ?.reduce((sum, member) => sum + (member.level ?? 0), 0) ?? 0;
+  }
+
+  getViewerPlanStageGridColumn(segment: ViewerTrainingSegment): string {
+    return `${segment.startWeek} / span ${Math.max(1, segment.weeks)}`;
+  }
+
+  onViewerPlanTimelineMove(event: MouseEvent): void {
+    const week = this.getViewerWeekFromTimelineEvent(event);
+    if (week != null) {
+      this.viewerSelectedWeek = week;
+      this.syncViewerSelectedWeekToPlayers(week);
+    }
+  }
+
+  onViewerRealWeekEnter(event: MouseEvent, comparison: ViewerStageComparison): void {
+    this.viewerSelectedWeek = comparison.offsetWeek;
+  }
+
+  onViewerRealTimelineMove(event: MouseEvent): void {
+    const week = this.getViewerWeekFromTimelineEvent(event);
+    if (week != null) {
+      this.viewerSelectedWeek = week;
+    }
+  }
+
+  onViewerTimelineLeave(): void {
+    if (this.viewerSelectedWeek == null) {
+      const defaultWeek = this.getViewerDefaultSelectedWeek();
+      this.viewerSelectedWeek = defaultWeek > 0 ? defaultWeek : null;
+      if (this.viewerSelectedWeek != null) {
+        this.syncViewerSelectedWeekToPlayers(this.viewerSelectedWeek);
+      }
+    }
+  }
+
+  private syncViewerSelectedWeekToPlayers(week: number): void {
+    for (const row of this.viewerPlayerRows) {
+      this.viewerSelectedWeekByPlayerId[row.initialPlayer.id] = week;
+    }
+  }
+
+  private getViewerWeekFromTimelineEvent(event: MouseEvent): number | null {
+    const target = event.currentTarget as HTMLElement | null;
+    if (!target || this.viewerTotalWeeks <= 0) {
+      return null;
+    }
+    const rect = target.getBoundingClientRect();
+    if (rect.width <= 0) {
+      return null;
+    }
+    const rawX = event.clientX - rect.left;
+    const x = Math.max(0, Math.min(rect.width, rawX));
+    const percent = x / rect.width;
+    return Math.max(1, Math.min(this.viewerTotalWeeks, Math.floor(percent * this.viewerTotalWeeks) + 1));
+  }
+
+  isViewerHoverMismatch(): boolean {
+    const comparison = this.getViewerSelectedComparison();
+    return !!comparison && comparison.actualTypeId != null && !comparison.matches;
+  }
+
+  getViewerPlayerWeekIndicator(row: ViewerPlayerRow, comparison: ViewerStageComparison): string | null {
+    return this.viewerFollowUpResponse?.weekPlayerIndicators?.[comparison.offsetWeek]?.[row.initialPlayer.id] ?? null;
+  }
+
+  isViewerPlayerWeekWarning(row: ViewerPlayerRow, comparison: ViewerStageComparison, index: number): boolean {
+    return this.getViewerPlayerWeekIndicator(row, comparison) === 'warning';
+  }
+
+  isViewerPlayerWeekPositive(row: ViewerPlayerRow, comparison: ViewerStageComparison, index: number): boolean {
+    return this.getViewerPlayerWeekIndicator(row, comparison) === 'positive';
+  }
+
+  private getViewerComparisonForWeek(week: number): ViewerStageComparison | null {
+    return this.viewerStageComparisons.find(comparison => comparison.offsetWeek === week) ?? null;
+  }
+
+  getViewerPlayerSelectedWeek(playerId: number): number | null {
+    const selectedWeek = this.viewerSelectedWeekByPlayerId[playerId];
+    if (selectedWeek != null) {
+      return selectedWeek;
+    }
+    const defaultWeek = this.getViewerDefaultSelectedWeek();
+    return defaultWeek > 0 ? defaultWeek : null;
+  }
+
+  getViewerPlayerSelectedWeekLeftPercent(playerId: number): number {
+    const week = this.getViewerPlayerSelectedWeek(playerId);
+    if (!week || this.viewerTotalWeeks <= 0) {
+      return 0;
+    }
+    return ((week - 1) / this.viewerTotalWeeks) * 100;
+  }
+
+  getViewerPlayerSelectedWeekWidthPercent(): number {
+    if (this.viewerTotalWeeks <= 0) {
+      return 0;
+    }
+    return 100 / this.viewerTotalWeeks;
+  }
+
+  getViewerPlayerSelectedWeekInfo(playerId: number): {offsetWeek: number; season: number; week: number; date: string | null} | null {
+    const offsetWeek = this.getViewerPlayerSelectedWeek(playerId);
+    if (!offsetWeek) {
+      return null;
+    }
+    const weekInfo = this.viewerFollowUpResponse?.weekInfoPlanned?.[offsetWeek];
+    if (!weekInfo) {
+      return null;
+    }
+    return {
+      offsetWeek,
+      season: weekInfo.season,
+      week: weekInfo.week,
+      date: weekInfo.date ?? null
+    };
+  }
+
+  getViewerPlannedComparablePlayer(playerId: number): PlayerInfo | null {
+    const week = this.getViewerPlayerSelectedWeek(playerId);
+    if (!week) {
+      return null;
+    }
+    return this.viewerPlannedPlayersByWeek[week]?.[playerId] ?? null;
+  }
+
+  getViewerEstimatedComparablePlayer(playerId: number): PlayerInfo | null {
+    const week = this.getViewerPlayerSelectedWeek(playerId);
+    if (!week) {
+      return null;
+    }
+    return this.viewerRealPlayersByWeek[week]?.[playerId]
+      ?? this.viewerProjectedPlayersByWeek[week]?.[playerId]
+      ?? this.viewerPlannedPlayersByWeek[week]?.[playerId]
+      ?? null;
+  }
+
+  isViewerSelectedComparableEstimated(playerId: number): boolean {
+    const week = this.getViewerPlayerSelectedWeek(playerId);
+    if (!week) {
+      return false;
+    }
+    return !this.viewerRealPlayersByWeek[week]?.[playerId] && !!this.viewerProjectedPlayersByWeek[week]?.[playerId];
+  }
+
+  private getViewerDefaultSelectedWeek(): number {
+    const lastRealWeek = [...this.viewerStageComparisons]
+      .reverse()
+      .find(comparison => comparison.actualTypeId != null)?.offsetWeek ?? null;
+    if (lastRealWeek != null) {
+      return lastRealWeek;
+    }
+    return this.viewerStageComparisons[0]?.offsetWeek ?? 0;
+  }
+
+
+  private getViewerStageIndexForWeek(week: number): number | null {
+    if (week <= 0 || this.viewerPlannedSegments.length === 0) {
+      return null;
+    }
+    for (let i = 0; i < this.viewerPlannedSegments.length; i++) {
+      const segment = this.viewerPlannedSegments[i];
+      if (week >= segment.startWeek && week < segment.startWeek + segment.weeks) {
+        return i;
+      }
+    }
+    return this.viewerPlannedSegments.length - 1;
+  }
+
+  getViewerPath(row: ViewerPlayerRow, values: Array<number | null>): string {
+    const maxHtms = row.maxHtms > 0 ? row.maxHtms : 1;
+    const totalWeeks = this.viewerTotalWeeks;
+    if (totalWeeks <= 0) {
+      return '';
+    }
+    const points: Array<{x: number; y: number; defined: boolean}> = [];
+    const initialHtms = this.getPlayerHtmsValue(row.initialPlayer);
+    if (initialHtms != null) {
+      points.push({x: 0, y: this.mapViewerHtmsToY(initialHtms, maxHtms), defined: true});
+    } else {
+      points.push({x: 0, y: 100, defined: false});
+    }
+    for (let i = 0; i < totalWeeks; i++) {
+      const value = values[i] ?? null;
+      points.push({
+        x: ((i + 1) / totalWeeks) * 100,
+        y: value != null ? this.mapViewerHtmsToY(value, maxHtms) : 100,
+        defined: value != null
+      });
+    }
+    let path = '';
+    for (const point of points) {
+      if (!point.defined) {
+        continue;
+      }
+      path += path ? ` L ${point.x} ${point.y}` : `M ${point.x} ${point.y}`;
+    }
+    return path;
+  }
+
+  private mapViewerHtmsToY(value: number, maxHtms: number): number {
+    const ratio = Math.max(0, Math.min(1, value / maxHtms));
+    return 94 - (ratio * 88);
   }
 
   private ensureVisibleBestFormationCriteria(): void {

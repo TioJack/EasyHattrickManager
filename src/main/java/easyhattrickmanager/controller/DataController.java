@@ -4,6 +4,7 @@ import easyhattrickmanager.controller.model.DataResponse;
 import easyhattrickmanager.controller.model.PlayerDataResponse;
 import easyhattrickmanager.service.DataService;
 import easyhattrickmanager.service.PlayerDataService;
+import easyhattrickmanager.service.TeamTrainingFollowUpService;
 import easyhattrickmanager.service.TeamTrainingService;
 import easyhattrickmanager.service.UpdateService;
 import easyhattrickmanager.service.model.dataresponse.CurrencyInfo;
@@ -12,6 +13,8 @@ import easyhattrickmanager.service.model.dataresponse.UserConfig;
 import easyhattrickmanager.service.model.teamtraining.TeamTrainingProgressResponse;
 import easyhattrickmanager.service.model.teamtraining.TeamTrainingRequest;
 import easyhattrickmanager.service.model.teamtraining.TeamTrainingResponse;
+import easyhattrickmanager.service.model.teamtrainingfollowup.TeamTrainingFollowUpRequest;
+import easyhattrickmanager.service.model.teamtrainingfollowup.TeamTrainingFollowUpResponse;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +34,8 @@ public class DataController {
     private final DataService dataService;
     private final UpdateService updateService;
     private final PlayerDataService playerDataService;
-    private TeamTrainingService teamTrainingService;
+    private final TeamTrainingService teamTrainingService;
+    private final TeamTrainingFollowUpService teamTrainingFollowUpService;
 
     @GetMapping
     public ResponseEntity<DataResponse> getData() {
@@ -81,5 +85,10 @@ public class DataController {
     @PostMapping("/teamTraining/progress")
     public TeamTrainingProgressResponse teamTrainingProgress(@RequestBody TeamTrainingRequest teamTrainingRequest) {
         return this.teamTrainingService.getTeamTrainingProgress(teamTrainingRequest);
+    }
+
+    @PostMapping("/teamTraining/followUp")
+    public TeamTrainingFollowUpResponse teamTrainingFollowUp(@RequestBody TeamTrainingFollowUpRequest teamTrainingFollowUpRequest) {
+        return this.teamTrainingFollowUpService.getTeamTrainingFollowUp(teamTrainingFollowUpRequest);
     }
 }

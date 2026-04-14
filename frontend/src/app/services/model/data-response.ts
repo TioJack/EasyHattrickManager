@@ -1,3 +1,5 @@
+import type {BestFormationCriteria, MatchDetail, TeamTrainingRequest, TeamTrainingResponse} from './team-training';
+
 export interface DataResponse {
   version: string;
   user: User;
@@ -167,6 +169,7 @@ export interface Project {
   endWeek?: number;
   filter: PlayerFilter;
   sort: PlayerSort;
+  planner?: ProjectTrainingPlanner;
 }
 
 export interface PlayerFilter {
@@ -177,4 +180,28 @@ export interface PlayerFilter {
 export interface PlayerSort {
   mode: string;
   criteria: string;
+}
+
+export interface ProjectTrainingPlanner {
+  iniSeason?: number;
+  iniWeek?: number;
+  filter?: PlayerFilter;
+  sort?: PlayerSort;
+  trainingPlans: ProjectTrainingStage[];
+  trainingPlanPercents: Record<number, number[]>;
+  autoRefreshBestFormation: boolean;
+  bestFormationCriteria: BestFormationCriteria;
+  fixedFormationCode?: string | null;
+  matchDetail: MatchDetail;
+  teamTrainingRequest?: TeamTrainingRequest;
+  teamTrainingResponse?: TeamTrainingResponse;
+}
+
+export interface ProjectTrainingStage {
+  typeId: number;
+  weeks: number;
+  coach: number;
+  assistants: number;
+  intensity: number;
+  stamina: number;
 }

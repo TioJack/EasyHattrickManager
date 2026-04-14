@@ -21,4 +21,5 @@ public class ProjectInfo {
     Integer endWeek;
     PlayerFilterInfo filter;
     PlayerSortInfo sort;
+    ProjectTrainingPlannerInfo planner;
 }

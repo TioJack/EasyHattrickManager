@@ -1,7 +1,7 @@
 import {Component, HostListener, Input, OnInit, ViewChild} from '@angular/core';
 import {AuthService} from '../services/auth.service';
 import {PlayerInfo, Project, TeamExtendedInfo, WeeklyInfo} from '../services/model/data-response';
-import {AsyncPipe, DatePipe, NgForOf} from '@angular/common';
+import {AsyncPipe, DatePipe, NgForOf, NgIf} from '@angular/common';
 import {PlayService, ViewMode} from '../services/play.service';
 import {UserConfigService} from '../services/user-config.service';
 import {TranslatePipe} from '@ngx-translate/core';
@@ -21,7 +21,7 @@ import {DEFAULT_DATE_FORMAT} from '../constants/global.constant';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [NgForOf, TranslatePipe, LanguageComponent, CurrencyComponent, FirstCapitalizePipe, AsyncPipe, RouterLink, PlayerFilterComponent, PlayerSortComponent, AlertComponent, DatePipe, DateFormatComponent, ShowTrainingInfoComponent, ShowSubSkillsComponent],
+  imports: [NgForOf, NgIf, TranslatePipe, LanguageComponent, CurrencyComponent, FirstCapitalizePipe, AsyncPipe, RouterLink, PlayerFilterComponent, PlayerSortComponent, AlertComponent, DatePipe, DateFormatComponent, ShowTrainingInfoComponent, ShowSubSkillsComponent],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
@@ -33,6 +33,9 @@ export class HeaderComponent implements OnInit {
   filteredPlayersForFilter: PlayerInfo[] = [];
   dateFormat: string | null = null;
   viewMode: ViewMode = 'players';
+  plannerDirty = false;
+  plannerCanSave = false;
+  plannerCanClear = false;
 
   constructor(
     private authService: AuthService,
@@ -46,6 +49,7 @@ export class HeaderComponent implements OnInit {
     if (this.dataResponse.userConfig) {
       this.userConfigService.setUserConfig(this.dataResponse.userConfig);
     }
+    this.playService.setViewMode('players');
     if (this.dataResponse.userConfig.projects.length > 0) {
       this.selectProject(this.dataResponse.userConfig.projects[0]);
     }
@@ -56,6 +60,19 @@ export class HeaderComponent implements OnInit {
     });
     this.playService.viewMode$.subscribe(mode => {
       this.viewMode = mode;
+    });
+    this.playService.selectedProject$.subscribe(project => {
+      this.selectedProject = project;
+      this.filteredPlayersForFilter = project ? this.buildFilteredPlayersForProject(project) : [];
+    });
+    this.playService.plannerDirty$.subscribe(isDirty => {
+      this.plannerDirty = isDirty;
+    });
+    this.playService.plannerCanSave$.subscribe(canSave => {
+      this.plannerCanSave = canSave;
+    });
+    this.playService.plannerCanClear$.subscribe(canClear => {
+      this.plannerCanClear = canClear;
     });
   }
 
@@ -93,6 +110,7 @@ export class HeaderComponent implements OnInit {
   selectProject(project: Project): void {
     this.selectedProject = project;
     this.filteredPlayersForFilter = this.buildFilteredPlayersForProject(project);
+    this.playService.setViewMode('players');
     this.playService.selectProject(project);
     const team = this.dataResponse.teams.find((team: TeamExtendedInfo) => team.team.id === project.teamId);
     if (!team) {
@@ -134,10 +152,48 @@ export class HeaderComponent implements OnInit {
 
   setViewMode(mode: ViewMode): void {
     this.playService.setViewMode(mode);
+    if (mode === 'training-planner' || mode === 'training-plan-viewer') {
+      const planner = this.selectedProject?.planner;
+      if (planner?.iniSeason != null && planner?.iniWeek != null) {
+        this.playService.goToSeasonAndWeek(planner.iniSeason, planner.iniWeek);
+      }
+      return;
+    }
+    this.playService.restorePlayersViewWeek();
   }
 
   isViewMode(mode: ViewMode): boolean {
     return this.viewMode === mode;
+  }
+
+  hasSavedPlanner(): boolean {
+    return !!this.selectedProject?.planner?.trainingPlans?.length;
+  }
+
+  savePlanner(): void {
+    this.playService.requestPlannerSave();
+  }
+
+  reloadPlanner(): void {
+    const currentProject = this.selectedProject;
+    if (!currentProject) {
+      return;
+    }
+    const currentConfig = this.userConfigService.getUserConfig();
+    const reloadedProject = currentConfig?.projects.find(project =>
+      project.name === currentProject.name && project.teamId === currentProject.teamId
+    );
+    if (!reloadedProject) {
+      this.alertComponent.showAlert('ehm.update-fail', 'danger');
+      return;
+    }
+    this.selectedProject = reloadedProject;
+    this.playService.updateSelectedProject(reloadedProject);
+    this.playService.requestPlannerReload();
+  }
+
+  clearPlanner(): void {
+    this.playService.requestPlannerClear();
   }
 
   protected readonly DEFAULT_DATE_FORMAT = DEFAULT_DATE_FORMAT;

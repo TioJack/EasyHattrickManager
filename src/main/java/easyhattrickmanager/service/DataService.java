@@ -5,7 +5,6 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import easyhattrickmanager.controller.model.DataResponse;
 import easyhattrickmanager.repository.CountryDAO;
 import easyhattrickmanager.repository.LanguageDAO;
@@ -19,7 +18,6 @@ import easyhattrickmanager.repository.StaffMemberDAO;
 import easyhattrickmanager.repository.TeamDAO;
 import easyhattrickmanager.repository.TrainerDAO;
 import easyhattrickmanager.repository.TrainingDAO;
-import easyhattrickmanager.repository.UserConfigDAO;
 import easyhattrickmanager.repository.UserDAO;
 import easyhattrickmanager.repository.model.Country;
 import easyhattrickmanager.repository.model.League;
@@ -76,7 +74,7 @@ public class DataService {
     private final PlayerSubSkillDAO playerSubSkillDAO;
     private final PlayerTrainingDAO playerTrainingDAO;
     private final LanguageDAO languageDAO;
-    private final UserConfigDAO userConfigDAO;
+    private final UserConfigStorageService userConfigStorageService;
     private final UserInfoMapper userInfoMapper;
     private final TeamExtendedInfoMapper teamExtendedInfoMapper;
     private final TrainingInfoMapper trainingInfoMapper;
@@ -84,7 +82,6 @@ public class DataService {
     private final PlayerInfoMapper playerInfoMapper;
     private final LanguageInfoMapper languageInfoMapper;
     private final CountryDAO countryDAO;
-
     @Value("${app.version}")
     private String appVersion;
 
@@ -162,12 +159,7 @@ public class DataService {
     }
 
     private UserConfig getUserConfig(int userId) {
-        try {
-            return new ObjectMapper().readValue(userConfigDAO.get(userId), UserConfig.class);
-        } catch (Exception e) {
-            System.err.printf("Error getUserConfig %s. %s%n", userId, e.getMessage());
-            return null;
-        }
+        return userConfigStorageService.getUserConfig(userId);
     }
 
     @Cacheable(value = "LANGUAGES", unless = "#result.isEmpty()")
@@ -196,12 +188,8 @@ public class DataService {
     }
 
     public void saveUserConfig(String username, UserConfig userConfig) {
-        try {
-            User user = userDAO.get(username);
-            userConfigDAO.update(user.getId(), new ObjectMapper().writeValueAsString(userConfig));
-        } catch (Exception e) {
-            System.err.printf("Error saveUserConfig %s %s. %s%n", username, userConfig, e.getMessage());
-        }
+        User user = userDAO.get(username);
+        userConfigStorageService.saveUserConfig(user.getId(), userConfig);
     }
 
 }

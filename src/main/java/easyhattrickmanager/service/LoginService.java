@@ -1,6 +1,5 @@
 package easyhattrickmanager.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.scribejava.core.model.OAuth1AccessToken;
 import com.github.scribejava.core.model.OAuth1RequestToken;
 import com.github.scribejava.core.oauth.OAuth10aService;
@@ -13,7 +12,6 @@ import easyhattrickmanager.controller.model.UserRequest;
 import easyhattrickmanager.repository.CountryDAO;
 import easyhattrickmanager.repository.LanguageDAO;
 import easyhattrickmanager.repository.TeamDAO;
-import easyhattrickmanager.repository.UserConfigDAO;
 import easyhattrickmanager.repository.UserDAO;
 import easyhattrickmanager.repository.UserEhmDAO;
 import easyhattrickmanager.repository.UserEhmHistoryDAO;
@@ -55,9 +53,8 @@ public class LoginService {
     private final Map<String, LoginData> temporaryLoginDataStorage = new HashMap<>();
     private final UpdateService updateService;
     private final UpdateExecutionService updateExecutionService;
-    private final UserConfigDAO userConfigDAO;
+    private final UserConfigStorageService userConfigStorageService;
     private final CountryDAO countryDAO;
-
     public boolean existUserEhm(String username) {
         return userEhmDAO.get(username).isPresent();
     }
@@ -200,7 +197,7 @@ public class LoginService {
 
     private void saveUserConfig(ManagerCompendium managerCompendium) {
         try {
-            String config = userConfigDAO.get(managerCompendium.getManager().getUserId());
+            UserConfig config = userConfigStorageService.getUserConfig(managerCompendium.getManager().getUserId());
             if (Objects.nonNull(config)) {
                 return;
             }
@@ -216,7 +213,7 @@ public class LoginService {
                 .showSubSkills(true)
                 .projects(createProjects(managerCompendium.getManager().getTeams()))
                 .build();
-            userConfigDAO.insert(managerCompendium.getManager().getUserId(), new ObjectMapper().writeValueAsString(userConfig));
+            userConfigStorageService.saveUserConfig(managerCompendium.getManager().getUserId(), userConfig);
         } catch (Exception e) {
             System.err.printf("Error saveUserConfig %s%n", e.getMessage());
         }

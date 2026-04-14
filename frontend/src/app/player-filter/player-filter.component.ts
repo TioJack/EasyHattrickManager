@@ -1,8 +1,8 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {PlayerFilter, PlayerInfo, UserConfig} from '../services/model/data-response';
+import {PlayerFilter, PlayerInfo, ProjectTrainingPlanner, UserConfig} from '../services/model/data-response';
 import {NgForOf, NgIf} from '@angular/common';
 import {UserConfigService} from '../services/user-config.service';
-import {PlayService} from '../services/play.service';
+import {PlayService, ViewMode} from '../services/play.service';
 import {TranslatePipe} from '@ngx-translate/core';
 import {FirstCapitalizePipe} from '../pipes/first-capitalize.pipe';
 
@@ -23,6 +23,7 @@ export class PlayerFilterComponent implements OnInit, OnDestroy {
   projectName: string = '';
   filter: PlayerFilter = {mode: 'exclusive', playerIds: []};
   selectedPlayerIds = new Set<number>();
+  viewMode: ViewMode = 'players';
   private persistDebounceTimer: number | null = null;
   private pendingConfigToSave: UserConfig | null = null;
   private readonly persistDebounceMs = 300;
@@ -33,18 +34,14 @@ export class PlayerFilterComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.playService.viewMode$.subscribe(mode => {
+      this.viewMode = mode;
+      this.loadFilterFromSelection();
+    });
     this.playService.selectedProject$.subscribe(project => {
       if (project) {
         this.projectName = project.name;
-        if (!project.filter) {
-          this.filter = {mode: 'exclusive', playerIds: []};
-        } else {
-          this.filter = project.filter;
-          if (!this.filter.mode) {
-            this.filter.mode = 'exclusive';
-          }
-        }
-        this.refreshSelectedIds();
+        this.loadFilterFromSelection();
       }
     });
   }
@@ -119,21 +116,70 @@ export class PlayerFilterComponent implements OnInit, OnDestroy {
     }
     const updatedConfig = {...currentConfig};
     const activeProject = updatedConfig.projects.find(
-      (project) => project.name === this.projectName
+      (project) => project.name === this.projectName && project.teamId === this.playService.getSelectedProject()?.teamId
     );
     if (activeProject) {
-      if (!activeProject.filter) {
-        activeProject.filter = {mode: this.filter.mode, playerIds: []};
+      if (this.viewMode === 'training-planner') {
+        activeProject.planner = this.ensurePlanner(activeProject.planner);
+        activeProject.planner.filter = {
+          mode: this.filter.mode ?? 'exclusive',
+          playerIds: [...this.filter.playerIds]
+        };
+      } else {
+        if (!activeProject.filter) {
+          activeProject.filter = {mode: this.filter.mode, playerIds: []};
+        }
+        activeProject.filter.playerIds = [...this.filter.playerIds];
+        activeProject.filter.mode = this.filter.mode ?? 'exclusive';
       }
-      activeProject.filter.playerIds = [...this.filter.playerIds];
-      activeProject.filter.mode = this.filter.mode ?? 'exclusive';
     }
     this.userConfigService.setUserConfig(updatedConfig);
+    if (activeProject) {
+      this.playService.updateSelectedProject(activeProject);
+    }
     this.scheduleSave(updatedConfig);
   }
 
   private refreshSelectedIds(): void {
     this.selectedPlayerIds = new Set(this.filter.playerIds ?? []);
+  }
+
+  private loadFilterFromSelection(): void {
+    const project = this.playService.getSelectedProject();
+    if (!project) {
+      return;
+    }
+    const activeFilter = this.viewMode === 'training-planner'
+      ? project.planner?.filter
+      : project.filter;
+    if (!activeFilter) {
+      this.filter = {mode: 'exclusive', playerIds: []};
+    } else {
+      this.filter = {
+        mode: activeFilter.mode ?? 'exclusive',
+        playerIds: [...(activeFilter.playerIds ?? [])]
+      };
+    }
+    this.refreshSelectedIds();
+  }
+
+  private ensurePlanner(planner?: ProjectTrainingPlanner): ProjectTrainingPlanner {
+    return planner ?? {
+      trainingPlans: [],
+      trainingPlanPercents: {},
+      autoRefreshBestFormation: false,
+      bestFormationCriteria: 'HATSTATS',
+      matchDetail: {
+        tactic: 'NORMAL',
+        teamAttitude: 'PIN',
+        teamSpirit: 'CALM',
+        teamSubSpirit: 0.5,
+        teamConfidence: 'STRONG',
+        teamSubConfidence: 0.5,
+        sideMatch: 'AWAY',
+        styleOfPlay: 0
+      }
+    };
   }
 
   private scheduleSave(config: UserConfig): void {

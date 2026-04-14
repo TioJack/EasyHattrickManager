@@ -1,6 +1,6 @@
 <app-alert #alert></app-alert>
-<header class="d-flex justify-content-between align-items-center bg-light p-1 border-bottom header-fixed">
-  <div class="d-flex align-items-center gap-2">
+<header class="bg-light border-bottom header-fixed header-shell">
+  <div class="header-group header-group--start">
     <div class="dropdown">
       <button class="btn btn-outline-primary dropdown-toggle" type="button" id="teamDropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
         {{ 'ehm.project' | translate | firstCapitalize }}: {{ selectedProject?.name }}
@@ -14,7 +14,7 @@
       </ul>
     </div>
 
-    <div class="btn-group" role="group" aria-label="Modo de vista">
+    <div class="btn-group planner-view-toggle" role="group" aria-label="Modo de vista">
       <button
         class="btn"
         [class.btn-primary]="isViewMode('players')"
@@ -33,10 +33,20 @@
         (click)="setViewMode('training-planner')">
         <i class="bi bi-graph-up"></i>
       </button>
+      <button
+        class="btn"
+        [class.btn-primary]="isViewMode('training-plan-viewer')"
+        [class.btn-outline-primary]="!isViewMode('training-plan-viewer')"
+        type="button"
+        [disabled]="!hasSavedPlanner()"
+        [title]="'ehm.plan-follow-up' | translate | firstCapitalize"
+        (click)="setViewMode('training-plan-viewer')">
+        <i class="bi bi-eye"></i>
+      </button>
     </div>
   </div>
 
-  <div class="d-flex align-items-center">
+  <div class="header-group header-group--timeline">
     <button class="btn btn-outline-secondary" (click)="playService.onFirstWeek()" title="{{ 'ehm.start' | translate }}">
       <i class="bi bi-chevron-bar-left"></i>
     </button>
@@ -67,7 +77,34 @@
     <i class="bi bi-info-circle ms-2 fs-6" title="{{ 'ehm.navigate-help' | translate }}"></i>
   </div>
 
-  <div class="d-inline-flex gap-2">
+  <div class="header-group header-group--actions">
+    <div *ngIf="isViewMode('training-planner')" class="planner-project-actions">
+      <button
+        class="btn btn-success"
+        type="button"
+        [disabled]="!plannerDirty || !plannerCanSave"
+        (click)="savePlanner()"
+        title="Guardar planificación del proyecto">
+        <i class="bi bi-floppy"></i>
+      </button>
+      <button
+        class="btn btn-outline-secondary"
+        type="button"
+        [disabled]="!plannerDirty || !plannerCanSave"
+        (click)="reloadPlanner()"
+        title="Recargar planificación guardada">
+        <i class="bi bi-arrow-clockwise"></i>
+      </button>
+      <button
+        class="btn btn-outline-danger"
+        type="button"
+        [disabled]="!plannerCanClear"
+        (click)="clearPlanner()"
+        title="Borrar planificación">
+        <i class="bi bi-trash"></i>
+      </button>
+    </div>
+
     <div class="dropdown">
       <button class="btn btn-primary" type="button" id="dropdownFilterButton" data-bs-toggle="dropdown" aria-expanded="false">
         <i class="bi bi-filter"></i>

@@ -659,6 +659,7 @@ public class UpdateTranslationService {
         addTranslation_EN_ES_CA("ehm.duration", "duration", "duración", "durada");
         addTranslation_EN_ES_CA("ehm.coach", "coach", "entrenador", "entrenador");
         addTranslation_EN_ES_CA("ehm.assistant-coach", "assistant coach", "entrenador asistente", "entrenador assistent");
+        addTranslation_EN_ES_CA("ehm.assistants", "assistants", "asistentes", "assistents");
         addTranslation_EN_ES_CA("ehm.stamina", "stamina", "resistencia", "resistència");
         addTranslation_EN_ES_CA("ehm.add-training-stage", "add training stage", "añadir etapa de entrenamiento", "afegir etapa d'entrenament");
         addTranslation_EN_ES_CA("ehm.totals", "totals", "totales", "totals");
@@ -674,6 +675,14 @@ public class UpdateTranslationService {
         addTranslation_EN_ES_CA("ehm.training", "training", "entrenamiento", "entrenament");
         addTranslation_EN_ES_CA("ehm.view-players", "players", "jugadores", "jugadors");
         addTranslation_EN_ES_CA("ehm.training-planner", "training planner", "planificador de entrenamiento", "planificador d'entrenament");
+        addTranslation_EN_ES_CA("ehm.plan-follow-up", "plan follow-up", "seguimiento del plan", "seguiment del pla");
+        addTranslation_EN_ES_CA("ehm.planned", "planned", "planificado", "planificat");
+        addTranslation_EN_ES_CA("ehm.training-planned", "planned training", "entrenamiento planificado", "entrenament planificat");
+        addTranslation_EN_ES_CA("ehm.training-received", "received training", "entrenamiento recibido", "entrenament rebut");
+        addTranslation_EN_ES_CA("ehm.received", "received", "recibido", "rebut");
+        addTranslation_EN_ES_CA("ehm.pending", "pending", "pendiente", "pendent");
+        addTranslation_EN_ES_CA("ehm.no-saved-plan-to-compare", "there is no saved plan to compare.", "no hay planificación guardada para comparar.", "no hi ha cap planificació desada per comparar.");
+        addTranslation_EN_ES_CA("ehm.no-players-in-saved-plan", "there are no players in the saved plan.", "no hay jugadores en la planificación guardada.", "no hi ha jugadors a la planificació desada.");
         addTranslation_EN_ES_CA("ehm.training-planner-welcome", "Welcome to the Easy Hattrick Manager training planner.", "Bienvenido al planificador de entrenamiento de Easy Hattrick Manager.", "Benvingut al planificador d'entrenament d'Easy Hattrick Manager.");
         addTranslation_EN_ES_CA("ehm.training-planner-help", "To get started, add training stages using the form on the left.", "Para empezar, añade etapas de entrenamiento mediante el formulario de la izquierda.", "Per començar, afegeix etapes d'entrenament mitjançant el formulari de l'esquerra.");
         addTranslation_EN_ES_CA("ehm.lineup-ratings", "lineup / ratings", "alineación / calificaciones", "alineació / qualificacions");
