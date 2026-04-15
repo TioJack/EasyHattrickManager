@@ -1436,11 +1436,17 @@
 .viewer-player-stage-plan .viewer-stage-timeline__grid--plan {
   min-height: 52px;
   height: 52px;
+  gap: 0;
 }
 
 .viewer-player-stage-plan .viewer-stage-timeline__grid--player-real {
   min-height: 72px;
   height: 72px;
+  gap: 0;
+}
+
+.viewer-stage-warning-row--player-real {
+  gap: 0;
 }
 
 .viewer-player-stage-plan__label {

@@ -345,6 +345,7 @@ export class MainComponent implements OnInit, OnDestroy {
   isViewerLoading = false;
   private viewerPlannedPlayerWindowsByPlayerId: Record<number, ViewerPlayerWindow> = {};
   private viewerRealPlayerWindowsByPlayerId: Record<number, ViewerPlayerWindow> = {};
+  private viewerRequestedPlayerWindowsByPlayerId: Record<number, ViewerPlayerWindow> = {};
   viewerSelectedWeek: number | null = null;
   private readonly roleTrapByRole: Record<string, string> = {
     KEEPER: 't1',
@@ -1150,6 +1151,10 @@ export class MainComponent implements OnInit, OnDestroy {
     if (!persistedRequest || !persistedResponse) {
       return false;
     }
+    const currentRequest = this.buildTeamTrainingRequest(this.autoRefreshBestFormation);
+    if (!currentRequest || this.buildTeamTrainingRequestKey(currentRequest) !== this.buildTeamTrainingRequestKey(persistedRequest)) {
+      return false;
+    }
     if (this.plannerRequestTimer !== null) {
       clearTimeout(this.plannerRequestTimer);
       this.plannerRequestTimer = null;
@@ -1354,7 +1359,7 @@ export class MainComponent implements OnInit, OnDestroy {
     const rawX = event.clientX - rect.left;
     const x = Math.max(0, Math.min(rect.width, rawX));
     const percent = rect.width > 0 ? x / rect.width : 0;
-    const week = Math.max(1, Math.min(weekCount, Math.round(percent * (weekCount - 1)) + 1));
+    const week = Math.max(1, Math.min(weekCount, Math.floor(percent * weekCount) + 1));
     this.hoverWeekByPlayerId[playerId] = week;
     const container = target.closest('.planner-center-body') as HTMLElement | null;
     const containerRect = container?.getBoundingClientRect();
@@ -1406,7 +1411,7 @@ export class MainComponent implements OnInit, OnDestroy {
     const rawX = event.clientX - rect.left;
     const x = Math.max(0, Math.min(rect.width, rawX));
     const percent = rect.width > 0 ? x / rect.width : 0;
-    this.bestFormationTimelineHoverWeek = Math.max(1, Math.min(weekCount, Math.round(percent * (weekCount - 1)) + 1));
+    this.bestFormationTimelineHoverWeek = Math.max(1, Math.min(weekCount, Math.floor(percent * weekCount) + 1));
     this.bestFormationTimelineHoverPercent = percent * 100;
   }
 
@@ -1445,7 +1450,31 @@ export class MainComponent implements OnInit, OnDestroy {
       return null;
     }
     const playersById = this.plannerPlayersByWeek[week];
-    return playersById ? playersById[playerId] ?? null : null;
+    const popupPlayer = playersById ? playersById[playerId] ?? null : null;
+    if (popupPlayer) {
+      return popupPlayer;
+    }
+    const playerWindow = this.plannerPlayerWindowsByPlayerId[playerId];
+    const firstObservedWeek = this.getPlannerFirstObservedWeek(playerId);
+    if (
+      playerWindow
+      && week >= playerWindow.inclusionWeek
+      && (playerWindow.departureWeek == null || week <= playerWindow.departureWeek)
+      && (firstObservedWeek == null || week < firstObservedWeek)
+    ) {
+      return this.players.find(player => player.id === playerId) ?? null;
+    }
+    return null;
+  }
+
+  private getPlannerFirstObservedWeek(playerId: number): number | null {
+    const weekCount = this.getPlannerWeekCount();
+    for (let week = 1; week <= weekCount; week++) {
+      if (this.plannerPlayersByWeek[week]?.[playerId]) {
+        return week;
+      }
+    }
+    return null;
   }
 
   getMaxHtmsRanges(playerId: number): Array<{leftPercent: number; widthPercent: number}> {
@@ -1567,7 +1596,7 @@ export class MainComponent implements OnInit, OnDestroy {
     for (let index = startIndex; index <= endIndex; index++) {
       const weekData = weeklyData[index];
       const offset = index - startIndex;
-      const inclusionWeek = offset + 1;
+      const inclusionWeek = Math.max(1, offset);
       for (const player of weekData.players ?? []) {
         if (!isPlayerAllowed(player)) {
           continue;
@@ -1586,7 +1615,7 @@ export class MainComponent implements OnInit, OnDestroy {
       .map(teamTrainingPlayer => {
         const lastSeenIndex = lastSeenIndexByPlayerId.get(teamTrainingPlayer.player.id) ?? startIndex;
         const departureWeek = lastSeenIndex < maxObservedIndex
-          ? Math.max(1, (lastSeenIndex - startIndex) + 1)
+          ? Math.max(0, lastSeenIndex - startIndex)
           : null;
         return {
           ...teamTrainingPlayer,
@@ -1712,7 +1741,7 @@ export class MainComponent implements OnInit, OnDestroy {
           return;
         }
         this.isViewerLoading = false;
-        this.applyViewerFollowUpResponse(response, planner);
+        this.applyViewerFollowUpResponse(response, followUpState.request);
       },
       error: error => {
         if (requestToken !== this.viewerFollowUpRequestToken) {
@@ -1744,7 +1773,7 @@ export class MainComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  private applyViewerFollowUpResponse(response: TeamTrainingFollowUpResponse, planner: ProjectTrainingPlanner): void {
+  private applyViewerFollowUpResponse(response: TeamTrainingFollowUpResponse, request: TeamTrainingRequest): void {
     this.viewerFollowUpResponse = response;
     this.viewerTotalWeeks = Math.max(...Object.keys(response.weekTrainingPlanned ?? {}).map(Number).filter(Number.isFinite), 0);
     this.viewerCompletedWeeks = Math.max(...Object.keys(response.weekTraining ?? {}).map(Number).filter(Number.isFinite), 0);
@@ -1801,6 +1830,7 @@ export class MainComponent implements OnInit, OnDestroy {
 
     const initialPlayers = this.playService.sortPlayers(response.initialPlayers ?? []);
     const initialPlayerIds = initialPlayers.map(player => player.id);
+    this.viewerRequestedPlayerWindowsByPlayerId = this.indexViewerRequestedPlayerWindows(request?.players ?? [], initialPlayerIds);
     this.viewerPlannedPlayerWindowsByPlayerId = this.buildViewerPlayerWindows(this.viewerPlannedPlayersByWeek, initialPlayerIds);
     this.viewerRealPlayerWindowsByPlayerId = this.buildViewerPlayerWindows(
       this.mergeViewerPlayersByWeek(this.viewerRealPlayersByWeek, this.viewerProjectedPlayersByWeek),
@@ -1949,6 +1979,24 @@ export class MainComponent implements OnInit, OnDestroy {
       };
     }
     return merged;
+  }
+
+  private indexViewerRequestedPlayerWindows(
+    players: TeamTrainingPlayer[],
+    playerIds: number[]
+  ): Record<number, ViewerPlayerWindow> {
+    const allowedIds = new Set(playerIds);
+    return (players ?? []).reduce<Record<number, ViewerPlayerWindow>>((acc, teamTrainingPlayer) => {
+      const playerId = teamTrainingPlayer.player?.id;
+      if (playerId == null || !allowedIds.has(playerId)) {
+        return acc;
+      }
+      acc[playerId] = {
+        inclusionWeek: Math.max(1, teamTrainingPlayer.inclusionWeek ?? 1),
+        departureWeek: teamTrainingPlayer.departureWeek ?? null
+      };
+      return acc;
+    }, {});
   }
 
   private buildViewerDataResponsePayload(): DataResponse {
@@ -2338,6 +2386,10 @@ export class MainComponent implements OnInit, OnDestroy {
     const week = this.getViewerPlayerSelectedWeek(playerId);
     if (!week) {
       return null;
+    }
+    const requestedWindow = this.viewerRequestedPlayerWindowsByPlayerId[playerId];
+    if (requestedWindow && requestedWindow.inclusionWeek > 1 && week === requestedWindow.inclusionWeek) {
+      return this.viewerPlayerRows.find(row => row.initialPlayer.id === playerId)?.initialPlayer ?? null;
     }
     return this.viewerPlannedPlayersByWeek[week]?.[playerId] ?? null;
   }
