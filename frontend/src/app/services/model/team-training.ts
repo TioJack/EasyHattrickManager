@@ -16,6 +16,7 @@ export interface TeamTrainingRequest {
 export interface TeamTrainingPlayer {
   player: PlayerInfo;
   inclusionWeek: number;
+  departureWeek?: number | null;
 }
 
 export interface TrainingStage {

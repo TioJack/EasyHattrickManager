@@ -28,6 +28,7 @@ import {
   FormationRating,
   MatchDetail,
   StagePlayerParticipation,
+  TeamTrainingPlayer,
   TeamTrainingFollowUpResponse,
   TeamTrainingProgressResponse,
   TeamTrainingRequest,
@@ -100,6 +101,11 @@ interface ViewerPlayerRow {
   plannedSeries: Array<number | null>;
   realSeries: Array<number | null>;
   maxHtms: number;
+}
+
+interface ViewerPlayerWindow {
+  inclusionWeek: number;
+  departureWeek: number | null;
 }
 
 interface ViewerTrainingSegment {
@@ -310,6 +316,7 @@ export class MainComponent implements OnInit, OnDestroy {
   private plannerHtmsByPlayerId: Record<number, Array<number | null>> = {};
   private plannerMaxHtmsByPlayerId: Record<number, number | null> = {};
   private plannerMaxHtmsRangesByPlayerId: Record<number, Array<{leftPercent: number; widthPercent: number}>> = {};
+  private plannerPlayerWindowsByPlayerId: Record<number, {inclusionWeek: number; departureWeek: number | null}> = {};
   private hoverWeekByPlayerId: Record<number, number> = {};
   private hoverTimelinePercentByPlayerId: Record<number, number> = {};
   private viewerPlannedPlayersByWeek: Record<number, Record<number, PlayerInfo>> = {};
@@ -336,6 +343,8 @@ export class MainComponent implements OnInit, OnDestroy {
   viewerMismatchWeeks = 0;
   viewerHasSavedPlanner = false;
   isViewerLoading = false;
+  private viewerPlannedPlayerWindowsByPlayerId: Record<number, ViewerPlayerWindow> = {};
+  private viewerRealPlayerWindowsByPlayerId: Record<number, ViewerPlayerWindow> = {};
   viewerSelectedWeek: number | null = null;
   private readonly roleTrapByRole: Record<string, string> = {
     KEEPER: 't1',
@@ -403,6 +412,8 @@ export class MainComponent implements OnInit, OnDestroy {
     this.playService.viewMode$.subscribe(mode => {
       const modeChanged = this.viewMode !== mode;
       this.viewMode = mode;
+      this.refreshPlayers();
+      this.ensurePlayerPlans();
       if (mode === 'training-planner' && modeChanged) {
         this.activatePlannerForCurrentProject();
       }
@@ -470,6 +481,7 @@ export class MainComponent implements OnInit, OnDestroy {
       intensity,
       stamina
     });
+    this.refreshPlayers();
     const stageIndex = this.trainingPlans.length - 1;
     this.applyDefaultParticipationForStage(stageIndex, this.newTrainingTypeId);
     this.updatePlannerUiState();
@@ -503,6 +515,7 @@ export class MainComponent implements OnInit, OnDestroy {
       return;
     }
     this.trainingPlans.splice(index, 1);
+    this.refreshPlayers();
     for (const playerId of Object.keys(this.trainingPlanPercents)) {
       const percents = this.trainingPlanPercents[Number(playerId)];
       if (percents) {
@@ -532,6 +545,8 @@ export class MainComponent implements OnInit, OnDestroy {
   }
 
   onStageUpdated(): void {
+    this.refreshPlayers();
+    this.ensurePlayerPlans();
     this.updatePlannerUiState();
     this.scheduleTeamTrainingRequest();
   }
@@ -557,6 +572,112 @@ export class MainComponent implements OnInit, OnDestroy {
 
   getPlanPercent(playerId: number, index: number): number {
     return this.trainingPlanPercents[playerId]?.[index] ?? 100;
+  }
+
+  isPlanStageActive(playerId: number, index: number): boolean {
+    const playerWindow = this.plannerPlayerWindowsByPlayerId[playerId];
+    if (!playerWindow) {
+      return true;
+    }
+    const stageRange = this.getStageWeekRange(index);
+    if (!stageRange) {
+      return true;
+    }
+    if (stageRange.endWeek < playerWindow.inclusionWeek) {
+      return false;
+    }
+    if (playerWindow.departureWeek != null && stageRange.startWeek > playerWindow.departureWeek) {
+      return false;
+    }
+    return true;
+  }
+
+  getPlanStageState(playerId: number, index: number): 'active' | 'inactive' | 'partial' {
+    const leadingMask = this.getPlanStageLeadingMask(playerId, index);
+    const trailingMask = this.getPlanStageTrailingMask(playerId, index);
+    if (!this.isPlanStageActive(playerId, index)) {
+      return 'inactive';
+    }
+    if ((leadingMask && leadingMask.widthPercent > 0) || (trailingMask && trailingMask.widthPercent > 0)) {
+      return 'partial';
+    }
+    return 'active';
+  }
+
+  getPlanStageHint(playerId: number, index: number): string {
+    const playerWindow = this.plannerPlayerWindowsByPlayerId[playerId];
+    const stageRange = this.getStageWeekRange(index);
+    if (!playerWindow || !stageRange) {
+      return '';
+    }
+    if (stageRange.endWeek < playerWindow.inclusionWeek) {
+      return `Fuera hasta S${playerWindow.inclusionWeek}`;
+    }
+    if (playerWindow.departureWeek != null && stageRange.startWeek > playerWindow.departureWeek) {
+      return `Fuera desde S${playerWindow.departureWeek + 1}`;
+    }
+    if (playerWindow.inclusionWeek > stageRange.startWeek && playerWindow.inclusionWeek <= stageRange.endWeek) {
+      return `Entra S${playerWindow.inclusionWeek}`;
+    }
+    if (playerWindow.departureWeek != null && playerWindow.departureWeek >= stageRange.startWeek && playerWindow.departureWeek < stageRange.endWeek) {
+      return `Sale S${playerWindow.departureWeek + 1}`;
+    }
+    return '';
+  }
+
+  getPlannerPlayerWindowLabel(playerId: number): string {
+    const playerWindow = this.plannerPlayerWindowsByPlayerId[playerId];
+    if (!playerWindow) {
+      return 'Activo: todo el plan';
+    }
+    if (playerWindow.departureWeek == null) {
+      return playerWindow.inclusionWeek <= 1
+        ? 'Activo: todo el plan'
+        : `Activo: desde S${playerWindow.inclusionWeek}`;
+    }
+    if (playerWindow.inclusionWeek <= 1) {
+      return `Activo: hasta S${playerWindow.departureWeek}`;
+    }
+    return `Activo: S${playerWindow.inclusionWeek}-S${playerWindow.departureWeek}`;
+  }
+
+  getPlanStageLeadingMask(playerId: number, index: number): {widthPercent: number} | null {
+    const playerWindow = this.plannerPlayerWindowsByPlayerId[playerId];
+    const stageRange = this.getStageWeekRange(index);
+    if (!playerWindow || !stageRange) {
+      return null;
+    }
+    if (playerWindow.inclusionWeek <= stageRange.startWeek) {
+      return null;
+    }
+    if (playerWindow.inclusionWeek > stageRange.endWeek) {
+      return {widthPercent: 100};
+    }
+    const inactiveWeeks = playerWindow.inclusionWeek - stageRange.startWeek;
+    const stageWeeks = stageRange.endWeek - stageRange.startWeek + 1;
+    return {
+      widthPercent: (inactiveWeeks / stageWeeks) * 100
+    };
+  }
+
+  getPlanStageTrailingMask(playerId: number, index: number): {leftPercent: number; widthPercent: number} | null {
+    const playerWindow = this.plannerPlayerWindowsByPlayerId[playerId];
+    const stageRange = this.getStageWeekRange(index);
+    if (!playerWindow || !stageRange || playerWindow.departureWeek == null) {
+      return null;
+    }
+    if (playerWindow.departureWeek >= stageRange.endWeek) {
+      return null;
+    }
+    if (playerWindow.departureWeek < stageRange.startWeek) {
+      return {leftPercent: 0, widthPercent: 100};
+    }
+    const stageWeeks = stageRange.endWeek - stageRange.startWeek + 1;
+    const inactiveWeeks = stageRange.endWeek - playerWindow.departureWeek;
+    return {
+      leftPercent: ((playerWindow.departureWeek - stageRange.startWeek + 1) / stageWeeks) * 100,
+      widthPercent: (inactiveWeeks / stageWeeks) * 100
+    };
   }
 
   setPlanPercent(playerId: number, index: number, value: number): void {
@@ -745,6 +866,7 @@ export class MainComponent implements OnInit, OnDestroy {
     this.isTeamTrainingLoading = false;
     this.trainingPlans = [];
     this.trainingPlanPercents = {};
+    this.refreshPlayers();
     this.autoRefreshBestFormation = false;
     this.bestFormationCriteria = 'HATSTATS';
     this.fixedFormationCode = null;
@@ -781,6 +903,7 @@ export class MainComponent implements OnInit, OnDestroy {
       ? JSON.parse(JSON.stringify(planner.matchDetail)) as MatchDetail
       : this.createDefaultMatchDetail();
     this.ensureVisibleBestFormationCriteria();
+    this.refreshPlayers();
     this.ensurePlayerPlans();
     this.savedPlannerSignature = this.getPlannerSignature(planner ?? null);
     this.updatePlannerUiState();
@@ -842,6 +965,7 @@ export class MainComponent implements OnInit, OnDestroy {
     this.scheduledCalculateBestFormation = false;
     this.trainingPlans = [];
     this.trainingPlanPercents = {};
+    this.refreshPlayers();
     this.autoRefreshBestFormation = false;
     this.bestFormationCriteria = 'HATSTATS';
     this.fixedFormationCode = null;
@@ -988,14 +1112,13 @@ export class MainComponent implements OnInit, OnDestroy {
       };
     });
 
-    const players = this.players.map(player => ({
-      player,
-      inclusionWeek: 1
-    }));
+    const players = this.getPlannerTrainingPlayers();
+    this.syncPlannerPlayerWindows(players);
 
     const participations: StagePlayerParticipation[] = [];
-    for (const player of this.players) {
-      const percents = this.trainingPlanPercents[player.id] ?? [];
+    players.forEach((teamTrainingPlayer, playerIndex) => {
+      const player = teamTrainingPlayer.player;
+      const percents = this.trainingPlanPercents[player.id] ?? this.getDefaultParticipationValues(playerIndex);
       for (let i = 0; i < this.trainingPlans.length; i++) {
         participations.push({
           stageId: i + 1,
@@ -1003,7 +1126,7 @@ export class MainComponent implements OnInit, OnDestroy {
           participation: percents[i] ?? 100
         });
       }
-    }
+    });
 
     return {
       iniWeek: this.getCurrentWeekInfo(),
@@ -1034,6 +1157,7 @@ export class MainComponent implements OnInit, OnDestroy {
     this.scheduledCalculateBestFormation = false;
     this.inFlightTeamTrainingRequestKey = null;
     this.lastSuccessfulTeamTrainingRequestKey = this.buildTeamTrainingRequestKey(persistedRequest);
+    this.syncPlannerPlayerWindows(persistedRequest.players ?? []);
     this.applyTeamTrainingResponse(JSON.parse(JSON.stringify(persistedResponse)) as TeamTrainingResponse);
     this.stopTeamTrainingProgressPolling(true);
     this.isTeamTrainingLoading = false;
@@ -1389,7 +1513,158 @@ export class MainComponent implements OnInit, OnDestroy {
   }
 
   private refreshPlayers(): void {
-    this.players = [...this.basePlayers];
+    if (this.viewMode !== 'training-planner' || this.trainingPlans.length === 0) {
+      this.plannerPlayerWindowsByPlayerId = {};
+      this.players = [...this.basePlayers];
+      return;
+    }
+    const plannerPlayers = this.getPlannerTrainingPlayers();
+    this.syncPlannerPlayerWindows(plannerPlayers);
+    this.players = plannerPlayers.map(teamTrainingPlayer => teamTrainingPlayer.player);
+  }
+
+  private getPlannerTrainingPlayers(): TeamTrainingPlayer[] {
+    const team = this.selectedTeam;
+    const currentWeek = this.playService.getCurrentWeekInfo();
+    if (!team || !currentWeek) {
+      return this.players.map(player => ({
+        player,
+        inclusionWeek: 1
+      }));
+    }
+
+    const weeklyData = team.weeklyData ?? [];
+    const startIndex = weeklyData.findIndex(weekData =>
+      weekData.season === currentWeek.season && weekData.week === currentWeek.week
+    );
+    if (startIndex < 0) {
+      return this.players.map(player => ({
+        player,
+        inclusionWeek: 1
+      }));
+    }
+
+    const totalWeeks = Math.max(1, this.totalTrainingWeeks);
+    const endIndex = Math.min(weeklyData.length - 1, startIndex + totalWeeks);
+    const maxObservedIndex = weeklyData.length - 1;
+    const filter = this.selectedProject?.planner?.filter;
+    const filterIds = new Set(filter?.playerIds ?? []);
+    const isPlayerAllowed = (player: PlayerInfo): boolean => {
+      if (!filter) {
+        return true;
+      }
+      if (filter.mode === 'inclusive') {
+        return filterIds.has(player.id);
+      }
+      if (filter.mode === 'exclusive') {
+        return !filterIds.has(player.id);
+      }
+      return true;
+    };
+
+    const playersById = new Map<number, TeamTrainingPlayer>();
+    const lastSeenIndexByPlayerId = new Map<number, number>();
+    for (let index = startIndex; index <= endIndex; index++) {
+      const weekData = weeklyData[index];
+      const offset = index - startIndex;
+      const inclusionWeek = offset + 1;
+      for (const player of weekData.players ?? []) {
+        if (!isPlayerAllowed(player)) {
+          continue;
+        }
+        lastSeenIndexByPlayerId.set(player.id, index);
+        if (!playersById.has(player.id)) {
+          playersById.set(player.id, {
+            player,
+            inclusionWeek
+          });
+        }
+      }
+    }
+
+    const teamTrainingPlayers = Array.from(playersById.values())
+      .map(teamTrainingPlayer => {
+        const lastSeenIndex = lastSeenIndexByPlayerId.get(teamTrainingPlayer.player.id) ?? startIndex;
+        const departureWeek = lastSeenIndex < maxObservedIndex
+          ? Math.max(1, (lastSeenIndex - startIndex) + 1)
+          : null;
+        return {
+          ...teamTrainingPlayer,
+          departureWeek
+        };
+      })
+      .filter(teamTrainingPlayer => teamTrainingPlayer.departureWeek == null || teamTrainingPlayer.departureWeek >= 1);
+
+    const sortedPlayers = this.playService.sortPlayers(teamTrainingPlayers.map(teamTrainingPlayer => teamTrainingPlayer.player));
+    const teamTrainingPlayerById = new Map(teamTrainingPlayers.map(teamTrainingPlayer => [teamTrainingPlayer.player.id, teamTrainingPlayer]));
+    return sortedPlayers.reduce<TeamTrainingPlayer[]>((acc, player) => {
+      const teamTrainingPlayer = teamTrainingPlayerById.get(player.id);
+      if (teamTrainingPlayer) {
+        acc.push(teamTrainingPlayer);
+      }
+      return acc;
+    }, []);
+  }
+
+  private syncPlannerPlayerWindows(players: TeamTrainingPlayer[]): void {
+    this.plannerPlayerWindowsByPlayerId = players.reduce<Record<number, {inclusionWeek: number; departureWeek: number | null}>>((acc, player) => {
+      acc[player.player.id] = {
+        inclusionWeek: player.inclusionWeek,
+        departureWeek: player.departureWeek ?? null
+      };
+      return acc;
+    }, {});
+  }
+
+  getPlannerLeadingMask(playerId: number): {widthPercent: number} | null {
+    const window = this.plannerPlayerWindowsByPlayerId[playerId];
+    const totalWeeks = this.getPlannerWeekCount() || this.totalTrainingWeeks;
+    if (!window || totalWeeks <= 0 || window.inclusionWeek <= 1) {
+      return null;
+    }
+    return {
+      widthPercent: ((window.inclusionWeek - 1) / totalWeeks) * 100
+    };
+  }
+
+  getPlannerTrailingMask(playerId: number): {leftPercent: number; widthPercent: number} | null {
+    const window = this.plannerPlayerWindowsByPlayerId[playerId];
+    const totalWeeks = this.getPlannerWeekCount() || this.totalTrainingWeeks;
+    if (!window || totalWeeks <= 0 || window.departureWeek == null || window.departureWeek >= totalWeeks) {
+      return null;
+    }
+    return {
+      leftPercent: (window.departureWeek / totalWeeks) * 100,
+      widthPercent: ((totalWeeks - window.departureWeek) / totalWeeks) * 100
+    };
+  }
+
+  isPlannerPlayerDeparted(playerId: number): boolean {
+    const window = this.plannerPlayerWindowsByPlayerId[playerId];
+    const totalWeeks = this.getPlannerWeekCount() || this.totalTrainingWeeks;
+    if (!window || totalWeeks <= 0 || window.departureWeek == null) {
+      return false;
+    }
+    return window.departureWeek < totalWeeks;
+  }
+
+  private getDefaultParticipationValues(playerIndex: number): number[] {
+    return this.trainingPlans.map(plan => this.getDefaultParticipationValue(plan.typeId, playerIndex));
+  }
+
+  private getStageWeekRange(index: number): {startWeek: number; endWeek: number} | null {
+    if (index < 0 || index >= this.trainingPlans.length) {
+      return null;
+    }
+    let startWeek = 1;
+    for (let i = 0; i < index; i++) {
+      startWeek += this.trainingPlans[i]?.weeks ?? 0;
+    }
+    const duration = this.trainingPlans[index]?.weeks ?? 0;
+    return {
+      startWeek,
+      endWeek: startWeek + Math.max(0, duration) - 1
+    };
   }
 
   private rebuildViewerState(): void {
@@ -1524,7 +1799,13 @@ export class MainComponent implements OnInit, OnDestroy {
       comparison.actualTypeId != null && !comparison.matches
     ).length;
 
-    const initialPlayers = response.initialPlayers ?? [];
+    const initialPlayers = this.playService.sortPlayers(response.initialPlayers ?? []);
+    const initialPlayerIds = initialPlayers.map(player => player.id);
+    this.viewerPlannedPlayerWindowsByPlayerId = this.buildViewerPlayerWindows(this.viewerPlannedPlayersByWeek, initialPlayerIds);
+    this.viewerRealPlayerWindowsByPlayerId = this.buildViewerPlayerWindows(
+      this.mergeViewerPlayersByWeek(this.viewerRealPlayersByWeek, this.viewerProjectedPlayersByWeek),
+      initialPlayerIds
+    );
     this.viewerPlayerRows = initialPlayers.map(initialPlayer => {
       const initialHtms = this.getPlayerHtmsValue(initialPlayer);
       const plannedSeries: Array<number | null> = [];
@@ -1625,6 +1906,45 @@ export class MainComponent implements OnInit, OnDestroy {
       });
     }
     return segments;
+  }
+
+  private buildViewerPlayerWindows(
+    playersByWeek: Record<number, Record<number, PlayerInfo>>,
+    playerIds: number[]
+  ): Record<number, ViewerPlayerWindow> {
+    const windows: Record<number, ViewerPlayerWindow> = {};
+    for (const playerId of playerIds) {
+      let inclusionWeek: number | null = null;
+      let departureWeek: number | null = null;
+      for (let week = 1; week <= this.viewerTotalWeeks; week++) {
+        if (playersByWeek[week]?.[playerId]) {
+          inclusionWeek ??= week;
+          departureWeek = week;
+        }
+      }
+      if (inclusionWeek == null || departureWeek == null) {
+        continue;
+      }
+      windows[playerId] = {
+        inclusionWeek,
+        departureWeek: departureWeek < this.viewerTotalWeeks ? departureWeek : null
+      };
+    }
+    return windows;
+  }
+
+  private mergeViewerPlayersByWeek(
+    primary: Record<number, Record<number, PlayerInfo>>,
+    secondary: Record<number, Record<number, PlayerInfo>>
+  ): Record<number, Record<number, PlayerInfo>> {
+    const merged: Record<number, Record<number, PlayerInfo>> = {};
+    for (let week = 1; week <= this.viewerTotalWeeks; week++) {
+      merged[week] = {
+        ...(secondary[week] ?? {}),
+        ...(primary[week] ?? {})
+      };
+    }
+    return merged;
   }
 
   private buildViewerDataResponsePayload(): DataResponse {
@@ -1781,6 +2101,99 @@ export class MainComponent implements OnInit, OnDestroy {
     return `${segment.startWeek} / span ${Math.max(1, segment.weeks)}`;
   }
 
+  getViewerPlannedStageState(playerId: number, segment: ViewerTrainingSegment): 'active' | 'inactive' | 'partial' {
+    const window = this.viewerPlannedPlayerWindowsByPlayerId[playerId];
+    const startWeek = segment.startWeek;
+    const endWeek = segment.startWeek + Math.max(1, segment.weeks) - 1;
+    if (!window) {
+      return 'inactive';
+    }
+    if (endWeek < window.inclusionWeek) {
+      return 'inactive';
+    }
+    if (window.departureWeek != null && startWeek > window.departureWeek) {
+      return 'inactive';
+    }
+    if (
+      (window.inclusionWeek > startWeek && window.inclusionWeek <= endWeek)
+      || (window.departureWeek != null && window.departureWeek >= startWeek && window.departureWeek < endWeek)
+    ) {
+      return 'partial';
+    }
+    return 'active';
+  }
+
+  getViewerPlannedStageLeadingMask(playerId: number, segment: ViewerTrainingSegment): {widthPercent: number} | null {
+    const window = this.viewerPlannedPlayerWindowsByPlayerId[playerId];
+    const startWeek = segment.startWeek;
+    const endWeek = segment.startWeek + Math.max(1, segment.weeks) - 1;
+    if (!window) {
+      return {widthPercent: 100};
+    }
+    if (window.inclusionWeek <= startWeek) {
+      return null;
+    }
+    if (window.inclusionWeek > endWeek) {
+      return {widthPercent: 100};
+    }
+    const stageWeeks = endWeek - startWeek + 1;
+    return {
+      widthPercent: ((window.inclusionWeek - startWeek) / stageWeeks) * 100
+    };
+  }
+
+  getViewerPlannedStageTrailingMask(playerId: number, segment: ViewerTrainingSegment): {leftPercent: number; widthPercent: number} | null {
+    const window = this.viewerPlannedPlayerWindowsByPlayerId[playerId];
+    const startWeek = segment.startWeek;
+    const endWeek = segment.startWeek + Math.max(1, segment.weeks) - 1;
+    if (!window || window.departureWeek == null) {
+      return null;
+    }
+    if (window.departureWeek >= endWeek) {
+      return null;
+    }
+    if (window.departureWeek < startWeek) {
+      return {leftPercent: 0, widthPercent: 100};
+    }
+    const stageWeeks = endWeek - startWeek + 1;
+    return {
+      leftPercent: ((window.departureWeek - startWeek + 1) / stageWeeks) * 100,
+      widthPercent: ((endWeek - window.departureWeek) / stageWeeks) * 100
+    };
+  }
+
+  isViewerRealWeekActive(playerId: number, week: number): boolean {
+    const window = this.viewerRealPlayerWindowsByPlayerId[playerId];
+    if (!window) {
+      return false;
+    }
+    if (week < window.inclusionWeek) {
+      return false;
+    }
+    return window.departureWeek == null || week <= window.departureWeek;
+  }
+
+  getViewerRealLeadingMask(playerId: number): {widthPercent: number} | null {
+    const window = this.viewerRealPlayerWindowsByPlayerId[playerId];
+    if (!window || this.viewerTotalWeeks <= 0 || window.inclusionWeek <= 1) {
+      return null;
+    }
+    return {
+      widthPercent: ((window.inclusionWeek - 1) / this.viewerTotalWeeks) * 100
+    };
+  }
+
+  getViewerRealTrailingMask(playerId: number): {leftPercent: number; widthPercent: number} | null {
+    const window = this.viewerRealPlayerWindowsByPlayerId[playerId];
+    if (!window || this.viewerTotalWeeks <= 0 || window.departureWeek == null || window.departureWeek >= this.viewerTotalWeeks) {
+      return null;
+    }
+    return {
+      leftPercent: (window.departureWeek / this.viewerTotalWeeks) * 100,
+      widthPercent: ((this.viewerTotalWeeks - window.departureWeek) / this.viewerTotalWeeks) * 100
+    };
+  }
+
   onViewerPlanTimelineMove(event: MouseEvent): void {
     const week = this.getViewerWeekFromTimelineEvent(event);
     if (week != null) {
@@ -1846,6 +2259,23 @@ export class MainComponent implements OnInit, OnDestroy {
 
   isViewerPlayerWeekPositive(row: ViewerPlayerRow, comparison: ViewerStageComparison, index: number): boolean {
     return this.getViewerPlayerWeekIndicator(row, comparison) === 'positive';
+  }
+
+  getViewerRealWeekTooltip(row: ViewerPlayerRow, comparison: ViewerStageComparison, index: number): string {
+    if (!this.isViewerRealWeekActive(row.initialPlayer.id, comparison.offsetWeek)) {
+      return '';
+    }
+
+    if (comparison.actualTypeId == null) {
+      return this.translateService.instant('ehm.pending');
+    }
+
+    const parts: string[] = [this.translateService.instant('ht.training-type-' + comparison.actualTypeId)];
+    const percent = row.realPercents[index];
+    if (percent != null) {
+      parts.push(`${Math.round(percent)}%`);
+    }
+    return parts.join(' ');
   }
 
   private getViewerComparisonForWeek(week: number): ViewerStageComparison | null {

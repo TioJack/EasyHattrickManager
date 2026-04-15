@@ -10,5 +10,6 @@ public class TeamTrainingPlayer {
 
     PlayerInfo player;
     int inclusionWeek;
+    Integer departureWeek;
 
 }

@@ -136,47 +136,7 @@ export class PlayService {
           }
         }
         const sort = this.getActiveSort();
-        let sortedPlayers = filteredPlayers;
-        if (sort) {
-          sortedPlayers = [...filteredPlayers].sort((a, b) => {
-            let valueA;
-            let valueB;
-            if (sort.criteria === 'name') {
-              valueA = `${a.firstName || ''} ${a.nickName || ''} ${a.lastName || ''}`.trim();
-              valueB = `${b.firstName || ''} ${b.nickName || ''} ${b.lastName || ''}`.trim();
-            } else if (sort.criteria === 'age') {
-              valueA = (a.age || 0) + ((a.ageDays || 0) / 111);
-              valueB = (b.age || 0) + ((b.ageDays || 0) / 111);
-            } else if (sort.criteria === 'playerCategoryId') {
-              valueA = a.playerCategoryId == 0 ? null : this.categorySort.indexOf(a.playerCategoryId);
-              valueB = b.playerCategoryId == 0 ? null : this.categorySort.indexOf(b.playerCategoryId);
-            } else if (sort.criteria === 'training') {
-              valueA = a.playerTraining ? this.getMaxTrainingValue(a.playerTraining) : null;
-              valueB = b.playerTraining ? this.getMaxTrainingValue(b.playerTraining) : null;
-            } else {
-              valueA = (a as any)[sort.criteria] !== undefined ? (a as any)[sort.criteria] : null;
-              valueB = (b as any)[sort.criteria] !== undefined ? (b as any)[sort.criteria] : null;
-            }
-
-            if (valueA == null && valueB != null) return 1;
-            if (valueA != null && valueB == null) return -1;
-            if (valueA == null && valueB == null) {
-              return sort.mode === 'asc' ? a.id - b.id : b.id - a.id;
-            }
-
-            if (typeof valueA === 'string' && typeof valueB === 'string') {
-              const result = valueA.localeCompare(valueB);
-              if (result !== 0) {
-                return sort.mode === 'asc' ? result : -result;
-              }
-            }
-
-            if (valueA < valueB) return sort.mode === 'asc' ? -1 : 1;
-            if (valueA > valueB) return sort.mode === 'asc' ? 1 : -1;
-
-            return sort.mode === 'asc' ? a.id - b.id : b.id - a.id;
-          });
-        }
+        const sortedPlayers = this.sortPlayers(filteredPlayers, sort);
         this.playersSubject.next(sortedPlayers);
         this.dateSubject.next(matchingWeek.date);
         this.staffSubject.next(matchingWeek.staff);
@@ -219,6 +179,52 @@ export class PlayService {
       return project.planner?.sort;
     }
     return project.sort;
+  }
+
+  sortPlayers(players: PlayerInfo[], sort: PlayerSort | undefined = this.getActiveSort()): PlayerInfo[] {
+    if (!sort) {
+      return [...players];
+    }
+    return [...players].sort((a, b) => this.comparePlayers(a, b, sort));
+  }
+
+  private comparePlayers(a: PlayerInfo, b: PlayerInfo, sort: PlayerSort): number {
+    let valueA;
+    let valueB;
+    if (sort.criteria === 'name') {
+      valueA = `${a.firstName || ''} ${a.nickName || ''} ${a.lastName || ''}`.trim();
+      valueB = `${b.firstName || ''} ${b.nickName || ''} ${b.lastName || ''}`.trim();
+    } else if (sort.criteria === 'age') {
+      valueA = (a.age || 0) + ((a.ageDays || 0) / 111);
+      valueB = (b.age || 0) + ((b.ageDays || 0) / 111);
+    } else if (sort.criteria === 'playerCategoryId') {
+      valueA = a.playerCategoryId == 0 ? null : this.categorySort.indexOf(a.playerCategoryId);
+      valueB = b.playerCategoryId == 0 ? null : this.categorySort.indexOf(b.playerCategoryId);
+    } else if (sort.criteria === 'training') {
+      valueA = a.playerTraining ? this.getMaxTrainingValue(a.playerTraining) : null;
+      valueB = b.playerTraining ? this.getMaxTrainingValue(b.playerTraining) : null;
+    } else {
+      valueA = (a as any)[sort.criteria] !== undefined ? (a as any)[sort.criteria] : null;
+      valueB = (b as any)[sort.criteria] !== undefined ? (b as any)[sort.criteria] : null;
+    }
+
+    if (valueA == null && valueB != null) return 1;
+    if (valueA != null && valueB == null) return -1;
+    if (valueA == null && valueB == null) {
+      return sort.mode === 'asc' ? a.id - b.id : b.id - a.id;
+    }
+
+    if (typeof valueA === 'string' && typeof valueB === 'string') {
+      const result = valueA.localeCompare(valueB);
+      if (result !== 0) {
+        return sort.mode === 'asc' ? result : -result;
+      }
+    }
+
+    if (valueA < valueB) return sort.mode === 'asc' ? -1 : 1;
+    if (valueA > valueB) return sort.mode === 'asc' ? 1 : -1;
+
+    return sort.mode === 'asc' ? a.id - b.id : b.id - a.id;
   }
 
   private getMaxTrainingValue(trainingInfo: PlayerTrainingInfo): number {

@@ -458,9 +458,17 @@ public class TeamTrainingFollowUpService {
             if (originalPlayer.getPlayer() == null) {
                 continue;
             }
+            final int adjustedInclusionWeek = Math.max(1, originalPlayer.getInclusionWeek() - completedWeeks);
+            final Integer adjustedDepartureWeek = originalPlayer.getDepartureWeek() == null
+                ? null
+                : originalPlayer.getDepartureWeek() - completedWeeks;
+            if (adjustedDepartureWeek != null && adjustedDepartureWeek <= 0) {
+                continue;
+            }
             players.add(TeamTrainingPlayer.builder()
                 .player(actualPlayersById.getOrDefault(originalPlayer.getPlayer().getId(), originalPlayer.getPlayer()))
-                .inclusionWeek(1)
+                .inclusionWeek(adjustedInclusionWeek)
+                .departureWeek(adjustedDepartureWeek)
                 .build());
         }
         final List<Integer> remainingStageIds = remainingStages.stream().map(TrainingStage::getId).toList();

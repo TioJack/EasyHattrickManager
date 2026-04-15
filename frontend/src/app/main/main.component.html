@@ -242,7 +242,7 @@
               <app-player-card-compact class="flex-fill w-100" [player]="player"></app-player-card-compact>
             </div>
             <div class="planner-center d-flex">
-              <div class="card flex-fill w-100">
+                <div class="card flex-fill w-100">
                 <div class="card-body p-2 d-flex flex-column planner-center-body">
                   <div *ngIf="trainingPlans.length === 0" class="text-muted"></div>
                   <div *ngIf="trainingPlans.length > 0" class="planner-sliders-area">
@@ -250,20 +250,43 @@
                       <div
                         *ngFor="let plan of trainingPlans; let i = index; trackBy: trackByStageIndex"
                         class="planner-slider-segment"
+                        [class.planner-slider-segment--inactive]="!isPlanStageActive(player.id, i)"
+                        [class.planner-slider-segment--partial]="getPlanStageLeadingMask(player.id, i) || getPlanStageTrailingMask(player.id, i)"
                         [style.flex-grow]="plan.weeks"
-                        [style.flex-basis.%]="0">
+                        [style.flex-basis.%]="0"
+                        [attr.data-stage-state]="getPlanStageState(player.id, i)"
+                        [attr.title]="getPlanStageHint(player.id, i)">
+                      <div
+                        *ngIf="getPlanStageState(player.id, i) === 'inactive' && getPlanStageLeadingMask(player.id, i) as stageLeadingMask"
+                        class="planner-slider-stage-mask planner-slider-stage-mask--leading"
+                        [style.width.%]="stageLeadingMask.widthPercent">
+                      </div>
+                      <div
+                        *ngIf="getPlanStageState(player.id, i) === 'inactive' && getPlanStageTrailingMask(player.id, i) as stageTrailingMask"
+                        class="planner-slider-stage-mask planner-slider-stage-mask--trailing"
+                        [style.left.%]="stageTrailingMask.leftPercent"
+                        [style.width.%]="stageTrailingMask.widthPercent">
+                      </div>
+                        <div
+                          *ngIf="false"
+                          class="planner-slider-stage-state"
+                          [class.planner-slider-stage-state--inactive]="getPlanStageState(player.id, i) === 'inactive'"
+                          [class.planner-slider-stage-state--partial]="getPlanStageState(player.id, i) === 'partial'">
+                          {{ getPlanStageHint(player.id, i) }}
+                        </div>
                         <input
                           class="planner-slider"
                           type="range"
                           orient="vertical"
                           min="0"
                           max="100"
+                          [disabled]="!isPlanStageActive(player.id, i)"
                           [style.accentColor]="trainingTypeColor(plan.typeId)"
                           [ngModel]="getPlanPercent(player.id, i)"
                           (ngModelChange)="setPlanPercent(player.id, i, $event)"
                           (change)="onPlanPercentCommit()">
                         <div class="planner-slider-value text-nowrap">
-                          {{ getPlanPercent(player.id, i) }}%
+                          {{ isPlanStageActive(player.id, i) ? (getPlanPercent(player.id, i) + '%') : '–' }}
                         </div>
                       </div>
                     </div>
@@ -274,6 +297,17 @@
                       (mousemove)="onTimelineMove($event, player.id)"
                       (mouseleave)="onTimelineLeave(player.id)">
                       <div class="planner-timeline-bar">
+                        <div
+                          *ngIf="getPlannerLeadingMask(player.id) as leadingMask"
+                          class="planner-timeline-mask planner-timeline-mask--leading"
+                          [style.width.%]="leadingMask.widthPercent">
+                        </div>
+                        <div
+                          *ngIf="getPlannerTrailingMask(player.id) as trailingMask"
+                          class="planner-timeline-mask planner-timeline-mask--trailing"
+                          [style.left.%]="trailingMask.leftPercent"
+                          [style.width.%]="trailingMask.widthPercent">
+                        </div>
                         <div
                           *ngFor="let range of getMaxHtmsRanges(player.id)"
                           class="planner-timeline-marker"
@@ -306,12 +340,14 @@
               </div>
             </div>
             <div class="planner-side d-flex">
-              <ng-container *ngIf="getPlannerResultPlayer(player.id) as result; else noResult">
-                <app-player-card-compact class="flex-fill w-100" [player]="result"></app-player-card-compact>
-              </ng-container>
-              <ng-template #noResult>
-                <div class="card flex-fill w-100"></div>
-              </ng-template>
+              <div class="planner-result-slot flex-fill w-100" [class.planner-result-slot--departed]="isPlannerPlayerDeparted(player.id)">
+                <ng-container *ngIf="getPlannerResultPlayer(player.id) as result; else noResult">
+                  <app-player-card-compact class="flex-fill w-100" [player]="result"></app-player-card-compact>
+                </ng-container>
+                <ng-template #noResult>
+                  <div class="card flex-fill w-100"></div>
+                </ng-template>
+              </div>
             </div>
           </div>
         </div>
@@ -913,9 +949,22 @@
                         <div
                             *ngFor="let plan of viewerPlannedSegments; let i = index; trackBy: trackByStageIndex"
                             class="planner-timeline-segment viewer-stage-timeline__segment viewer-player-stage-plan__segment viewer-player-stage-plan__segment--planned"
+                            [class.viewer-stage-timeline__segment--inactive]="getViewerPlannedStageState(row.initialPlayer.id, plan) === 'inactive'"
+                            [class.viewer-stage-timeline__segment--partial]="getViewerPlannedStageState(row.initialPlayer.id, plan) === 'partial'"
                             [style.grid-column]="getViewerPlanStageGridColumn(plan)"
                             [style.backgroundColor]="trainingTypeColor(plan.typeId)"
                             [style.color]="getTrainingTextColor(plan.typeId)">
+                            <div
+                              *ngIf="getViewerPlannedStageLeadingMask(row.initialPlayer.id, plan) as plannedLeadingMask"
+                              class="viewer-stage-availability-mask viewer-stage-availability-mask--leading"
+                              [style.width.%]="plannedLeadingMask.widthPercent">
+                            </div>
+                            <div
+                              *ngIf="getViewerPlannedStageTrailingMask(row.initialPlayer.id, plan) as plannedTrailingMask"
+                              class="viewer-stage-availability-mask viewer-stage-availability-mask--trailing"
+                              [style.left.%]="plannedTrailingMask.leftPercent"
+                              [style.width.%]="plannedTrailingMask.widthPercent">
+                            </div>
                             <span class="viewer-player-stage-plan__label viewer-player-stage-plan__label--planned">
                               {{ ('ht.training-type-' + plan.typeId) | translate | firstCapitalize }} {{ row.plannedPercents[i] | number:'1.0-0' }}%
                             </span>
@@ -963,8 +1012,21 @@
                           (mousemove)="onViewerPlayerTimelineMove($event, row.initialPlayer.id)"
                           (mouseleave)="onViewerPlayerTimelineLeave(row.initialPlayer.id)">
                           <div
+                            *ngIf="getViewerRealLeadingMask(row.initialPlayer.id) as realLeadingMask"
+                            class="viewer-stage-availability-mask viewer-stage-availability-mask--continuous viewer-stage-availability-mask--leading"
+                            [style.width.%]="realLeadingMask.widthPercent">
+                          </div>
+                          <div
+                            *ngIf="getViewerRealTrailingMask(row.initialPlayer.id) as realTrailingMask"
+                            class="viewer-stage-availability-mask viewer-stage-availability-mask--continuous viewer-stage-availability-mask--trailing"
+                            [style.left.%]="realTrailingMask.leftPercent"
+                            [style.width.%]="realTrailingMask.widthPercent">
+                          </div>
+                          <div
                             *ngFor="let comparison of viewerStageComparisons; let i = index"
                             class="planner-timeline-segment viewer-stage-timeline__segment viewer-player-stage-plan__segment viewer-player-stage-plan__segment--real"
+                            [class.viewer-stage-timeline__segment--inactive]="!isViewerRealWeekActive(row.initialPlayer.id, comparison.offsetWeek)"
+                            [attr.title]="getViewerRealWeekTooltip(row, comparison, i)"
                             [style.grid-column]="'span 1'"
                             [style.backgroundColor]="comparison.actualTypeId != null ? trainingTypeColor(comparison.actualTypeId) : null"
                             [style.color]="comparison.actualTypeId != null ? getTrainingTextColor(comparison.actualTypeId) : null"

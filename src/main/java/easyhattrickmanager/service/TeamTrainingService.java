@@ -138,6 +138,7 @@ public class TeamTrainingService {
         }
         final Map<Long, Integer> participationByStageAndPlayer = this.indexParticipations(teamTrainingRequest.getParticipations());
         final Map<Integer, List<PlayerInfo>> playersByInclusionWeek = this.indexPlayersByInclusionWeek(teamTrainingRequest.getPlayers());
+        final Map<Integer, Integer> departureWeekByPlayerId = this.indexDepartureWeekByPlayerId(teamTrainingRequest.getPlayers());
         final Map<Integer, Map<Skill, Double>> coefficientsByStageId = stages.stream()
             .collect(Collectors.toMap(TrainingStage::getId, stage -> this.indexSkillCoefficients(stage.getTraining().getSkillCoefficients())));
         final boolean calculateBestFormation = this.shouldCalculateBestFormation(teamTrainingRequest);
@@ -164,10 +165,12 @@ public class TeamTrainingService {
                 final List<PlayerInfo> includedPlayers = playersByInclusionWeek.getOrDefault(currentWeek, List.of());
                 final List<PlayerInfo> players = this.getPlayers(
                     trainingStage,
+                    currentWeek,
                     includedPlayers,
                     previousWeekPlayers,
                     participationByStageAndPlayer,
-                    coefficientsBySkill);
+                    coefficientsBySkill,
+                    departureWeekByPlayerId);
                 weekPlayers.put(currentWeek, players);
                 previousWeekPlayers = players;
                 if (!calculateBestFormation) {
@@ -345,7 +348,8 @@ public class TeamTrainingService {
         return players.stream()
             .sorted(Comparator
                 .comparingInt((TeamTrainingPlayer player) -> player.getPlayer() == null ? Integer.MAX_VALUE : player.getPlayer().getId())
-                .thenComparingInt(TeamTrainingPlayer::getInclusionWeek))
+                .thenComparingInt(TeamTrainingPlayer::getInclusionWeek)
+                .thenComparing(player -> player.getDepartureWeek() == null ? Integer.MAX_VALUE : player.getDepartureWeek()))
             .toList();
     }
 
@@ -555,24 +559,32 @@ public class TeamTrainingService {
 
     private List<PlayerInfo> getPlayers(
         TrainingStage trainingStage,
+        int currentWeek,
         List<PlayerInfo> includedPlayers,
         List<PlayerInfo> previousWeekPlayers,
         Map<Long, Integer> participationByStageAndPlayer,
-        Map<Skill, Double> coefficientsBySkill) {
+        Map<Skill, Double> coefficientsBySkill,
+        Map<Integer, Integer> departureWeekByPlayerId) {
+        final List<PlayerInfo> activeIncludedPlayers = includedPlayers.stream()
+            .filter(player -> this.isPlayerActiveForWeek(player, currentWeek, departureWeekByPlayerId))
+            .toList();
+        final List<PlayerInfo> activePreviousWeekPlayers = previousWeekPlayers.stream()
+            .filter(player -> this.isPlayerActiveForWeek(player, currentWeek, departureWeekByPlayerId))
+            .toList();
         final int trainingStageId = trainingStage.getId();
-        final int includedSize = includedPlayers.size();
-        final int previousSize = previousWeekPlayers.size();
+        final int includedSize = activeIncludedPlayers.size();
+        final int previousSize = activePreviousWeekPlayers.size();
         final int totalPlayers = includedSize + previousSize;
 
         if (totalPlayers < 24) {
             final List<PlayerInfo> players = new ArrayList<>(totalPlayers);
-            includedPlayers.forEach(player -> players.add(
+            activeIncludedPlayers.forEach(player -> players.add(
                 this.applyPlayerWeekTraining(
                     player,
                     trainingStage,
                     getParticipation(participationByStageAndPlayer, trainingStageId, player.getId()),
                     coefficientsBySkill)));
-            previousWeekPlayers.forEach(player -> players.add(
+            activePreviousWeekPlayers.forEach(player -> players.add(
                 this.applyPlayerWeekTraining(
                     player,
                     trainingStage,
@@ -584,8 +596,8 @@ public class TeamTrainingService {
         final PlayerInfo[] players = new PlayerInfo[totalPlayers];
         IntStream.range(0, totalPlayers).parallel().forEach(index -> {
             final PlayerInfo player = index < includedSize
-                ? includedPlayers.get(index)
-                : previousWeekPlayers.get(index - includedSize);
+                ? activeIncludedPlayers.get(index)
+                : activePreviousWeekPlayers.get(index - includedSize);
             players[index] = this.applyPlayerWeekTraining(
                 player,
                 trainingStage,
@@ -601,6 +613,25 @@ public class TeamTrainingService {
             .computeIfAbsent(teamTrainingPlayer.getInclusionWeek(), week -> new ArrayList<>())
             .add(teamTrainingPlayer.getPlayer()));
         return index;
+    }
+
+    private Map<Integer, Integer> indexDepartureWeekByPlayerId(final List<TeamTrainingPlayer> players) {
+        if (players == null || players.isEmpty()) {
+            return Map.of();
+        }
+        final Map<Integer, Integer> index = new HashMap<>(players.size() * 2);
+        players.stream()
+            .filter(teamTrainingPlayer -> teamTrainingPlayer.getPlayer() != null)
+            .forEach(teamTrainingPlayer -> index.put(teamTrainingPlayer.getPlayer().getId(), teamTrainingPlayer.getDepartureWeek()));
+        return index;
+    }
+
+    private boolean isPlayerActiveForWeek(final PlayerInfo player, final int currentWeek, final Map<Integer, Integer> departureWeekByPlayerId) {
+        if (player == null) {
+            return false;
+        }
+        final Integer departureWeek = departureWeekByPlayerId.get(player.getId());
+        return departureWeek == null || departureWeek >= currentWeek;
     }
 
     private int getParticipation(Map<Long, Integer> participationByStageAndPlayer, int stageId, int playerId) {
