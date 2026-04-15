@@ -785,13 +785,13 @@
                             *ngFor="let comparison of viewerStageComparisons"
                             class="planner-timeline-segment viewer-stage-timeline__segment viewer-player-stage-plan__segment viewer-player-stage-plan__segment--real"
                             [style.grid-column]="'span 1'"
-                            [style.backgroundColor]="comparison.actualTypeId != null ? trainingTypeColor(comparison.actualTypeId) : null"
-                            [style.color]="comparison.actualTypeId != null ? getTrainingTextColor(comparison.actualTypeId) : null"
-                            [class.viewer-stage-timeline__segment--pending]="comparison.actualTypeId == null">
+                            [style.backgroundColor]="getViewerDisplayedRealTypeId(comparison) != null ? trainingTypeColor(getViewerDisplayedRealTypeId(comparison)!) : null"
+                            [style.color]="getViewerDisplayedRealTypeId(comparison) != null ? getTrainingTextColor(getViewerDisplayedRealTypeId(comparison)!) : null"
+                            [class.viewer-stage-timeline__segment--pending]="getViewerDisplayedRealTypeId(comparison) == null">
                             <span class="viewer-player-stage-plan__label viewer-player-stage-plan__label--real">
-                              <ng-container *ngIf="comparison.actualTypeId != null; else pendingTopTraining">
+                              <ng-container *ngIf="getViewerDisplayedRealTypeId(comparison) != null; else pendingTopTraining">
                                 <span class="viewer-player-stage-plan__type">
-                                  {{ ('ht.training-type-' + comparison.actualTypeId) | translate | firstCapitalize }}
+                                  {{ ('ht.training-type-' + getViewerDisplayedRealTypeId(comparison)) | translate | firstCapitalize }}
                                 </span>
                               </ng-container>
                               <ng-template #pendingTopTraining>{{ 'ehm.pending' | translate | firstCapitalize }}</ng-template>
@@ -1028,13 +1028,13 @@
                             [class.viewer-stage-timeline__segment--inactive]="!isViewerRealWeekActive(row.initialPlayer.id, comparison.offsetWeek)"
                             [attr.title]="getViewerRealWeekTooltip(row, comparison, i)"
                             [style.grid-column]="'span 1'"
-                            [style.backgroundColor]="comparison.actualTypeId != null ? trainingTypeColor(comparison.actualTypeId) : null"
-                            [style.color]="comparison.actualTypeId != null ? getTrainingTextColor(comparison.actualTypeId) : null"
-                            [class.viewer-stage-timeline__segment--pending]="comparison.actualTypeId == null">
+                            [style.backgroundColor]="getViewerDisplayedRealTypeId(comparison) != null ? trainingTypeColor(getViewerDisplayedRealTypeId(comparison)!) : null"
+                            [style.color]="getViewerDisplayedRealTypeId(comparison) != null ? getTrainingTextColor(getViewerDisplayedRealTypeId(comparison)!) : null"
+                            [class.viewer-stage-timeline__segment--pending]="getViewerDisplayedRealTypeId(comparison) == null">
                             <span class="viewer-player-stage-plan__label viewer-player-stage-plan__label--real">
-                              <ng-container *ngIf="comparison.actualTypeId != null; else pendingPlayerTraining">
+                              <ng-container *ngIf="getViewerDisplayedRealTypeId(comparison) != null; else pendingPlayerTraining">
                                 <span class="viewer-player-stage-plan__type">
-                                  {{ ('ht.training-type-' + comparison.actualTypeId) | translate | firstCapitalize }}
+                                  {{ ('ht.training-type-' + getViewerDisplayedRealTypeId(comparison)) | translate | firstCapitalize }}
                                 </span>
                                 <span class="viewer-player-stage-plan__percent">
                                   {{ row.realPercents[i] ?? 0 | number:'1.0-0' }}%

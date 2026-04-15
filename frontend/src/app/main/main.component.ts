@@ -1822,10 +1822,14 @@ export class MainComponent implements OnInit, OnDestroy {
         }
 
         const realPlayer = this.viewerRealPlayersByWeek[offsetWeek]?.[initialPlayer.id] ?? null;
+        const projectedPlayer = this.viewerProjectedPlayersByWeek[offsetWeek]?.[initialPlayer.id] ?? null;
         const actualTypeId = response.weekTraining?.[offsetWeek]?.training?.trainingType ?? null;
-        const realHtms = this.getPlayerHtmsValue(realPlayer);
+        const expectedTypeId = response.weekTrainingPlanned?.[offsetWeek]?.training?.trainingType ?? null;
+        const effectiveRealPlayer = realPlayer ?? projectedPlayer;
+        const effectiveTypeId = actualTypeId ?? expectedTypeId;
+        const realHtms = this.getPlayerHtmsValue(effectiveRealPlayer);
         realSeries.push(realHtms);
-        realPercents.push(realPlayer ? this.getViewerActualTrainingPercent(realPlayer, actualTypeId) : null);
+        realPercents.push(effectiveRealPlayer ? this.getViewerActualTrainingPercent(effectiveRealPlayer, effectiveTypeId) : null);
         if (realHtms != null) {
           maxHtms = Math.max(maxHtms, realHtms);
         }
@@ -2079,7 +2083,9 @@ export class MainComponent implements OnInit, OnDestroy {
     if (!comparison) {
       return null;
     }
-    return this.viewerFollowUpResponse?.weekTraining?.[comparison.offsetWeek] ?? null;
+    return this.viewerFollowUpResponse?.weekTraining?.[comparison.offsetWeek]
+      ?? this.viewerFollowUpResponse?.weekTrainingPlanned?.[comparison.offsetWeek]
+      ?? null;
   }
 
   getViewerSelectedPlannedWeekInfo(): {season: number; week: number; date: string | null} | null {
@@ -2266,16 +2272,21 @@ export class MainComponent implements OnInit, OnDestroy {
       return '';
     }
 
-    if (comparison.actualTypeId == null) {
+    const effectiveTypeId = this.getViewerDisplayedRealTypeId(comparison);
+    if (effectiveTypeId == null) {
       return this.translateService.instant('ehm.pending');
     }
 
-    const parts: string[] = [this.translateService.instant('ht.training-type-' + comparison.actualTypeId)];
+    const parts: string[] = [this.translateService.instant('ht.training-type-' + effectiveTypeId)];
     const percent = row.realPercents[index];
     if (percent != null) {
       parts.push(`${Math.round(percent)}%`);
     }
     return parts.join(' ');
+  }
+
+  getViewerDisplayedRealTypeId(comparison: ViewerStageComparison): number | null {
+    return comparison.actualTypeId ?? comparison.expectedTypeId ?? null;
   }
 
   private getViewerComparisonForWeek(week: number): ViewerStageComparison | null {
