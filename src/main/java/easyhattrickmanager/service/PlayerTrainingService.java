@@ -179,22 +179,27 @@ public class PlayerTrainingService {
             if (value < 1) {
                 return 0;
             }
+            return clampSubSkill(value - Math.floor(value));
         }
         if (previousBaseSkill > currentBaseSkill) {
             if (value < 0) {
-                return 1 + value;
+                return clampSubSkill(1 + value);
             } else {
                 return 0.99;
             }
         }
         if (value >= 1) {
-            double wrapped = value - 1;
-            return wrapped < previousSubSkill ? 0.99 : wrapped;
+            double wrapped = value - Math.floor(value);
+            return wrapped < previousSubSkill ? 0.99 : clampSubSkill(wrapped);
         }
         if (value < 0) {
             return 0;
         }
-        return value;
+        return clampSubSkill(value);
+    }
+
+    private double clampSubSkill(double value) {
+        return Math.max(0.0, Math.min(0.99, value));
     }
 
     private static final Map<Integer, Double> PER_TRAINER = Map.ofEntries(
