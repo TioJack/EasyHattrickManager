@@ -2334,7 +2334,7 @@ export class MainComponent implements OnInit, OnDestroy {
   }
 
   getViewerDisplayedRealTypeId(comparison: ViewerStageComparison): number | null {
-    return comparison.actualTypeId ?? comparison.expectedTypeId ?? null;
+    return comparison.actualTypeId ?? null;
   }
 
   private getViewerComparisonForWeek(week: number): ViewerStageComparison | null {
@@ -2388,8 +2388,13 @@ export class MainComponent implements OnInit, OnDestroy {
       return null;
     }
     const requestedWindow = this.viewerRequestedPlayerWindowsByPlayerId[playerId];
-    if (requestedWindow && requestedWindow.inclusionWeek > 1 && week === requestedWindow.inclusionWeek) {
-      return this.viewerPlayerRows.find(row => row.initialPlayer.id === playerId)?.initialPlayer ?? null;
+    if (requestedWindow && requestedWindow.inclusionWeek > 1) {
+      if (week <= requestedWindow.inclusionWeek) {
+        return this.viewerPlayerRows.find(row => row.initialPlayer.id === playerId)?.initialPlayer ?? null;
+      }
+      return this.viewerPlannedPlayersByWeek[week - 1]?.[playerId]
+        ?? this.viewerPlannedPlayersByWeek[week]?.[playerId]
+        ?? null;
     }
     return this.viewerPlannedPlayersByWeek[week]?.[playerId] ?? null;
   }
