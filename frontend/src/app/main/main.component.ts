@@ -2387,6 +2387,9 @@ export class MainComponent implements OnInit, OnDestroy {
     if (!week) {
       return null;
     }
+    if (!this.getViewerEstimatedComparablePlayer(playerId)) {
+      return null;
+    }
     const requestedWindow = this.viewerRequestedPlayerWindowsByPlayerId[playerId];
     if (requestedWindow && requestedWindow.inclusionWeek > 1) {
       if (week <= requestedWindow.inclusionWeek) {
