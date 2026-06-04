@@ -388,6 +388,8 @@
   "ehm.training-planner-welcome" : "Welcome to the Easy Hattrick Manager training planner.",
   "ehm.training-received" : "received training",
   "ehm.tsi" : "TSI",
+  "ehm.tutorial-english" : "English tutorial",
+  "ehm.tutorial-spanish" : "Spanish tutorial",
   "ehm.update-data" : "update data",
   "ehm.update-fail" : "update failed, please try again.",
   "ehm.update-ok" : "update completed successfully!",

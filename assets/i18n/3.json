@@ -387,6 +387,8 @@
   "ehm.training-planner-welcome" : "willkommen in der einfachen hattrick manager-trainingsplaner.",
   "ehm.training-received" : "ausbildung",
   "ehm.tsi" : "TSI",
+  "ehm.tutorial-english" : "englisch tutorial",
+  "ehm.tutorial-spanish" : "sekundäres tutorial",
   "ehm.update-data" : "aktualisierung der daten",
   "ehm.update-fail" : "update versagt, bitte versuchen sie es erneut.",
   "ehm.update-ok" : "update erfolgreich abgeschlossen!",

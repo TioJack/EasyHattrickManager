@@ -44,6 +44,26 @@
               {{ 'ehm.get-into' | translate }}
             </button>
           </form>
+          <div class="border-top mt-4 pt-3">
+            <div class="d-grid gap-2">
+              <a
+                href="https://youtu.be/0E5utKzOS50"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-outline-danger btn-sm">
+                <i class="bi bi-youtube me-2"></i>
+                {{ 'ehm.tutorial-english' | translate }}
+              </a>
+              <a
+                href="https://youtu.be/g7dc2c_9Vk8"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-outline-danger btn-sm">
+                <i class="bi bi-youtube me-2"></i>
+                {{ 'ehm.tutorial-spanish' | translate }}
+              </a>
+            </div>
+          </div>
         </div>
         <div *ngIf="error" class="card-footer text-danger text-center">
           {{ 'ehm.error-log-in' | translate | firstCapitalize }}

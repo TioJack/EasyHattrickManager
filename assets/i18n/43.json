@@ -387,6 +387,8 @@
   "ehm.training-planner-welcome" : "добре дошли в лесния мениджър на хеттрик.",
   "ehm.training-received" : "е преминало обучение",
   "ehm.tsi" : "ОИК",
+  "ehm.tutorial-english" : "английски уроци",
+  "ehm.tutorial-spanish" : "испански уроци",
   "ehm.update-data" : "данни за актуализация",
   "ehm.update-fail" : "грешка при обновяване, моля опитайте отново.",
   "ehm.update-ok" : "обновяването завърши успешно!",

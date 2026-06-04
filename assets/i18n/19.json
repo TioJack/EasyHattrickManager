@@ -387,6 +387,8 @@
   "ehm.training-planner-welcome" : "kolay şapkatrick yönetici eğitimi planlayıcısına hoş geldiniz.",
   "ehm.training-received" : "verilen eğitim aldı",
   "ehm.tsi" : "TSI",
+  "ehm.tutorial-english" : "english öğretici",
+  "ehm.tutorial-spanish" : "spanish öğretici",
   "ehm.update-data" : "güncelleme verileri",
   "ehm.update-fail" : "güncelleme başarısız oldu, lütfen tekrar deneyin.",
   "ehm.update-ok" : "güncelleme başarıyla tamamlandı!",

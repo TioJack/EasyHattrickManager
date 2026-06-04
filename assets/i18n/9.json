@@ -387,6 +387,8 @@
   "ehm.training-planner-welcome" : "tervetuloa helppo hattrick managerin harjoitussuunnittelija.",
   "ehm.training-received" : "saanut koulutusta",
   "ehm.tsi" : "TSI",
+  "ehm.tutorial-english" : "englannin kielen opetusohjelma",
+  "ehm.tutorial-spanish" : "espanjan opetusohjelma",
   "ehm.update-data" : "päivitä tiedot",
   "ehm.update-fail" : "päivitys epäonnistui, yritä uudelleen.",
   "ehm.update-ok" : "päivitys suoritettu onnistuneesti!",

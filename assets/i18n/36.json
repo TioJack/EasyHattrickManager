@@ -387,6 +387,8 @@
   "ehm.training-planner-welcome" : "tere tulemast lihtsale kübaratrikijuhi koolitusplaneerijale.",
   "ehm.training-received" : "sai väljaõppe",
   "ehm.tsi" : "TSI",
+  "ehm.tutorial-english" : "inglise keele õpetus",
+  "ehm.tutorial-spanish" : "hispaaniakeelne õpetus",
   "ehm.update-data" : "värskendada andmeid",
   "ehm.update-fail" : "värskendus nurjus, palun proovi uuesti.",
   "ehm.update-ok" : "uuendus edukalt lõpetatud!",
