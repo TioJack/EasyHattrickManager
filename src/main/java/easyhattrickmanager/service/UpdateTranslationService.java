@@ -235,6 +235,8 @@ public class UpdateTranslationService {
         addTranslation_EN_ES_CA("ehm.error-register", "error registering user.", "error al registrar el usuario.", "error en registrar l'usuari.");
         addTranslation_EN_ES_CA("ehm.have-account", "already have an account?", "¿Ya tienes una cuenta?", "ja tens un compte?");
         addTranslation_EN_ES_CA("ehm.log-in-here", "login here", "inicia sesión aquí", "inicia sessió aquí");
+        addTranslation_EN_ES_CA("ehm.tutorial-english", "English tutorial", "tutorial en inglés", "tutorial en anglès");
+        addTranslation_EN_ES_CA("ehm.tutorial-spanish", "Spanish tutorial", "tutorial en español", "tutorial en espanyol");
         addTranslation_EN_ES_CA("ehm.processing-response", "processing response ...", "procesando respuesta ...", "processant resposta ...");
         addTranslation_EN_ES_CA("ehm.welcome", "welcome", "¡Bienvenido", "benvingut");
         addTranslation_EN_ES_CA("ehm.now-on",
