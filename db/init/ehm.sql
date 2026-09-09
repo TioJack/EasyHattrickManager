@@ -119,7 +119,8 @@ CREATE TABLE IF NOT EXISTS `player_data` (
     htms INT NOT NULL,
     htms28 INT NOT NULL,
     player_category_id INT NOT NULL,
-    PRIMARY KEY (`id`, `season_week`, `team_id`)
+    PRIMARY KEY (`id`, `season_week`, `team_id`),
+    KEY `idx_player_data_team_week_id` (`team_id`, `season_week`, `id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `player_subskill` (
@@ -136,7 +137,8 @@ CREATE TABLE IF NOT EXISTS `player_subskill` (
     set_pieces DOUBLE NOT NULL,
     htms INT NOT NULL,
     htms28 INT NOT NULL,
-    PRIMARY KEY (`id`, `season_week`, `team_id`)
+    PRIMARY KEY (`id`, `season_week`, `team_id`),
+    KEY `idx_player_subskill_team_week_id` (`team_id`, `season_week`, `id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `player_form` (
@@ -146,7 +148,8 @@ CREATE TABLE IF NOT EXISTS `player_form` (
     form DOUBLE NOT NULL,
     hidden_form DOUBLE NOT NULL,
     expected_form DOUBLE NOT NULL,
-    PRIMARY KEY (`id`, `season_week`, `team_id`)
+    PRIMARY KEY (`id`, `season_week`, `team_id`),
+    KEY `idx_player_form_team_week_id` (`team_id`, `season_week`, `id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS player_training (
@@ -161,7 +164,8 @@ CREATE TABLE IF NOT EXISTS player_training (
     scorer DOUBLE NOT NULL,
     set_pieces DOUBLE NOT NULL,
     minutes INT NOT NULL,
-    PRIMARY KEY (id, season_week, team_id)
+    PRIMARY KEY (id, season_week, team_id),
+    KEY `idx_player_training_team_week_id` (`team_id`, `season_week`, `id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `training` (
@@ -170,7 +174,8 @@ CREATE TABLE IF NOT EXISTS `training` (
     training_type INT NOT NULL,
     training_level INT NOT NULL,
     stamina_training_part INT NOT NULL,
-    PRIMARY KEY (`season_week`, `team_id`)
+    PRIMARY KEY (`season_week`, `team_id`),
+    KEY `idx_training_team_week` (`team_id`, `season_week`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `trainer` (
@@ -184,7 +189,8 @@ CREATE TABLE IF NOT EXISTS `trainer` (
     status INT NOT NULL,
     start_date DATETIME NOT NULL,
     cost INT NOT NULL,
-    PRIMARY KEY (`season_week`, `team_id`)
+    PRIMARY KEY (`season_week`, `team_id`),
+    KEY `idx_trainer_team_week` (`team_id`, `season_week`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `staff_member` (
@@ -197,7 +203,8 @@ CREATE TABLE IF NOT EXISTS `staff_member` (
     hof_player_id INT NOT NULL,
     start_date DATETIME NOT NULL,
     cost INT NOT NULL,
-    PRIMARY KEY (`season_week`, `team_id`, `id`)
+    PRIMARY KEY (`season_week`, `team_id`, `id`),
+    KEY `idx_staff_member_team_week_id` (`team_id`, `season_week`, `id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `league` (

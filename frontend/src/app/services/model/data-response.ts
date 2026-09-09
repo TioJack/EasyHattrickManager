@@ -1,4 +1,4 @@
-import type {BestFormationCriteria, MatchDetail, TeamTrainingRequest, TeamTrainingResponse} from './team-training';
+import type {BestFormationCriteria, MatchDetail, TeamTrainingResponse} from './team-training';
 
 export interface DataResponse {
   version: string;
@@ -193,7 +193,6 @@ export interface ProjectTrainingPlanner {
   bestFormationCriteria: BestFormationCriteria;
   fixedFormationCode?: string | null;
   matchDetail: MatchDetail;
-  teamTrainingRequest?: TeamTrainingRequest;
   teamTrainingResponse?: TeamTrainingResponse;
 }
 

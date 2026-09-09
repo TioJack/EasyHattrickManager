@@ -118,6 +118,15 @@ interface ViewerTrainingSegment {
   stamina: number | null;
 }
 
+interface PlannerRequestState {
+  iniWeek?: WeekInfo;
+  trainingPlans: ProjectTrainingStage[];
+  trainingPlanPercents: Record<number, number[]>;
+  bestFormationCriteria: BestFormationCriteria;
+  fixedFormationCode?: string | null;
+  matchDetail: MatchDetail;
+}
+
 @Component({
   selector: 'app-main',
   standalone: true,
@@ -1027,13 +1036,11 @@ export class MainComponent implements OnInit, OnDestroy {
     };
   }
 
-  private buildPersistedTeamTrainingState(): Pick<ProjectTrainingPlanner, 'teamTrainingRequest' | 'teamTrainingResponse'> {
-    const request = this.buildTeamTrainingRequest(this.autoRefreshBestFormation);
-    if (!request || !this.teamTrainingResponse) {
+  private buildPersistedTeamTrainingState(): Pick<ProjectTrainingPlanner, 'teamTrainingResponse'> {
+    if (!this.buildTeamTrainingRequest(this.autoRefreshBestFormation) || !this.teamTrainingResponse) {
       return {};
     }
     return {
-      teamTrainingRequest: JSON.parse(JSON.stringify(request)) as TeamTrainingRequest,
       teamTrainingResponse: JSON.parse(JSON.stringify(this.teamTrainingResponse)) as TeamTrainingResponse
     };
   }
@@ -1099,8 +1106,11 @@ export class MainComponent implements OnInit, OnDestroy {
     };
   }
 
-  private buildTeamTrainingRequest(calculateBestFormation: boolean): TeamTrainingRequest | null {
-    const stages: TrainingStage[] = this.trainingPlans.map((plan, index) => {
+  private buildTeamTrainingRequest(calculateBestFormation: boolean, plannerState?: PlannerRequestState): TeamTrainingRequest | null {
+    const trainingPlans = plannerState?.trainingPlans ?? this.trainingPlans;
+    const trainingPlanPercents = plannerState?.trainingPlanPercents ?? this.trainingPlanPercents;
+    const iniWeek = plannerState?.iniWeek ?? this.getCurrentWeekInfo();
+    const stages: TrainingStage[] = trainingPlans.map((plan, index) => {
       const training = this.mapTrainingTypeToStage(plan.typeId);
       return {
         id: index + 1,
@@ -1113,14 +1123,14 @@ export class MainComponent implements OnInit, OnDestroy {
       };
     });
 
-    const players = this.getPlannerTrainingPlayers();
+    const players = this.getPlannerTrainingPlayers(iniWeek, trainingPlans);
     this.syncPlannerPlayerWindows(players);
 
     const participations: StagePlayerParticipation[] = [];
     players.forEach((teamTrainingPlayer, playerIndex) => {
       const player = teamTrainingPlayer.player;
-      const percents = this.trainingPlanPercents[player.id] ?? this.getDefaultParticipationValues(playerIndex);
-      for (let i = 0; i < this.trainingPlans.length; i++) {
+      const percents = trainingPlanPercents[player.id] ?? this.getDefaultParticipationValues(playerIndex, trainingPlans);
+      for (let i = 0; i < trainingPlans.length; i++) {
         participations.push({
           stageId: i + 1,
           playerId: player.id,
@@ -1130,15 +1140,30 @@ export class MainComponent implements OnInit, OnDestroy {
     });
 
     return {
-      iniWeek: this.getCurrentWeekInfo(),
+      iniWeek,
       players,
       stages,
       participations,
       calculateBestFormation,
-      bestFormationCriteria: this.bestFormationCriteria,
-      fixedFormationCode: this.fixedFormationCode,
-      matchDetail: this.matchDetail
+      bestFormationCriteria: plannerState?.bestFormationCriteria ?? this.bestFormationCriteria,
+      fixedFormationCode: plannerState?.fixedFormationCode ?? this.fixedFormationCode,
+      matchDetail: plannerState?.matchDetail ?? this.matchDetail
     };
+  }
+
+  private buildTeamTrainingRequestFromPlanner(planner: ProjectTrainingPlanner): TeamTrainingRequest | null {
+    const iniWeek = this.getPlannerIniWeek(planner);
+    if (!iniWeek) {
+      return null;
+    }
+    return this.buildTeamTrainingRequest(planner.autoRefreshBestFormation ?? false, {
+      iniWeek,
+      trainingPlans: planner.trainingPlans ?? [],
+      trainingPlanPercents: planner.trainingPlanPercents ?? {},
+      bestFormationCriteria: planner.bestFormationCriteria ?? 'HATSTATS',
+      fixedFormationCode: planner.fixedFormationCode ?? null,
+      matchDetail: planner.matchDetail ?? this.createDefaultMatchDetail()
+    });
   }
 
   private buildTeamTrainingRequestKey(request: TeamTrainingRequest): string {
@@ -1146,13 +1171,12 @@ export class MainComponent implements OnInit, OnDestroy {
   }
 
   private restorePersistedTeamTraining(planner: ProjectTrainingPlanner): boolean {
-    const persistedRequest = planner.teamTrainingRequest;
     const persistedResponse = planner.teamTrainingResponse;
-    if (!persistedRequest || !persistedResponse) {
+    if (!persistedResponse) {
       return false;
     }
     const currentRequest = this.buildTeamTrainingRequest(this.autoRefreshBestFormation);
-    if (!currentRequest || this.buildTeamTrainingRequestKey(currentRequest) !== this.buildTeamTrainingRequestKey(persistedRequest)) {
+    if (!currentRequest) {
       return false;
     }
     if (this.plannerRequestTimer !== null) {
@@ -1161,8 +1185,8 @@ export class MainComponent implements OnInit, OnDestroy {
     }
     this.scheduledCalculateBestFormation = false;
     this.inFlightTeamTrainingRequestKey = null;
-    this.lastSuccessfulTeamTrainingRequestKey = this.buildTeamTrainingRequestKey(persistedRequest);
-    this.syncPlannerPlayerWindows(persistedRequest.players ?? []);
+    this.lastSuccessfulTeamTrainingRequestKey = this.buildTeamTrainingRequestKey(currentRequest);
+    this.syncPlannerPlayerWindows(currentRequest.players ?? []);
     this.applyTeamTrainingResponse(JSON.parse(JSON.stringify(persistedResponse)) as TeamTrainingResponse);
     this.stopTeamTrainingProgressPolling(true);
     this.isTeamTrainingLoading = false;
@@ -1177,6 +1201,22 @@ export class MainComponent implements OnInit, OnDestroy {
       week: 0,
       date: this.plannerFallbackDate
     };
+  }
+
+  private getPlannerIniWeek(planner: ProjectTrainingPlanner): WeekInfo | null {
+    if (planner.iniSeason == null || planner.iniWeek == null) {
+      return null;
+    }
+    const matchingWeek = this.selectedTeam?.weeklyData?.find(weekData =>
+      weekData.season === planner.iniSeason && weekData.week === planner.iniWeek
+    );
+    return matchingWeek
+      ? {
+          season: matchingWeek.season,
+          week: matchingWeek.week,
+          date: matchingWeek.date
+        }
+      : null;
   }
 
   private applyTeamTrainingResponse(response: TeamTrainingResponse): void {
@@ -1552,9 +1592,11 @@ export class MainComponent implements OnInit, OnDestroy {
     this.players = plannerPlayers.map(teamTrainingPlayer => teamTrainingPlayer.player);
   }
 
-  private getPlannerTrainingPlayers(): TeamTrainingPlayer[] {
+  private getPlannerTrainingPlayers(
+    currentWeek: WeekInfo | null = this.playService.getCurrentWeekInfo(),
+    trainingPlans: ProjectTrainingStage[] = this.trainingPlans
+  ): TeamTrainingPlayer[] {
     const team = this.selectedTeam;
-    const currentWeek = this.playService.getCurrentWeekInfo();
     if (!team || !currentWeek) {
       return this.players.map(player => ({
         player,
@@ -1573,7 +1615,7 @@ export class MainComponent implements OnInit, OnDestroy {
       }));
     }
 
-    const totalWeeks = Math.max(1, this.totalTrainingWeeks);
+    const totalWeeks = Math.max(1, this.getTrainingPlanWeekCount(trainingPlans));
     const endIndex = Math.min(weeklyData.length - 1, startIndex + totalWeeks);
     const maxObservedIndex = weeklyData.length - 1;
     const filter = this.selectedProject?.planner?.filter;
@@ -1677,8 +1719,15 @@ export class MainComponent implements OnInit, OnDestroy {
     return window.departureWeek < totalWeeks;
   }
 
-  private getDefaultParticipationValues(playerIndex: number): number[] {
-    return this.trainingPlans.map(plan => this.getDefaultParticipationValue(plan.typeId, playerIndex));
+  private getDefaultParticipationValues(
+    playerIndex: number,
+    trainingPlans: ProjectTrainingStage[] = this.trainingPlans
+  ): number[] {
+    return trainingPlans.map(plan => this.getDefaultParticipationValue(plan.typeId, playerIndex));
+  }
+
+  private getTrainingPlanWeekCount(trainingPlans: ProjectTrainingStage[]): number {
+    return trainingPlans.reduce((sum, plan) => sum + (plan.weeks || 0), 0);
   }
 
   private getStageWeekRange(index: number): {startWeek: number; endWeek: number} | null {
@@ -1754,7 +1803,7 @@ export class MainComponent implements OnInit, OnDestroy {
   }
 
   private getViewerFollowUpState(planner: ProjectTrainingPlanner): {request: TeamTrainingRequest; response: TeamTrainingResponse} | null {
-    const currentRequest = this.buildTeamTrainingRequest(this.autoRefreshBestFormation);
+    const currentRequest = this.buildTeamTrainingRequestFromPlanner(planner);
     if (currentRequest && this.teamTrainingResponse) {
       const currentRequestKey = this.buildTeamTrainingRequestKey(currentRequest);
       if (currentRequestKey === this.lastSuccessfulTeamTrainingRequestKey) {
@@ -1764,9 +1813,9 @@ export class MainComponent implements OnInit, OnDestroy {
         };
       }
     }
-    if (planner.teamTrainingRequest && planner.teamTrainingResponse) {
+    if (currentRequest && planner.teamTrainingResponse) {
       return {
-        request: planner.teamTrainingRequest,
+        request: currentRequest,
         response: planner.teamTrainingResponse
       };
     }

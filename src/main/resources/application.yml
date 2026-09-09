@@ -1,5 +1,5 @@
 app:
-  version: 40
+  version: 41
 
 server:
   port: 1998

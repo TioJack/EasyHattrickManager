@@ -1,7 +1,6 @@
 package easyhattrickmanager.service.model.dataresponse;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import easyhattrickmanager.service.model.teamtraining.TeamTrainingRequest;
 import easyhattrickmanager.service.model.teamtraining.TeamTrainingResponse;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +26,5 @@ public class ProjectTrainingPlannerInfo {
     String bestFormationCriteria;
     String fixedFormationCode;
     ProjectTrainingMatchDetailInfo matchDetail;
-    TeamTrainingRequest teamTrainingRequest;
     TeamTrainingResponse teamTrainingResponse;
 }
