@@ -21,7 +21,7 @@ public class SecurityConfiguration {
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/actuator/**", "/login/**", "/pojo/**", "/update/**", "/shar/**", "/ho/**", "/img/**", "/assets/**", "/repair/**", "/check/**").permitAll()
-                .requestMatchers("/data/**").authenticated()
+                .requestMatchers("/data/**", "/lineup/**").authenticated()
             )
             .addFilter(new JwtAuthenticationFilter(jwtService));
         return http.build();

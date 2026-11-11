@@ -123,3 +123,22 @@ export interface Ratings {
   midfield3?: number;
   peasoStats?: number;
 }
+
+export interface LineupRatingRequest {
+  fieldPlayers: Array<{
+    player: PlayerInfo;
+    role: string;
+    behaviour: string;
+  }>;
+  benchPlayers: Array<{
+    player: PlayerInfo;
+    role: string;
+    behaviour: string;
+  }>;
+  penaltyTakers: Array<{
+    player: PlayerInfo;
+    role: string;
+    behaviour: string;
+  }>;
+  matchDetail: MatchDetail;
+}

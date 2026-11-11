@@ -1,5 +1,5 @@
 <app-alert #alert></app-alert>
-<header class="bg-light border-bottom header-fixed header-shell">
+<header class="bg-light border-bottom header-fixed header-shell" [class.header-shell--simulator]="isViewMode('lineup-simulator')">
   <div class="header-group header-group--start">
     <div class="dropdown">
       <button class="btn btn-outline-primary dropdown-toggle" type="button" id="teamDropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
@@ -32,6 +32,15 @@
         title="{{ 'ehm.training-planner' | translate | firstCapitalize }}"
         (click)="setViewMode('training-planner')">
         <i class="bi bi-graph-up"></i>
+      </button>
+      <button
+        class="btn"
+        [class.btn-primary]="isViewMode('lineup-simulator')"
+        [class.btn-outline-primary]="!isViewMode('lineup-simulator')"
+        type="button"
+        title="Simulador de alineación"
+        (click)="setViewMode('lineup-simulator')">
+        <i class="bi bi-diagram-3"></i>
       </button>
       <button
         class="btn"

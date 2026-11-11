@@ -2,6 +2,11 @@
   width: 100%;
 }
 
+.lineup-simulator-main {
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+}
+
 .planner-controls {
   gap: 0.5rem;
 }

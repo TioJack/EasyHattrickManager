@@ -5,6 +5,7 @@
 /target/
 /db/data/
 /db/backups/
+/db/scripts/.sim.env
 /docker/remote/
 deploy.sh
 upload.sh
@@ -28,3 +29,4 @@ upload_README.txt
 /.codex
 /docs/
 /tools/
+/python/

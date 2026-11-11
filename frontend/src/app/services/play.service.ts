@@ -6,7 +6,7 @@ import {PlayerStats} from './model/player-stats';
 import {WeekInfo} from '../player/model/week-info';
 import {UserConfigService} from './user-config.service';
 
-export type ViewMode = 'players' | 'training-planner' | 'training-plan-viewer';
+export type ViewMode = 'players' | 'training-planner' | 'training-plan-viewer' | 'lineup-simulator';
 
 @Injectable({
   providedIn: 'root'

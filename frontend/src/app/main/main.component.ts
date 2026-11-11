@@ -40,6 +40,7 @@ import {SalaryPipe} from '../pipes/salary.pipe';
 import {NumberSeparatorPipe} from '../pipes/number-separator.pipe';
 import {UserConfigService} from '../services/user-config.service';
 import {Subscription} from 'rxjs';
+import {LineupSimulatorComponent} from '../lineup-simulator/lineup-simulator.component';
 
 interface LineupPoint {
   x: number;
@@ -145,7 +146,8 @@ interface PlannerRequestState {
     FirstCapitalizePipe,
     FormsModule,
     SalaryPipe,
-    NumberSeparatorPipe
+    NumberSeparatorPipe,
+    LineupSimulatorComponent
   ],
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.scss']
@@ -1590,6 +1592,20 @@ export class MainComponent implements OnInit, OnDestroy {
     const plannerPlayers = this.getPlannerTrainingPlayers();
     this.syncPlannerPlayerWindows(plannerPlayers);
     this.players = plannerPlayers.map(teamTrainingPlayer => teamTrainingPlayer.player);
+  }
+
+  get simulatorPlayers(): PlayerInfo[] {
+    // The simulator needs the complete squad, independently of a project's training filter.
+    const week = this.playService.getCurrentWeekInfo();
+    return this.selectedTeam?.weeklyData.find(data => data.season === week?.season && data.week === week?.week)?.players ?? this.basePlayers;
+  }
+
+  get simulatorPlanner() {
+    return this.selectedProject?.planner ?? null;
+  }
+
+  get simulatorStorageKey(): string {
+    return `ehm-lineup:${this.selectedTeam?.team.id ?? 'team'}:${this.selectedProject?.name ?? 'default'}`;
   }
 
   private getPlannerTrainingPlayers(

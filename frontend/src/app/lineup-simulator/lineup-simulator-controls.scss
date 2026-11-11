@@ -1,0 +1,66 @@
+:host { display: block; width: 100%; overflow-x: auto; }
+#ngMatchorder {
+  .mo-sandbox a { color: #527239; text-decoration: underline; cursor: pointer; }
+  select { box-sizing: border-box; font-size: 13.3333px; padding: 0; }
+  .htbox-table th { vertical-align: bottom; }
+  .htbox-table td { vertical-align: top; padding: 4px 4px 4px 2px; }
+  .mo-sandbox .boxBody { padding: 7px 10px 5px; }
+  .icon-mother-club { color: #e74c3c; }
+  .center { text-align: center; }
+  .beach-players-forms.form-veryhigh .beach-players-form.form-full { background: #63cf31; }
+  .beach-players-forms.form-high .beach-players-form.form-full { background: #f1c40a; }
+  .beach-players-forms.form-low .beach-players-form.form-full { background: #f5a104; }
+  .beach-players-forms.form-verylow .beach-players-form.form-full { background: #dd4140; }
+  .beach-players-forms.form-veryhigh .beach-players-form.form-half { background: linear-gradient(to top, #63cf31, #59965d 50%, #eee 50%); }
+  .beach-players-forms.form-high .beach-players-form.form-half { background: linear-gradient(to top, #f1c40a 50%, #eee 50%); }
+  .beach-players-forms.form-low .beach-players-form.form-half { background: linear-gradient(to top, #f5a104 50%, #eee 50%); }
+  .beach-players-forms.form-verylow .beach-players-form.form-half { background: linear-gradient(to top, #dd4140 50%, #eee 50%); }
+  .ehm-arena { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+  .ehm-arena img { display: block; width: 650px; height: 340px; max-width: none; }
+  .ehm-pitch-help { position: absolute; top: 35px; left: 65px; right: 10px; z-index: 6000; padding: 10px; }
+  .ehm-facecard { width: 81px; height: 74px; position: relative; display: flex; justify-content: center; align-items: flex-start; cursor: grab; }
+  .mo-players .playerName { position: absolute; top: 58px; left: 0; width: 81px; text-align: center; color: #fff; font-size: 13px; white-space: nowrap; overflow: hidden; pointer-events: none; }
+  .ehm-recommendations { margin-top: 10px; font-size: 12px; }
+  .ehm-recommendations button { width: 100%; padding: 4px 0; border: 0; text-align: left; background: transparent; color: #000; }
+  .ehm-avatar { width: 41px; height: 56px; object-fit: cover; object-position: top; }
+  .ehm-shirt-number { position: absolute; top: 0; left: 0; color: white; font-size: 13px; }
+  .ehm-face-specialty { position: absolute; right: 1px; top: 35px; color: white; font-size: 13px; }
+  .ehm-captain, .ehm-setpiece { position: absolute; top: 0; color: #fff; font-weight: bold; z-index: 2; }
+  .ehm-captain { right: 0; } .ehm-setpiece { left: 0; top: 18px; }
+  .ehm-position-rating { position: absolute; bottom: 2px; left: 24px; border-radius: 50%; background: #eee; color: #555; padding: 1px 3px; }
+  .ehm-bench-player { display: flex; flex-direction: column; align-items: center; max-width: 100%; color: #fff; font-size: 10px; overflow: hidden; white-space: nowrap; }
+  .ehm-bench-player span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+  .ehm-roster-details { display: flex; padding: 6px 3px; gap: 6px; border-top: 1px solid #ddd; white-space: normal; }
+  .ehm-roster-details img { width: 41px; height: 56px; object-fit: cover; }
+  .ehm-roster-details > div { display: flex; flex-direction: column; font-size: 11px; flex: 1; }
+  .ehm-skill-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 8px; margin-top: 5px; }
+  .ehm-skill-grid span { display: flex; justify-content: space-between; gap: 6px; }
+  .ehm-player-selected { background: #e7f2cf !important; outline: 2px solid #708e4a; }
+  .ehm-player-assigned { opacity: .4; }
+  .ehm-formation-list { pointer-events: auto !important; display: flex; flex-direction: column; }
+  .ehm-formation-list button { background: none; border: 0; color: white; padding: 4px 10px; text-align: left; font-size: 14px; }
+  .ehm-formation-list button:hover { background: #3f7136; }
+  .ehm-notice, .ehm-rating-error { padding: 8px; border: 1px solid #a2ad96; background: #fffbd9; color: #333; margin-top: 5px; }
+  .ehm-notice button { float: right; background: transparent; border: 0; }
+  .ehm-menu-backdrop { position: fixed; inset: 0; z-index: 5000; background: transparent; }
+  .ehm-position-menu { position: absolute; width: 190px; z-index: 5001; background: #b7acaa; color: black; box-shadow: 1px 1px 5px #666; padding: 10px; text-align: left; font-size: 13px; }
+  .ehm-position-menu::before { content: ''; position: absolute; top: 5px; right: 100%; border: 15px solid transparent; border-left: 0; border-right-color: #b7acaa; }
+  .ehm-position-menu.ehm-menu-left::before { right: auto; left: 100%; border-right: 0; border-left: 15px solid #b7acaa; }
+  .ehm-position-menu h3 { margin: 8px 0; font-size: 14px; }
+  .ehm-menu-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .ehm-menu-head button { background: transparent; border: 0; font-size: 20px; line-height: 1; }
+  .ehm-position-menu > button, .ehm-position-menu label, .ehm-position-menu ng-container > button { display: block; width: 100%; margin: 4px 0; }
+  .ehm-position-menu button:not(.ehm-menu-head button) { text-align: left; padding: 3px; background: #d0d0d0; border: 0; }
+  .ehm-position-menu select { width: 100%; height: auto; padding: 3px; margin: 3px 0; background-color: #dbd7d7; font-size: 13px; }
+  .ehm-dialog-backdrop { position: fixed; inset: 0; background: #0006; z-index: 6000; }
+  .ehm-dialog { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(540px, 92vw); max-height: 90vh; overflow: auto; z-index: 6001; background: #fff; box-shadow: 0 2px 14px #0007; text-align: left; }
+  .ehm-dialog .boxHead button { margin-left: auto; background: transparent; border: 0; color: #fff; font-size: 20px; }
+  .ehm-dialog .boxHead { display: flex; }
+  .ehm-dialog .padding { padding: 15px; }
+  .ehm-custom-form { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 15px; padding: 15px; }
+  .ehm-custom-form label { display: flex; flex-direction: column; gap: 3px; }
+  .ehm-custom-form input, .ehm-custom-form select { min-width: 0; width: auto; height: 25px; border: 1px solid #999; padding: 2px 5px; border-radius: 3px; }
+  .ehm-dialog-actions { display: flex; justify-content: flex-end; gap: 10px; padding: 12px 0 0; grid-column: 1 / -1; }
+  .ehm-dialog-actions button { padding: 4px 12px; border: 1px solid #829c7b; background: #f0f3ee; border-radius: 3px; color: #333; }
+  .ehm-dialog-actions button:last-child { background: #3f7136; color: #fff; }
+}

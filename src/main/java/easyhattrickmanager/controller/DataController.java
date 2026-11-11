@@ -4,6 +4,7 @@ import easyhattrickmanager.controller.model.DataResponse;
 import easyhattrickmanager.controller.model.PlayerDataResponse;
 import easyhattrickmanager.service.DataService;
 import easyhattrickmanager.service.PlayerDataService;
+import easyhattrickmanager.service.RatingService;
 import easyhattrickmanager.service.TeamTrainingFollowUpService;
 import easyhattrickmanager.service.TeamTrainingService;
 import easyhattrickmanager.service.UpdateService;
@@ -13,6 +14,8 @@ import easyhattrickmanager.service.model.dataresponse.UserConfig;
 import easyhattrickmanager.service.model.teamtraining.TeamTrainingProgressResponse;
 import easyhattrickmanager.service.model.teamtraining.TeamTrainingRequest;
 import easyhattrickmanager.service.model.teamtraining.TeamTrainingResponse;
+import easyhattrickmanager.service.model.teamtraining.Lineup;
+import easyhattrickmanager.service.model.teamtraining.Ratings;
 import easyhattrickmanager.service.model.teamtrainingfollowup.TeamTrainingFollowUpRequest;
 import easyhattrickmanager.service.model.teamtrainingfollowup.TeamTrainingFollowUpResponse;
 import java.util.List;
@@ -36,6 +39,7 @@ public class DataController {
     private final PlayerDataService playerDataService;
     private final TeamTrainingService teamTrainingService;
     private final TeamTrainingFollowUpService teamTrainingFollowUpService;
+    private final RatingService ratingService;
 
     @GetMapping
     public ResponseEntity<DataResponse> getData() {
@@ -90,5 +94,14 @@ public class DataController {
     @PostMapping("/teamTraining/followUp")
     public TeamTrainingFollowUpResponse teamTrainingFollowUp(@RequestBody TeamTrainingFollowUpRequest teamTrainingFollowUpRequest) {
         return this.teamTrainingFollowUpService.getTeamTrainingFollowUp(teamTrainingFollowUpRequest);
+    }
+
+    /**
+     * Calculates a local simulator lineup. This endpoint deliberately has no
+     * Hattrick API call or persistence side effect.
+     */
+    @PostMapping("/lineup/rating")
+    public Ratings rateLineup(@RequestBody Lineup lineup) {
+        return this.ratingService.getRatings(lineup);
     }
 }

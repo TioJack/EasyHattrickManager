@@ -1,0 +1,114 @@
+@use 'sass:list';
+@use './hattrick-reference';
+
+// Private font names keep EHM's typography and icons independent.
+@font-face { font-family: EhmHattrickRoboto; src: url('/assets/lineup/hattrick/fonts/roboto-400.ttf') format('truetype'); font-style: normal; font-weight: 400; font-display: swap; }
+@font-face { font-family: EhmHattrickRoboto; src: url('/assets/lineup/hattrick/fonts/roboto-500.ttf') format('truetype'); font-style: normal; font-weight: 500; font-display: swap; }
+@font-face { font-family: EhmHattrickRoboto; src: url('/assets/lineup/hattrick/fonts/roboto-700.ttf') format('truetype'); font-style: normal; font-weight: 700; font-display: swap; }
+@font-face { font-family: EhmHattrickIcons; src: url('/assets/lineup/hattrick/fonts/icomoon.woff') format('woff'); font-weight: 400; font-style: normal; font-display: block; }
+
+:host { display: block; width: 100%; min-width: 0; overflow-x: auto; }
+#ngMatchorder {
+  // Keep the reference's browser scale independent of EHM's page typography.
+  position: relative; width: 958px; zoom: 1.25; margin: 0; padding: 0;
+  color: #000; background: #dce2d9; text-align: left;
+  font: 13px/18.2px EhmHattrickRoboto, Roboto, Verdana, Helvetica, sans-serif;
+  letter-spacing: .2px; isolation: isolate;
+}
+#ngMatchorder, #ngMatchorder *, #ngMatchorder ::before, #ngMatchorder ::after { box-sizing: content-box; }
+#ngMatchorder :is(input, select, textarea, button) { font-family: inherit; font-size: 13px; line-height: normal; letter-spacing: normal; margin: 0; color: #000; }
+#ngMatchorder input[type='checkbox'] { appearance: auto; width: 13px; height: 13px; margin: 3px 3px 3px 4px; }
+#ngMatchorder select { appearance: auto; padding: 0 2px; border: 1px solid #767676; }
+#ngMatchorder :is(p, ul) { margin: 0; }
+#ngMatchorder p { padding: 4px 0; }
+#ngMatchorder ul { padding: 0; }
+#ngMatchorder li { list-style: none; padding: 0; }
+a { color: #527239; text-decoration: underline; cursor: pointer; }
+#ngMatchorder img { vertical-align: baseline; max-width: none; }
+#ngMatchorder [hidden], #ngMatchorder .ng-hide { display: none !important; }
+#ngMatchorder .relative { position: relative; }
+#ngMatchorder .pointer { cursor: pointer; }
+#ngMatchorder .block { display: block; }
+#ngMatchorder .nowrap { white-space: nowrap; }
+#ngMatchorder .box { margin-bottom: 6px; background: #fff; border-color: transparent; }
+#ngMatchorder :is(.boxHead, .boxBody, .header-icon, .mo-bench-position-content, .beach-players, .beach-players-facecard) { box-sizing: border-box; }
+#ngMatchorder .boxBody { padding: 5px 10px; }
+#ngMatchorder .boxHead a { text-decoration: none; }
+#ngMatchorder .htbox-left { width: 650px; flex: 0 0 650px; }
+#ngMatchorder .htbox-right { width: 302px; min-width: 0; flex: 1 1 302px; margin-inline-start: 6px; z-index: 2000; }
+#ngMatchorder .htbox-footer { height: 36px; font-size: 14px; }
+#ngMatchorder .mo-field .boxBody { height: 340px; border: 0; background: #40823c; }
+#ngMatchorder .mo-field .boxBody, .mo-positions::before, .sector-ratings::before { background-image: none !important; }
+.ehm-arena { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.ehm-arena img { display: block; width: 650px; height: 340px; }
+.mo-positions .position { transform: rotateX(33deg) translateZ(var(--z)) translateY(var(--y)) translateX(var(--x)); }
+
+// [top, left, depth, vertical correction, horizontal correction], in pixels.
+// The player overlay uses independent coordinates and stays untransformed.
+$normal: ((-4,0,-155,-52,0),(65,-204,-126,-33,-60),(65,-91,-126,-33,-25),(65,0,-126,-33,0),(65,91,-126,-33,25),(65,204,-126,-33,60),(146,-239,-105,-7,-35),(146,-107,-105,-7,-14),(146,0,-105,-7,0),(146,107,-105,-7,14),(146,239,-105,-7,35),(252,-116,-45,0,-4),(252,0,-45,0,0),(252,116,-45,0,4));
+$flipped: ((266,0,-25,5,0),(175,226,-55,3,35),(175,104,-55,3,14),(175,0,-55,3,0),(175,-104,-55,3,-14),(175,-226,-55,3,-35),(90,201,-96,-20,60),(90,92,-96,-20,25),(90,0,-96,-20,0),(90,-92,-96,-20,-25),(90,-201,-96,-20,-60),(16,81,-125,-50,35),(16,0,-125,-50,0),(16,-81,-125,-50,-35));
+$players: ((-6,0),(67,-220),(67,-99),(67,0),(67,99),(67,220),(155,-233),(155,-109),(155,0),(155,109),(155,233),(245,-116),(245,0),(245,116));
+$players-flipped: ((258,0),(175,226),(175,104),(175,0),(175,-104),(175,-226),(90,201),(90,92),(90,0),(90,-92),(90,-201),(16,81),(16,0),(16,-81));
+@mixin positions($slots, $faces) {
+  @for $i from 1 through 14 {
+    $slot: list.nth($slots, $i);
+    .mo-positions .position-#{$i + 99} { top: list.nth($slot, 1) * 1px; left: list.nth($slot, 2) * 1px; --z: #{list.nth($slot, 3)}px; --y: #{list.nth($slot, 4)}px; --x: #{list.nth($slot, 5)}px; }
+    .mo-players .position-#{$i + 99} { top: list.nth(list.nth($faces, $i), 1) * 1px; left: list.nth(list.nth($faces, $i), 2) * 1px; }
+  }
+}
+@include positions($normal, $players);
+.flip-order { @include positions($flipped, $players-flipped); }
+.mo-players .player { width: 84px; height: 74px; }
+.ehm-slot-card { position: relative; width: 81px; height: 74px; cursor: pointer; }
+
+// The transformed drop zones retain their original behaviour hit regions.
+.position-current-behaviour-1 { background-image: linear-gradient(to top, #79a777 20%, #3f7136 20%); }
+.position-current-behaviour-2 { background-image: linear-gradient(#79a777 20%, #3f7136 20%); }
+.position-current-behaviour-3, :is(.position-104, .position-109, .position-113).position-current-behaviour-4 { background-image: linear-gradient(to left, #79a777 20%, #3f7136 20%); }
+.position-current-behaviour-4, :is(.position-105, .position-110).position-current-behaviour-3 { background-image: linear-gradient(to right, #79a777 20%, #3f7136 20%); }
+.position-behaviour:not(.position-behaviour-0) .position-dropzone { transform: rotate(45deg) skew(-14deg, -14deg); }
+.position-behaviour-arrow { position: absolute; pointer-events: none; }
+.position-current-behaviour-1 .position-behaviour-arrow, .position-current-behaviour-2 .position-behaviour-arrow { left: -2px; width: 104px; height: 13px; background: #79a777; clip-path: polygon(0 0, 100% 0, 50% 100%); }
+.position-current-behaviour-1 .position-behaviour-arrow { top: calc(100% + 2px); }
+.position-current-behaviour-2 .position-behaviour-arrow { bottom: calc(100% + 2px); rotate: 180deg; }
+
+.ehm-balance-track { position: relative; width: 28px; flex: 1; margin: 20px 0; }
+.ehm-balance-track::before { content: ''; position: absolute; left: 18px; top: 0; bottom: 0; width: 4px; background: #ffcf00; }
+.ehm-balance-track::after { content: ''; position: absolute; left: 11px; top: 0; bottom: 0; width: 18px; border-block: 2px solid #ffcf00; pointer-events: none; }
+#ngMatchorder .ehm-balance-track input[type='range'] { position: absolute; inset: 0; width: 28px; height: 100%; writing-mode: vertical-lr; direction: rtl; opacity: 0; cursor: pointer; z-index: 2; }
+.ehm-balance-label { position: absolute; left: 6px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; border: 3px solid #ffcf00; border-radius: 50%; background: #fff; color: #000; font-size: 10px; line-height: 22px; text-align: center; pointer-events: none; }
+.ehm-balance-track:focus-within .ehm-balance-label { outline: 2px solid #fff; outline-offset: 2px; }
+.mo-bench-position-content:is(:hover, .hover, .on-drag-hover) { background-color: #ffffff26; }
+.mo-bench-position-description { white-space: nowrap; }
+.scroll-y { scrollbar-width: thin; scrollbar-color: #849d84 #e1e1e1; }
+.flex-half { flex-basis: 50%; box-sizing: border-box; }
+.htbox-table { width: 100%; border-collapse: collapse; }
+.htbox-table :is(th, td) { padding: 4px 6px 4px 0; vertical-align: middle; border: 0; }
+.htbox-table th { font-weight: 700; text-align: left; white-space: nowrap; background: transparent; }
+.mo-sandbox .boxBody { padding: 8px 10px; }
+.player-ratings { display: inline-block; border-radius: 100%; background: #e6e6e6; color: #666; text-align: center; font-size: 9px; font-weight: 700; }
+
+// Glyph mappings from reference sheet 5. Encapsulation keeps icon-* local.
+[class^='icon-'], [class*=' icon-'] { font-family: EhmHattrickIcons !important; font-style: normal; font-weight: 400; line-height: 1; font-variant: normal; text-transform: none; -webkit-font-smoothing: antialiased; }
+.icon-injury::before { content: ""; color: rgb(255, 51, 51); }
+.icon-mother-club::before { content: ""; }
+.icon-speciality-1::before { content: ""; }
+.icon-speciality-2::before { content: ""; }
+.icon-speciality-3::before { content: ""; }
+.icon-speciality-4::before { content: ""; }
+.icon-speciality-5::before { content: ""; }
+.icon-speciality-6::before { content: ""; }
+.icon-mo-players::before { content: ""; }
+.icon-mo-load::before { content: ""; }
+.icon-mo-orders::before { content: ""; }
+.icon-mo-penalties::before { content: ""; }
+.icon-mo-review::before { content: ""; }
+.icon-mo-select::before { content: ""; }
+.icon-exchange::before { content: ""; }
+.icon-trash::before { content: ""; }
+.icon-info::before { content: ""; }
+.icon-new-tab::before { content: ""; }
+.icon-settings::before { content: ""; }
+.icon-undo::before { content: ""; }
+.icon-copy::before { content: ""; }
+.icon-box-settings::before { content: ""; }

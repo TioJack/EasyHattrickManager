@@ -1,0 +1,207 @@
+/* Reference rules selected from the supplied Hattrick capture.
+ * Keep this partial inside the simulator component's emulated encapsulation.
+ * Positional coordinates and compact adaptations live in the importing file.
+ */
+.boxHead { position: relative; background: rgb(121, 167, 119); box-sizing: border-box; color: rgb(255, 255, 255); min-height: 28px; display: flex; align-items: center; overflow: hidden; border-style: solid; border-color: inherit; border-width: 1px 1px 0px; }
+.boxHead .header-icon { width: 28px; background: rgb(38, 127, 48); border-style: solid; border-color: inherit; border-block-width: 1px 0px; border-inline-width: 1px 0px; box-sizing: border-box; color: rgb(255, 255, 255); display: flex; align-self: stretch; align-items: center; justify-content: center; flex-shrink: 0; font-size: 16px; margin-block: -1px 0px; margin-inline: -1px 1px; }
+.boxHead .header-icon i { margin: -1px 0px 0px -1px; }
+.boxHead h2 { position: relative; color: inherit; font-weight: 700; font-size: 14px; line-height: 1; margin: 0px; padding-block: 7px 6px; padding-inline: 9px 12px; border-bottom-width: 0px; }
+.boxHead a { color: inherit; text-decoration: none; }
+.boxHead .header-right { flex-grow: 1; text-align: end; white-space: nowrap; display: flex; justify-content: flex-end; align-items: center; margin-top: -1px; padding-inline-end: 9px; }
+.boxHead .header-right a { display: inline-block; margin-inline-start: 7px; color: rgb(38, 127, 48); text-decoration: none; font-size: 14px; }
+.boxHead .header-right :is(a.disabled, a[disabled]) { opacity: 0.4; cursor: not-allowed; }
+.boxBody { box-sizing: border-box; padding: 8px 11px 1px; border-style: solid; border-color: inherit; border-width: 0px 1px; }
+.flex:not(.hidden):not([hidden]) { display: flex !important; }
+.flex-grow { flex-grow: 1 !important; }
+.flex-center { justify-content: center !important; }
+.flex-right, .flex-end { justify-content: flex-end !important; }
+.flex-space-between { justify-content: space-between !important; }
+.flex-middle { align-items: center !important; }
+.flex-bottom { align-items: flex-end !important; }
+.flex-wrap { flex-wrap: wrap !important; }
+.flex-column { flex-direction: column !important; }
+.htbox-footer { display: flex; align-items: center; justify-content: center; background-color: rgb(121, 167, 119); color: rgb(255, 255, 255); height: 28px; }
+.htbox-footer a { color: rgb(255, 255, 255); }
+.htbox-info { position: absolute; z-index: 9999; box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 5px; border-radius: 3px; top: 5px; right: 10px; font-size: 11px; padding: 5px 10px; max-width: 200px; background-color: rgb(121, 167, 119); color: rgb(255, 255, 255); }
+.htbox-info-hasclose p { padding-inline-end: 15px; }
+.padding { padding: 5px 10px !important; }
+.no-padding { padding: 0px !important; }
+[hidden] { display: none !important; }
+.htbox-content-controls > a { position: relative; width: 30px; height: 18px; }
+.htbox-content-controls.htbox-content-controls-small > a { width: 14px; height: 11px; }
+.htbox-content-controls > a::before { content: " "; position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; opacity: 0; transition: opacity 0.25s ease-in-out; }
+.htbox-content-controls > a.htbox-content-control-selected::before { opacity: 1; }
+.htbox-content-control-pitch { background: url("/assets/lineup/hattrick/media/toggle-players-off-green.png") no-repeat; }
+.htbox-content-control-pitch.htbox-content-control-selected:not([disabled])::before { background: url("/assets/lineup/hattrick/media/toggle-players-on-green.png") no-repeat; }
+.htbox-content-control-ratings { background: url("/assets/lineup/hattrick/media/toggle-ratings-off-green.png") no-repeat; }
+.htbox-content-control-ratings.htbox-content-control-selected:not([disabled])::before { background: url("/assets/lineup/hattrick/media/toggle-ratings-on-green.png") no-repeat; }
+.htbox-content-control-sectors { background: url("/assets/lineup/hattrick/media/toggle-sectors-off-green.png") no-repeat; }
+.htbox-content-control-sectors.htbox-content-control-selected:not([disabled])::before { background: url("/assets/lineup/hattrick/media/toggle-sectors-on-green.png") no-repeat; }
+.htbox-content-control-detailed { background: url("/assets/lineup/hattrick/media/toggle-detailed-off-green.png") no-repeat; }
+.htbox-content-control-detailed.htbox-content-control-selected:not([disabled])::before { background: url("/assets/lineup/hattrick/media/toggle-detailed-on-green.png") no-repeat; }
+.htbox-content-control-smart { background: url("/assets/lineup/hattrick/media/toggle-smart-off-green.png") no-repeat; }
+.htbox-content-control-smart.htbox-content-control-selected:not([disabled])::before { background: url("/assets/lineup/hattrick/media/toggle-smart-on-green.png") no-repeat; }
+.htbox-content-control-compact { background: url("/assets/lineup/hattrick/media/toggle-compact-off-green.png") no-repeat; }
+.htbox-content-control-compact.htbox-content-control-selected:not([disabled])::before { background: url("/assets/lineup/hattrick/media/toggle-compact-on-green.png") no-repeat; }
+.mo-field .position { position: absolute; opacity: 1; transition: opacity 0.25s ease-in-out; width: 100px; height: 60px; margin-left: calc(50% - 52px); }
+.flip-order .mo-field .position { height: 65px; }
+#ngMatchorder:not(.flip-order) .mo-field .position-keeper { height: 50px; }
+#ngMatchorder:not(.flip-order) .mo-field .position-defence { height: 65px; }
+#ngMatchorder:not(.flip-order) .mo-field .position-midfield { height: 65px; }
+#ngMatchorder:not(.flip-order) .mo-field .position-attack { height: 60px; }
+.flip-order .mo-field .position-keeper { height: 45px; }
+.flip-order .mo-field .position-defence { height: 60px; }
+.flip-order .mo-field :is(.position-midfield, .position-attack) { height: 65px; }
+.mo-positions { position: relative; perspective: 600px; opacity: 1; z-index: 1001; transition: opacity 0.25s ease-in-out; }
+.flip-order .mo-positions { perspective: 300px; }
+.mo-players { position: relative; opacity: 1; transition: opacity 0.25s ease-in-out; z-index: 2002; margin-left: calc(50% - 42px); user-select: none; }
+.mo-players .player { position: absolute; outline: 0px; }
+.mo-players .player:hover { z-index: 1005; }
+.position-behaviour { position: absolute; top: 0px; left: 0px; overflow: hidden; pointer-events: none; outline: 0px; }
+.position:hover, .position.hover { z-index: 300; }
+.position-dropzone { position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; pointer-events: auto; }
+#ngMatchorder:not(.ht-is-touch) .position:not(.position-has-player) .position-dropzone:hover, .position-dropzone.hover { background: rgba(182, 252, 182, 0.3); }
+.position-defence .position-behaviour:not(.position-behaviour-0) { width: 100%; padding-bottom: 60%; }
+.position-midfield .position-behaviour:not(.position-behaviour-0) { width: 100%; padding-bottom: 65%; }
+.position-attack .position-behaviour:not(.position-behaviour-0) { width: 100%; padding-bottom: 65%; }
+.position-behaviour { z-index: 20; }
+.position-behaviour.position-behaviour-0 { z-index: 10; width: 100%; height: 100%; }
+.position-keeper .player { top: -10px; }
+.position-defence .position-behaviour-1 .position-dropzone { transform-origin: -11% 91%; border-top-left-radius: 42px; }
+.position-midfield .position-behaviour-1 .position-dropzone { transform-origin: -10% 92%; border-top-left-radius: 42px; }
+:is(.position-101, .position-105) .position-behaviour-2 .position-dropzone { transform-origin: 112% 8%; border-bottom-right-radius: 41px; }
+.position-midfield .position-behaviour-2 .position-dropzone { transform-origin: 111% 8%; border-bottom-right-radius: 42px; }
+.position-attack .position-behaviour-2 .position-dropzone { transform-origin: 112% 8%; border-bottom-right-radius: 43px; }
+:is(.position-102 .position-behaviour-4, .position-105 .position-behaviour-3) .position-dropzone { transform-origin: 4% -59%; border-top-right-radius: 57px; }
+:is(.position-110 .position-behaviour-3, .position-107 .position-behaviour-4, .position-111 .position-behaviour-4) .position-dropzone { transform-origin: 4% -67%; border-top-right-radius: 55px; }
+:is(.position-101 .position-behaviour-3, .position-104 .position-behaviour-4) .position-dropzone { transform-origin: 96% 160%; border-bottom-left-radius: 57px; }
+:is(.position-106 .position-behaviour-3, .position-109 .position-behaviour-4) .position-dropzone { transform-origin: 96% 175%; border-bottom-left-radius: 50px; }
+.position-113 .position-behaviour-4 .position-dropzone { transform-origin: 119% 175%; border-bottom-left-radius: 38px; }
+.training-slot { position: absolute; inset: 1px; border: 3px solid rgb(255, 192, 0); border-radius: 100%; pointer-events: none; }
+.training-slot.training-slot-secondary { inset: 6px; border-color: rgb(255, 228, 150); }
+.training-slot.training-slot-half { border-style: dashed; }
+.training-slot.training-slot-double { border-style: double; border-width: 8px; }
+:is(.mo-player-list, .mo-orders) .boxBody { overflow: visible; outline: 0px; }
+.scroll-y { overflow-y: scroll; }
+:is(.mo-player-list, .mo-orders) .boxBody .scroll-y { height: 549px; }
+.mo-player-list.has-extra-player .boxBody .scroll-y { height: 525px; }
+.mo-list-sorting { text-align: center; padding: 5px 0px 10px; font-size: 14px; display: flex; align-items: center; }
+.mo-list-sorting label { white-space: nowrap; }
+.mo-list-sorting div { flex-grow: 1; }
+.mo-list-sorting select { width: 100%; }
+.mo-list-sorting a { margin: 5px; margin-inline-start: 10px; color: rgb(0, 0, 0); text-decoration: none; }
+.position-captain { position: absolute; top: 0px; right: 0px; }
+.mo-field .boxBody { height: 340px; overflow: visible; background: #40823c; position: relative; outline: 0px; }
+.flip-order .mo-field .boxBody { background: #40823c; }
+#ngMatchorder select { border-radius: 4px; height: 22px; background-color: rgb(255, 255, 255); border-width: 1px; }
+.mo-field .htbox-footer > * { height: 100%; flex-grow: 1; display: flex; justify-content: center; align-items: center; }
+.mo-field .htbox-footer .mo-formation { flex-direction: column; min-width: 90px; padding: 0px 5px; background-color: rgb(38, 127, 48); flex-grow: 0; position: relative; }
+.mo-field .htbox-footer .mo-formation-numbers { letter-spacing: 4px; font-size: 15px; font-weight: 700; }
+.mo-field-rating-predicitons-holder { background-color: rgb(63, 113, 54); color: rgb(255, 255, 255); position: absolute; right: 5px; bottom: 5px; font-size: 10px; z-index: 1100; text-align: center; height: 79px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1px 5px; width: 120px; margin: 0px 1px; }
+.flip-order .mo-field-rating-predicitons-holder { bottom: auto; top: 2px; }
+.mo-field-rating-predicitons { position: relative; display: flex; flex-wrap: wrap; align-items: stretch; justify-content: center; width: 100%; padding-bottom: 2px; color: rgb(238, 255, 238); }
+.mo-field-rating-predicitons::before { content: " "; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: url("/assets/lineup/hattrick/media/prediction-lines.png") center top; opacity: 0.2; }
+.flip-order .mo-field-rating-predicitons { bottom: auto; flex-flow: row-reverse wrap-reverse; padding-top: 2px; padding-bottom: 0px; margin-bottom: 2px; }
+.flip-order .mo-field-rating-predicitons::before { background: url("/assets/lineup/hattrick/media/prediction-lines-flipped.png") center bottom no-repeat; }
+.mo-field-rating-predicitons > div { margin: 1px; flex-basis: calc(33.333% - 2px); display: flex; flex-direction: column; align-items: center; justify-content: center; height: 18px; }
+.mo-field-rating-predicitons > div:nth-child(4) { flex-basis: 100%; }
+.mo-field-rating-predicitons-tactic { white-space: nowrap; }
+.mo-field-rating-predicitons-controls { position: absolute; bottom: 100%; right: 0px; background-color: rgb(63, 113, 54); padding: 1px 5px 0px 1px; flex-direction: row-reverse; }
+.flip-order .mo-field-rating-predicitons-controls { bottom: auto; top: 0px; right: 100%; padding: 1px 0px 2px 1px; flex-direction: column; }
+.mo-field-rating-predicitons-controls a { color: rgb(238, 255, 238); border: 1px solid rgb(101, 141, 94); display: flex; justify-content: center; align-items: center; width: 24px; height: 14px; cursor: pointer; text-decoration: none; margin: 1px; }
+.mo-field-rating-predicitons-controls a[disabled] { color: rgb(118, 140, 115); border-color: rgb(118, 140, 115); cursor: default; }
+.mo-bench .boxHead { min-height: 26px; align-items: center; }
+.mo-bench .boxHead h2 { flex-grow: 1; text-align: center; padding: 0px; }
+.mo-bench .boxHead .header-right { flex-grow: 0; }
+#ngMatchorder .mo-bench .boxBody { overflow: visible; padding-top: 0px; background-color: rgb(64, 130, 60); }
+.mo-bench .htbox-info { max-width: 500px; }
+.mo-bench-position { margin: 5px 0px; width: 83px; }
+.mo-bench-position-content { position: relative; width: 83px; height: 80px; box-sizing: border-box; border: 1px solid rgb(121, 167, 119); }
+.mo-bench-position-has-player { border-width: 0px; }
+.mo-bench-position-content .beach-players-facecard { width: 77px; height: 73px; }
+.position-200 .mo-bench-position-content { background: url("/assets/lineup/hattrick/media/sub-200-green.png") center 33px no-repeat; }
+.position-201 .mo-bench-position-content { background: url("/assets/lineup/hattrick/media/sub-201-green.png") center 33px no-repeat; }
+.position-202 .mo-bench-position-content { background: url("/assets/lineup/hattrick/media/sub-202-green.png") center 33px no-repeat; }
+.position-203 .mo-bench-position-content { background: url("/assets/lineup/hattrick/media/sub-203-green.png") center 33px no-repeat; }
+.position-204 .mo-bench-position-content { background: url("/assets/lineup/hattrick/media/sub-204-green.png") center 33px no-repeat; }
+.position-205 .mo-bench-position-content { background: url("/assets/lineup/hattrick/media/sub-205-green.png") center 33px no-repeat; }
+.position-206 .mo-bench-position-content { background: url("/assets/lineup/hattrick/media/sub-206-green.png") center 33px no-repeat; }
+.mo-bench-position.mo-bench-position-hasplayer .mo-bench-position-content { background-image: none !important; }
+.mo-bench-position-content-small { height: 24px; padding: 2px 0px; }
+.mo-bench-position-hasplayer .mo-bench-position-content-small { padding: 0px; }
+.mo-bench-position-number { display: flex; justify-content: center; align-items: center; font-size: 11px; background-color: rgb(121, 167, 119); color: rgb(64, 130, 60); border-radius: 100%; width: 16px; height: 16px; text-align: center; font-weight: 700; }
+:is(.position-200, .position-201, .position-202, .position-203, .position-204, .position-205, .position-206) .mo-bench-position-number { margin-top: -44px; }
+.mo-bench .mo-bench-position-description { color: rgb(121, 167, 119); font-size: 11px; font-weight: 700; text-align: center; word-break: break-word; }
+.coachmodifier-holder { position: absolute; top: 5px; bottom: 5px; left: 5px; display: flex; flex-direction: column; z-index: 1100; }
+.flip-order .coachmodifier-holder { flex-direction: column-reverse; }
+.coachmodifier-label { font-size: 11px; background-color: rgba(255, 255, 255, 0.6); border-radius: 3px; padding: 2px 5px; text-transform: capitalize; }
+.mo-positions .position { position: absolute; border: 2px solid rgb(121, 167, 119); background-clip: padding-box; background-color: rgb(63, 113, 54); outline: transparent solid 1px; }
+.beach-players-category-separator { text-align: center; margin-top: 10px; color: rgb(102, 102, 102); margin-bottom: 3px; font-size: 11px; }
+.mo-player-list li:first-child .beach-players-category-separator { margin-top: 0px; }
+.beach-players { width: 100%; background-color: rgb(255, 255, 255); color: rgb(67, 67, 67); box-sizing: border-box; position: relative; outline: 0px; text-decoration: none; }
+.mo-bench .player, .mo-bench-position { outline: 0px; }
+:is(.mo-players, .mo-bench) .beach-players { background-color: transparent; border-color: transparent; }
+.beach-players.beach-players-on-bench { background-color: rgb(204, 204, 204); color: rgb(67, 67, 67); border: 3px solid rgb(204, 204, 204); }
+.mo-bench .beach-players.beach-players-on-bench { background-color: transparent; border-color: transparent; border-width: 2px; }
+.mo-bench .beach-players.bench-players-name-only { border-bottom-width: 0px !important; }
+.beach-players.beach-players-on-field { background-color: gray; color: rgb(255, 255, 255); border: 3px solid rgb(128, 128, 128); }
+.mo-players .beach-players { border: 1px solid transparent; padding: 2px; }
+.players-list li { margin-bottom: 3px; line-height: 1.4em; }
+.beach-players-facecard { box-sizing: border-box; position: relative; width: 81px; height: 74px; color: rgb(255, 255, 255); outline: 0px; }
+.players-list .beach-players-on-bench .beach-players-facecard { color: rgb(67, 67, 67); }
+.players-list .beach-players-facecard { padding-inline-end: 3px; }
+.beach-players.beach-players-collapsed { font-size: 12px; }
+.beach-players-facecard:hover { z-index: 20; }
+.beach-players-facecard ht-avatar { width: 41px; height: 56px; }
+.beach-players-facecard-top { margin-bottom: 3px; }
+.beach-players-facecard-left { width: 15px; padding-inline-start: 3px; margin-top: 3px; }
+.beach-players-facecard-number { text-align: center; margin-top: -2px; margin-inline-start: -2px; margin-bottom: -100%; }
+.beach-players-form { display: inline-block; width: 8px; height: 8px; border-radius: 100%; background: rgb(238, 238, 238); margin-bottom: 2px; position: relative; }
+.beach-players-forms { margin-inline-start: 2px; }
+.beach-players-facecard-right { width: 22px; text-align: center; margin-top: 2px; }
+.beach-players-staminas { margin-top: 1px; }
+.beach-players-stamina { display: inline-block; background-color: rgb(238, 238, 238); width: 16px; height: 2px; margin-bottom: 2px; }
+.beach-players-specialty { margin-inline-start: 1px; }
+:is(.beach-players-specialty, .beach-players-collapsed-specialty) i { color: inherit; font-size: 14px; }
+.beach-players-facecard-name { text-align: center; font-size: 13px; white-space: nowrap; overflow: hidden; line-height: 1; }
+.beach-players-collapsed { font-size: 11px; margin-bottom: -1px; border-style: solid; border-color: rgb(204, 204, 204); border-image: none; border-width: 1px !important; }
+.beach-players-on-field .beach-players-collapsed { background-color: gray; border-color: gray; }
+.beach-players-collapsed-holder { padding-inline-start: 5px; height: 22px; }
+.beach-players-collapsed-specialty { width: 20px; }
+.beach-players-collapsed-stats { margin-inline-end: 5px; }
+.beach-players-collapsed-stats > * { margin-inline-end: 2px; }
+.beach-players-collapsed-form { display: flex; flex-direction: row-reverse; align-items: center; margin-inline-start: 5px; }
+.beach-players-collapsed-form .beach-players-form { margin: 0px; margin-inline-end: 3px; }
+.mo-all-skilltable td:last-child { width: 1px; text-align: right; }
+.beach-players-right { width: 21px; justify-content: center; text-align: center; padding: 2px 0px; }
+.beach-players-right .side-icon { margin-bottom: 2px; }
+.players-list .beach-players.has-training { border-inline-start: 3px solid rgb(0, 204, 255) !important; }
+.players-list .beach-players.has-training-half { border-inline-start: 3px dashed rgb(0, 204, 255) !important; }
+.players-list .beach-players.has-training-halfspeed { border-inline-start: 3px dashed rgb(255, 192, 0) !important; }
+.players-list .beach-players.has-training-fullspeed { border-inline-start: 3px solid rgb(255, 192, 0) !important; }
+.mo-field-training-mode-toggle { position: absolute; top: 5px; right: 0px; display: flex; flex-direction: column; }
+.flip-order .mo-field-training-mode-toggle { top: auto; bottom: 10px; flex-direction: column-reverse; }
+.mo-field-training-mode-toggle .htbox-info { position: relative; margin-bottom: 5px; background-color: rgba(255, 255, 255, 0.6); color: rgb(0, 0, 0); box-shadow: none; display: flex; align-items: center; height: 10px; line-height: 10px; }
+.mo-field-training-mode-indicator { display: block; width: 8px; height: 8px; border: 3px solid rgb(255, 192, 0); border-radius: 100%; margin-inline: 3px 4px; }
+.mo-field-training-mode-indicator-secondary { border-color: rgb(255, 228, 150); }
+.htbox-warning { background-color: rgb(255, 224, 102) !important; color: rgb(0, 0, 0) !important; }
+.htbox-highlight { background-color: rgb(51, 107, 49) !important; color: rgb(255, 255, 255) !important; }
+#ngMatchorder :is(.mo-player-list, .focused-player, .focused-player-details) .player-ratings { width: 18px; height: 18px; line-height: 18px; }
+#ngMatchorder :is(.mo-player-list, .focused-player, .focused-player-details) .player-ratings .stars .stars-full { font-size: 10px; }
+#ngMatchorder :is(.mo-player-list, .focused-player, .focused-player-details) .player-ratings .stars .stars-half { font-size: 7px; }
+.mo-sandbox .matchinfo-weather { padding: 5px 2px; border: 2px solid transparent; border-radius: 4px; margin-inline-end: 3px; }
+.mo-sandbox .matchinfo-weather.weather-selected { border-color: rgb(0, 0, 0); }
+.mo-sandbox select { margin-inline-end: 5px; }
+.beach-players-open-in-new-tab { text-decoration: none; color: inherit; }
+.beach-players-open-in-new-tab:hover { color: inherit; }
+.beach-players.beach-players-collapsed .beach-players-open-in-new-tab { display: none; margin-inline-end: 3px; }
+
+/* Shared mark colours preserve both full dots and the original two-tone half dot. */
+:is(.form-veryhigh, .stamina-veryhigh) { --ht-mark: #63cf31; }
+:is(.form-high, .stamina-high) { --ht-mark: #f1c40a; }
+:is(.form-low, .stamina-low) { --ht-mark: #f5a104; }
+:is(.form-verylow, .stamina-verylow) { --ht-mark: #dd4140; }
+.form-veryhigh { --ht-half: #59965d; }
+.beach-players-forms .form-full, .beach-players-staminas .stamina-full { background: var(--ht-mark); }
+.beach-players-forms .form-half { background: linear-gradient(to top, var(--ht-mark), var(--ht-half, var(--ht-mark)) 50%, #eee 50%, #eee 100%) padding-box; }
+

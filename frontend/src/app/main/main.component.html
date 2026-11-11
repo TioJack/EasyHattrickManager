@@ -1,4 +1,4 @@
-<main class="flex-grow-1 d-flex flex-column justify-content-center align-items-center text-center">
+<main class="flex-grow-1 d-flex flex-column justify-content-center align-items-center text-center" [class.lineup-simulator-main]="viewMode === 'lineup-simulator'">
   <div *ngIf="viewMode === 'players'; else nonPlayersView">
     <div class="row g-3 p-3 align-items-stretch">
       <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-4 d-flex">
@@ -17,6 +17,10 @@
   </div>
 
   <ng-template #nonPlayersView>
+    <ng-container *ngIf="viewMode === 'lineup-simulator'; else plannerOrViewerView">
+      <app-lineup-simulator [players]="simulatorPlayers" [planner]="simulatorPlanner" [trainingType]="training?.trainingType ?? 4" [storageKey]="simulatorStorageKey"></app-lineup-simulator>
+    </ng-container>
+    <ng-template #plannerOrViewerView>
     <ng-container *ngIf="viewMode === 'training-planner'; else viewerView">
     <div class="planner-overlay-root" [attr.aria-busy]="isTeamTrainingLoading">
       <fieldset class="planner-busy-fieldset">
@@ -683,6 +687,7 @@
       </div>
     </div>
     </ng-container>
+    </ng-template>
   </ng-template>
 
   <ng-template #viewerView>

@@ -8,7 +8,9 @@ import {
   TeamTrainingFollowUpResponse,
   TeamTrainingProgressResponse,
   TeamTrainingRequest,
-  TeamTrainingResponse
+  TeamTrainingResponse,
+  LineupRatingRequest,
+  Ratings
 } from './model/team-training';
 
 @Injectable({
@@ -107,6 +109,10 @@ export class DataService {
 
   teamTrainingFollowUp(request: TeamTrainingFollowUpRequest): Observable<TeamTrainingFollowUpResponse> {
     return this.http.post<TeamTrainingFollowUpResponse>(`${this.apiUrl}/teamTraining/followUp`, request);
+  }
+
+  rateLineup(request: LineupRatingRequest): Observable<Ratings> {
+    return this.http.post<Ratings>(`${this.apiUrl}/lineup/rating`, request);
   }
 
 }
