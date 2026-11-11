@@ -116,7 +116,7 @@ public class UpdateService {
                 if (playerData.getAge() > 16) {
                     playerDatas.add(playerData);
                 }
-                PlayerDetails33 playerDetails33 = hattrickService.getPlayerDetails33(playerHT.getPlayerId());
+                PlayerDetails33 playerDetails33 = hattrickService.getPlayerDetails33(teamId, playerHT.getPlayerId());
                 playerTransferDAO.insert(getPlayerTransfer(playerDetails33, seasonWeek));
             });
         playerDatas.forEach(playerDataDAO::insert);

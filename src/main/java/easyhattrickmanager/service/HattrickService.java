@@ -80,8 +80,8 @@ public class HattrickService {
         return this.hattrickClient.getPlayerDetails(getAccessTokenByTeamId(DEFAULT_TEAM_ID), playerId);
     }
 
-    public PlayerDetails33 getPlayerDetails33(int playerId) {
-        return this.hattrickClient.getPlayerDetails33(getAccessTokenByTeamId(DEFAULT_TEAM_ID), playerId);
+    public PlayerDetails33 getPlayerDetails33(int teamId, int playerId) {
+        return this.hattrickClient.getPlayerDetails33(getAccessTokenByTeamId(teamId), playerId);
     }
 
     public Avatars getAvatarsTDT(int teamId) {
