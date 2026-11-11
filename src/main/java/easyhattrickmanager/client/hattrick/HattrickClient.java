@@ -18,6 +18,7 @@ import easyhattrickmanager.client.hattrick.model.matchdetail.MatchDetail;
 import easyhattrickmanager.client.hattrick.model.matchesarchive.MatchesArchive;
 import easyhattrickmanager.client.hattrick.model.matchlineup.MatchLineup;
 import easyhattrickmanager.client.hattrick.model.playerdetails.PlayerDetails;
+import easyhattrickmanager.client.hattrick.model.playerdetails33.PlayerDetails33;
 import easyhattrickmanager.client.hattrick.model.players.Players;
 import easyhattrickmanager.client.hattrick.model.staffavatars.StaffAvatars;
 import easyhattrickmanager.client.hattrick.model.stafflist.Stafflist;
@@ -167,6 +168,16 @@ public class HattrickClient {
             String xml = this.getXML(accessToken, "playerdetails&version=3.1&playerID=" + playerID);
             PlayerDetails playerDetails = XMLMAPPER.readValue(xml, PlayerDetails.class);
             return playerDetails;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public PlayerDetails33 getPlayerDetails33(OAuth1AccessToken accessToken, int playerID) {
+        try {
+            String xml = this.getXML(accessToken, "playerdetails&version=3.3&playerID=" + playerID);
+            PlayerDetails33 playerDetails33 = XMLMAPPER.readValue(xml, PlayerDetails33.class);
+            return playerDetails33;
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e.getMessage());
         }

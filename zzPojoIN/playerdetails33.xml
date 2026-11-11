@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HattrickData>
+  <FileName>playerdetails.xml</FileName>
+  <Version>3.3</Version>
+  <UserID>4495104</UserID>
+  <FetchedDate>2026-11-11 10:24:10</FetchedDate>
+  <UserSupporterTier>platinum</UserSupporterTier>
+  <IsPlayingMatch>False</IsPlayingMatch>
+  <Player>
+    <PlayerID>488172024</PlayerID>
+    <FirstName>Fernán</FirstName>
+    <NickName></NickName>
+    <LastName>Gauca</LastName>
+    <PlayerNumber>1</PlayerNumber>
+    <PlayerCategoryID>0</PlayerCategoryID>
+    <OwnerNotes></OwnerNotes>
+    <Age>23</Age>
+    <AgeDays>70</AgeDays>
+    <NextBirthDay>2026-12-23 00:00:00</NextBirthDay>
+    <GenderID>1</GenderID>
+    <ArrivalDate>2024-11-02 15:50:00</ArrivalDate>
+    <PlayerForm>6</PlayerForm>
+    <Cards>0</Cards>
+    <InjuryLevel>-1</InjuryLevel>
+    <Statement></Statement>
+    <PlayerLanguage>Español, España</PlayerLanguage>
+    <PlayerLanguageID>6</PlayerLanguageID>
+    <TrainerData />
+    <OwningTeam>
+      <TeamID>1333746</TeamID>
+      <TeamName>Com jugam!!!</TeamName>
+      <LeagueID>36</LeagueID>
+    </OwningTeam>
+    <Salary>330700</Salary>
+    <IsAbroad>False</IsAbroad>
+    <Agreeability>3</Agreeability>
+    <Aggressiveness>2</Aggressiveness>
+    <Honesty>2</Honesty>
+    <Experience>4</Experience>
+    <Loyalty>20</Loyalty>
+    <MotherClubBonus>False</MotherClubBonus>
+    <MotherClub>
+      <TeamID>1437719</TeamID>
+      <TeamName>afra2</TeamName>
+    </MotherClub>
+    <Leadership>7</Leadership>
+    <Specialty>2</Specialty>
+    <NativeCountryID>35</NativeCountryID>
+    <NativeLeagueID>36</NativeLeagueID>
+    <NativeLeagueName>España</NativeLeagueName>
+    <TSI>246540</TSI>
+    <PlayerSkills>
+      <StaminaSkill>7</StaminaSkill>
+      <KeeperSkill>1</KeeperSkill>
+      <PlaymakerSkill>14</PlaymakerSkill>
+      <ScorerSkill>5</ScorerSkill>
+      <PassingSkill>5</PassingSkill>
+      <WingerSkill>17</WingerSkill>
+      <DefenderSkill>6</DefenderSkill>
+      <SetPiecesSkill>2</SetPiecesSkill>
+    </PlayerSkills>
+    <Caps>0</Caps>
+    <CapsU20>0</CapsU20>
+    <CareerGoals>19</CareerGoals>
+    <CareerHattricks>0</CareerHattricks>
+    <LeagueGoals>0</LeagueGoals>
+    <CupGoals>0</CupGoals>
+    <FriendliesGoals>0</FriendliesGoals>
+    <MatchesCurrentTeam>110</MatchesCurrentTeam>
+    <GoalsCurrentTeam>19</GoalsCurrentTeam>
+    <AssistsCurrentTeam>18</AssistsCurrentTeam>
+    <CareerAssists>18</CareerAssists>
+    <TransferListed>False</TransferListed>
+    <TransferDetails />
+    <TransferCompareAverage>68632715</TransferCompareAverage>
+    <TransferCompareAverageDate>2026-09-25 13:31:00</TransferCompareAverageDate>
+    <FamilyRelation />
+    <TrophyList>
+      <Trophy>
+        <TrophyTypeId>17</TrophyTypeId>
+        <TeamId>1333746</TeamId>
+        <TeamName>Com jugam!!!</TeamName>
+        <TrophySeason>83</TrophySeason>
+        <LeagueLevel>6</LeagueLevel>
+        <LeagueLevelUnitId>14585</LeagueLevelUnitId>
+        <LeagueLevelUnitName>VI.267</LeagueLevelUnitName>
+        <GainedDate>2026-10-31 01:08:00</GainedDate>
+      </Trophy>
+      <Trophy>
+        <TrophyTypeId>17</TrophyTypeId>
+        <TeamId>1333746</TeamId>
+        <TeamName>Com jugam!!!</TeamName>
+        <TrophySeason>82</TrophySeason>
+        <LeagueLevel>7</LeagueLevel>
+        <LeagueLevelUnitId>38874</LeagueLevelUnitId>
+        <LeagueLevelUnitName>VII.838</LeagueLevelUnitName>
+        <GainedDate>2026-07-11 01:23:00</GainedDate>
+      </Trophy>
+      <Trophy>
+        <TrophyTypeId>17</TrophyTypeId>
+        <TeamId>1333746</TeamId>
+        <TeamName>Com jugam!!!</TeamName>
+        <TrophySeason>81</TrophySeason>
+        <LeagueLevel>8</LeagueLevel>
+        <LeagueLevelUnitId>54800</LeagueLevelUnitId>
+        <LeagueLevelUnitName>VIII.999</LeagueLevelUnitName>
+        <GainedDate>2026-03-21 01:07:00</GainedDate>
+      </Trophy>
+    </TrophyList>
+  </Player>
+</HattrickData>

@@ -123,6 +123,14 @@ CREATE TABLE IF NOT EXISTS `player_data` (
     KEY `idx_player_data_team_week_id` (`team_id`, `season_week`, `id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS `player_transfer` (
+    id INT NOT NULL,
+    season_week VARCHAR(7) NOT NULL,
+    `value` INT NOT NULL,
+    `date` DATETIME NOT NULL,
+    PRIMARY KEY (`id`, `season_week`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE IF NOT EXISTS `player_subskill` (
     id INT NOT NULL,
     season_week VARCHAR(7) NOT NULL,

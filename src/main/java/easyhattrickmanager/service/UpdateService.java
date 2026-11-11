@@ -9,6 +9,7 @@ import easyhattrickmanager.client.hattrick.model.avatars.Avatar;
 import easyhattrickmanager.client.hattrick.model.avatars.Avatars;
 import easyhattrickmanager.client.hattrick.model.avatars.Layer;
 import easyhattrickmanager.client.hattrick.model.playerdetails.PlayerDetails;
+import easyhattrickmanager.client.hattrick.model.playerdetails33.PlayerDetails33;
 import easyhattrickmanager.client.hattrick.model.players.Players;
 import easyhattrickmanager.client.hattrick.model.staffavatars.StaffAvatars;
 import easyhattrickmanager.client.hattrick.model.stafflist.Staff;
@@ -23,6 +24,7 @@ import easyhattrickmanager.repository.PlayerDataDAO;
 import easyhattrickmanager.repository.PlayerFormDAO;
 import easyhattrickmanager.repository.PlayerSubSkillDAO;
 import easyhattrickmanager.repository.PlayerTrainingDAO;
+import easyhattrickmanager.repository.PlayerTransferDAO;
 import easyhattrickmanager.repository.StaffMemberDAO;
 import easyhattrickmanager.repository.TeamDAO;
 import easyhattrickmanager.repository.TrainerDAO;
@@ -35,6 +37,7 @@ import easyhattrickmanager.repository.model.PlayerData;
 import easyhattrickmanager.repository.model.PlayerForm;
 import easyhattrickmanager.repository.model.PlayerSubSkill;
 import easyhattrickmanager.repository.model.PlayerTraining;
+import easyhattrickmanager.repository.model.PlayerTransfer;
 import easyhattrickmanager.repository.model.StaffMember;
 import easyhattrickmanager.repository.model.Team;
 import easyhattrickmanager.repository.model.Trainer;
@@ -69,6 +72,7 @@ public class UpdateService {
     private final PlayerDataDAO playerDataDAO;
     private final PlayerTrainingDAO playerTrainingDAO;
     private final PlayerFormDAO playerFormDAO;
+    private final PlayerTransferDAO playerTransferDAO;
     private final PlayerSubSkillDAO playerSubSkillDAO;
     private final TrainingDAO trainingDAO;
     private final TrainerDAO trainerDAO;
@@ -112,6 +116,8 @@ public class UpdateService {
                 if (playerData.getAge() > 16) {
                     playerDatas.add(playerData);
                 }
+                PlayerDetails33 playerDetails33 = hattrickService.getPlayerDetails33(playerHT.getPlayerId());
+                playerTransferDAO.insert(getPlayerTransfer(playerDetails33, seasonWeek));
             });
         playerDatas.forEach(playerDataDAO::insert);
         Training training = getTraining(hattrickService.getTraining(teamId), seasonWeek);
@@ -135,9 +141,9 @@ public class UpdateService {
 
     private int getAssistantsLevel(Stafflist staff) {
         return isEmpty(staff.getStaffList().getStaffs()) ? 0 : staff.getStaffList().getStaffs().stream()
-                                                               .filter(stf -> stf.getStaffType() == 1)
-                                                               .map(Staff::getStaffLevel)
-                                                               .reduce(0, Integer::sum);
+            .filter(stf -> stf.getStaffType() == 1)
+            .map(Staff::getStaffLevel)
+            .reduce(0, Integer::sum);
     }
 
     public int getActualWeek(int teamId) {
@@ -186,6 +192,15 @@ public class UpdateService {
             .specialty(playerHT.getSpecialty())
             .countryId(playerHT.getCountryId())
             .genderId(playerHT.getGenderId())
+            .build();
+    }
+
+    private PlayerTransfer getPlayerTransfer(PlayerDetails33 playerDetails33, String seasonWeek) {
+        return PlayerTransfer.builder()
+            .id(playerDetails33.getPlayer().getPlayerId())
+            .seasonWeek(seasonWeek)
+            .value(playerDetails33.getPlayer().getTransferCompareAverage())
+            .date(playerDetails33.getPlayer().getTransferCompareAverageDate())
             .build();
     }
 
