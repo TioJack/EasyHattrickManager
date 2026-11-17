@@ -2,6 +2,7 @@ package easyhattrickmanager.controller;
 
 import easyhattrickmanager.controller.model.DataResponse;
 import easyhattrickmanager.controller.model.PlayerDataResponse;
+import easyhattrickmanager.service.CustomPlayerService;
 import easyhattrickmanager.service.DataService;
 import easyhattrickmanager.service.PlayerDataService;
 import easyhattrickmanager.service.TeamTrainingFollowUpService;
@@ -9,6 +10,7 @@ import easyhattrickmanager.service.TeamTrainingService;
 import easyhattrickmanager.service.UpdateService;
 import easyhattrickmanager.service.model.dataresponse.CurrencyInfo;
 import easyhattrickmanager.service.model.dataresponse.LanguageInfo;
+import easyhattrickmanager.service.model.dataresponse.PlayerInfo;
 import easyhattrickmanager.service.model.dataresponse.UserConfig;
 import easyhattrickmanager.service.model.teamtraining.TeamTrainingProgressResponse;
 import easyhattrickmanager.service.model.teamtraining.TeamTrainingRequest;
@@ -17,6 +19,7 @@ import easyhattrickmanager.service.model.teamtrainingfollowup.TeamTrainingFollow
 import easyhattrickmanager.service.model.teamtrainingfollowup.TeamTrainingFollowUpResponse;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @AllArgsConstructor
 @RestController
@@ -36,6 +40,7 @@ public class DataController {
     private final PlayerDataService playerDataService;
     private final TeamTrainingService teamTrainingService;
     private final TeamTrainingFollowUpService teamTrainingFollowUpService;
+    private final CustomPlayerService customPlayerService;
 
     @GetMapping
     public ResponseEntity<DataResponse> getData() {
@@ -80,6 +85,15 @@ public class DataController {
     @PostMapping("/teamTraining")
     public TeamTrainingResponse teamTraining(@RequestBody TeamTrainingRequest teamTrainingRequest) {
         return this.teamTrainingService.getTeamTraining(teamTrainingRequest);
+    }
+
+    @PostMapping("/custom-player/calculate")
+    public PlayerInfo calculateCustomPlayer(@RequestBody PlayerInfo player) {
+        try {
+            return customPlayerService.calculate(player);
+        } catch (IllegalArgumentException exception) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
+        }
     }
 
     @PostMapping("/teamTraining/progress")

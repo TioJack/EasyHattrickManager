@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProjectTrainingPlannerInfo {
 
+    List<PlayerInfo> customPlayers;
     Integer iniSeason;
     Integer iniWeek;
     PlayerFilterInfo filter;

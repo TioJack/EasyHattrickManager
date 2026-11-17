@@ -219,7 +219,11 @@
         </div>
       </div>
 
-      <div class="col-12">
+      <div class="col-12 d-flex gap-2">
+        <button type="button" class="btn btn-outline-primary planner-add-player" (click)="addCustomPlayer()"
+                [attr.aria-label]="'ehm.add-custom-player' | translate" [attr.title]="'ehm.add-custom-player' | translate">
+          <i class="bi bi-person-add" aria-hidden="true"></i>
+        </button>
         <button
           type="button"
           class="planner-toggle"
@@ -235,11 +239,14 @@
         </button>
       </div>
 
-      <ng-container *ngIf="showPlannerPlayers">
-        <div *ngFor="let player of players; trackBy: trackByPlayerId" class="col-12">
+      <ng-container>
+        <div *ngFor="let player of players; trackBy: trackByPlayerId" class="col-12" [hidden]="!showPlannerPlayers" [id]="'planner-player-' + player.id">
           <div class="planner-row align-items-stretch">
             <div class="planner-side d-flex">
-              <app-player-card-compact class="flex-fill w-100" [player]="player"></app-player-card-compact>
+              <app-player-card-compact class="flex-fill w-100" [player]="player"
+                [editable]="player.id < 0" [editing]="editingCustomPlayerIds.has(player.id)"
+                (editRequested)="editCustomPlayer(player.id)" (playerSave)="saveCustomPlayer($event)"
+                (deleteRequested)="deleteCustomPlayer(player.id)"></app-player-card-compact>
             </div>
             <div class="planner-center d-flex">
                 <div class="card flex-fill w-100">

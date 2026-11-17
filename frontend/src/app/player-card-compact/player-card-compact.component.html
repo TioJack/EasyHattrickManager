@@ -1,8 +1,73 @@
-<div class="card h-100 w-100" *ngIf="player">
+<div class="card h-100 w-100" *ngIf="player" [class.custom-player-card]="player.id < 0">
   <div class="card-body p-2">
+    <form *ngIf="editing && draft; else playerDetails" #playerForm="ngForm" (ngSubmit)="savePlayer(playerForm)" class="custom-player-editor text-start">
+      <div class="d-flex align-items-center justify-content-between gap-1 mb-2">
+        <span class="small text-muted">{{ 'ehm.custom-player' | translate | firstCapitalize }}</span>
+        <div class="player-card-actions d-flex gap-1">
+          <button class="btn btn-sm btn-outline-primary player-edit-button" type="submit" [disabled]="isSavingPlayer"
+                  [attr.aria-label]="'ehm.save-player' | translate" [attr.title]="'ehm.save-player' | translate">
+            <i class="bi bi-floppy" aria-hidden="true"></i>
+          </button>
+          <button *ngIf="editable" class="btn btn-sm btn-outline-danger player-edit-button" type="button"
+                  (click)="deleteRequested.emit()" [attr.aria-label]="'ehm.delete-player' | translate" [attr.title]="'ehm.delete-player' | translate">
+            <i class="bi bi-trash" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+      <fieldset [disabled]="isSavingPlayer">
+        <label class="player-editor-inline mb-1">
+          <span>{{ 'ehm.name' | translate | firstCapitalize }}</span>
+          <input class="form-control form-control-sm" name="name" [(ngModel)]="draft.firstName" required pattern=".*\S.*" maxlength="160">
+        </label>
+        <div class="player-editor-age mb-1">
+          <label>
+            <span>{{ 'ehm.years' | translate | firstCapitalize }}</span>
+            <input class="form-control form-control-sm" name="age" type="number" [(ngModel)]="draft.age" min="17" max="44" step="1" required pattern="[0-9]+">
+          </label>
+          <label>
+            <span>{{ 'ehm.days' | translate | firstCapitalize }}</span>
+            <input class="form-control form-control-sm" name="ageDays" type="number" [(ngModel)]="draft.ageDays" min="0" max="111" step="1" required pattern="[0-9]+">
+          </label>
+        </div>
+        <label class="player-editor-inline mb-1">
+          <span>{{ 'ht.specialty' | translate }}</span>
+          <select class="form-select form-select-sm" name="specialty" [(ngModel)]="draft.specialty">
+            <option *ngFor="let specialty of specialtyOptions" [ngValue]="specialty">{{ 'ht.specialty-' + specialty | translate }}</option>
+          </select>
+        </label>
+        <label *ngFor="let field of skillFields" class="player-editor-field mb-1">
+          <span>{{ field.label | translate }}</span>
+          <input class="form-control form-control-sm" [name]="field.key" [attr.name]="field.key" type="number" [(ngModel)]="draftSkills[field.key]" min="0" [max]="field.max" step="0.01" required>
+        </label>
+        <label class="player-editor-field mb-1">
+          <span>{{ 'ht.skill-form' | translate }}</span>
+          <input class="form-control form-control-sm" name="form" type="number" [(ngModel)]="draft.playerForm" min="0" max="8" step="1" required pattern="[0-9]+">
+        </label>
+        <label class="player-editor-field mb-1">
+          <span>{{ 'ht.skill-experience' | translate }}</span>
+          <input class="form-control form-control-sm" name="experience" type="number" [(ngModel)]="draft.experience" min="0" max="30" step="1" required pattern="[0-9]+">
+        </label>
+        <label class="player-editor-field mb-1">
+          <span>{{ 'ehm.loyalty' | translate | firstCapitalize }}</span>
+          <input class="form-control form-control-sm" name="loyalty" type="number" [(ngModel)]="draft.loyalty" min="0" max="20" step="1" required pattern="[0-9]+">
+        </label>
+        <label class="d-flex align-items-center gap-2 mt-2">
+          <input class="form-check-input m-0" name="motherClubBonus" type="checkbox" [(ngModel)]="draft.motherClubBonus">
+          <span>{{ 'ehm.mother-club-bonus' | translate | firstCapitalize }}</span>
+        </label>
+        <label class="player-editor-field mb-1">
+          <span>{{ 'ehm.shirt-number' | translate | firstCapitalize }}</span>
+          <input class="form-control form-control-sm" name="playerNumber" type="number" [(ngModel)]="draft.playerNumber" min="1" max="99" step="1" pattern="[0-9]+">
+        </label>
+      </fieldset>
+      <div *ngIf="playerCalculationFailed" class="small text-danger mt-2" role="alert">{{ 'ehm.player-calculation-failed' | translate }}</div>
+      <div *ngIf="playerForm.submitted && playerForm.invalid" class="small text-danger mt-2" role="alert">{{ 'ehm.invalid-player' | translate }}</div>
+    </form>
+    <ng-template #playerDetails>
     <div class="fw-bold mb-2 text-start fw-bold fs-6 player-name-row">
       <span *ngIf="player.playerNumber" class="player-name-number">{{ player.playerNumber }}. </span>
       <a
+        *ngIf="player.id > 0; else customName"
         class="player-name-link"
         target="_blank"
         [attr.title]="getPlayerFullName(player)"
@@ -13,6 +78,19 @@
           {{ player.lastName }}
         </span>
       </a>
+      <ng-template #customName>
+        <span class="player-name-link" [attr.title]="getPlayerFullName(player)">{{ getPlayerFullName(player) }}</span>
+      </ng-template>
+      <div *ngIf="editable" class="player-card-actions d-flex gap-1 ms-1">
+      <button type="button" class="btn btn-sm btn-outline-primary player-edit-button"
+              (click)="editRequested.emit()" [attr.aria-label]="'ehm.edit-player' | translate" [attr.title]="'ehm.edit-player' | translate">
+        <i class="bi bi-pencil" aria-hidden="true"></i>
+      </button>
+      <button type="button" class="btn btn-sm btn-outline-danger player-edit-button"
+              (click)="deleteRequested.emit()" [attr.aria-label]="'ehm.delete-player' | translate" [attr.title]="'ehm.delete-player' | translate">
+        <i class="bi bi-trash" aria-hidden="true"></i>
+      </button>
+      </div>
       <img
         *ngIf="player.motherClubBonus"
         src="assets/status/motherClubBonus.png"
@@ -177,5 +255,6 @@
         </td>
       </tr>
     </table>
+    </ng-template>
   </div>
 </div>

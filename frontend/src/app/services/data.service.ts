@@ -101,6 +101,10 @@ export class DataService {
     return this.http.post<TeamTrainingResponse>(`${this.apiUrl}/teamTraining`, request);
   }
 
+  calculateCustomPlayer(player: PlayerInfo): Observable<PlayerInfo> {
+    return this.http.post<PlayerInfo>(`${this.apiUrl}/custom-player/calculate`, player);
+  }
+
   teamTrainingProgress(request: TeamTrainingRequest): Observable<TeamTrainingProgressResponse> {
     return this.http.post<TeamTrainingProgressResponse>(`${this.apiUrl}/teamTraining/progress`, request);
   }

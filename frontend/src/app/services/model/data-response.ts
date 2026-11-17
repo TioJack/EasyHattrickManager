@@ -183,6 +183,7 @@ export interface PlayerSort {
 }
 
 export interface ProjectTrainingPlanner {
+  customPlayers?: PlayerInfo[];
   iniSeason?: number;
   iniWeek?: number;
   filter?: PlayerFilter;

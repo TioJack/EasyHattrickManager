@@ -670,6 +670,25 @@ public class UpdateTranslationService {
         addTranslation_EN_ES_CA("ehm.total-wage", "total wage", "salario total", "salari total");
         addTranslation_EN_ES_CA("ehm.averages", "averages", "medias", "mitges");
         addTranslation_EN_ES_CA("ehm.players", "players", "jugadores", "jugadors");
+        addTranslation_EN_ES_CA("ehm.add-custom-player", "add custom player", "añadir jugador personalizado", "afegir jugador personalitzat");
+        addTranslation_EN_ES_CA("ehm.custom-player", "custom player", "jugador personalizado", "jugador personalitzat");
+        addTranslation_EN_ES_CA("ehm.custom-player-name", "player {{suffix}}", "jugador {{suffix}}", "jugador {{suffix}}");
+        addTranslation_EN_ES_CA("ehm.save-player", "save player", "guardar jugador", "desar jugador");
+        addTranslation_EN_ES_CA("ehm.edit-player", "edit player", "editar jugador", "editar jugador");
+        addTranslation_EN_ES_CA("ehm.delete-player", "delete player", "eliminar jugador", "eliminar jugador");
+        addTranslation_EN_ES_CA("ehm.confirm-delete-custom-player",
+            "Delete “{{name}}” from this plan?",
+            "¿Eliminar a «{{name}}» de esta planificación?",
+            "Vols eliminar «{{name}}» d'aquesta planificació?");
+        addTranslation_EN_ES_CA("ehm.invalid-player",
+            "Review the highlighted player fields.",
+            "Revisa los campos marcados del jugador.",
+            "Revisa els camps marcats del jugador.");
+        addTranslation_EN_ES_CA("ehm.player-calculation-failed",
+            "Could not calculate player data. Save the player again to retry.",
+            "No se han podido calcular los datos del jugador. Vuelve a guardar la ficha.",
+            "No s'han pogut calcular les dades del jugador. Torna a desar la fitxa.");
+        addTranslation_EN_ES_CA("ehm.mother-club-bonus", "mother club bonus", "bonificación por club de origen", "bonificació per club d'origen");
         addTranslation_EN_ES_CA("ehm.very-low", "very low", "muy bajo", "molt baix");
         addTranslation_EN_ES_CA("ehm.low", "low", "bajo", "baix");
         addTranslation_EN_ES_CA("ehm.high", "high", "alto", "alt");

@@ -119,6 +119,7 @@ interface ViewerTrainingSegment {
 }
 
 interface PlannerRequestState {
+  customPlayers?: PlayerInfo[];
   iniWeek?: WeekInfo;
   trainingPlans: ProjectTrainingStage[];
   trainingPlanPercents: Record<number, number[]>;
@@ -154,6 +155,8 @@ export class MainComponent implements OnInit, OnDestroy {
   @Input() dataResponse: DataResponse | null = null;
   players: PlayerInfo[] = [];
   basePlayers: PlayerInfo[] = [];
+  customPlayers: PlayerInfo[] = [];
+  editingCustomPlayerIds = new Set<number>();
   training: TrainingInfo | null = null;
   staff: StaffInfo | null = null;
   viewMode: ViewMode = 'players';
@@ -787,6 +790,88 @@ export class MainComponent implements OnInit, OnDestroy {
     this.showPlannerPlayers = !this.showPlannerPlayers;
   }
 
+  addCustomPlayer(): void {
+    const id = Math.min(0, ...this.customPlayers.map(player => player.id)) - 1;
+    let ordinal = -id;
+    let suffix = '';
+    while (ordinal > 0) {
+      ordinal--;
+      suffix = String.fromCharCode(65 + ordinal % 26) + suffix;
+      ordinal = Math.floor(ordinal / 26);
+    }
+    const player: PlayerInfo = {
+      id, firstName: this.translateService.instant('ehm.custom-player-name', {suffix}), nickName: '', lastName: '',
+      age: 17, ageDays: 0, specialty: 0, countryId: 0,
+      agreeability: 0, aggressiveness: 0, honesty: 0, arrivalDate: this.getCurrentWeekInfo().date,
+      tsi: 0, playerForm: 7, experience: 1, loyalty: 1, motherClubBonus: false, leadership: 1,
+      salary: 0, transferListed: false, cards: 0, injuryLevel: -1,
+      staminaSkill: 5, keeperSkill: 1, defenderSkill: 5, playmakerSkill: 5,
+      wingerSkill: 5, passingSkill: 5, scorerSkill: 5, setPiecesSkill: 1,
+      htms: 0, htms28: 0, playerCategoryId: 0, changes: {},
+      playerTraining: {keeper: 0, defender: 0, playmaker: 0, winger: 0, passing: 0, scorer: 0, setPieces: 0}
+    };
+    this.customPlayers = [...this.customPlayers, player];
+    this.editingCustomPlayerIds.add(id);
+    this.showPlannerPlayers = true;
+    this.refreshPlayers();
+    this.players = [player, ...this.players.filter(existing => existing.id !== id)];
+    this.ensurePlayerPlans();
+    this.updatePlannerUiState();
+    window.setTimeout(() => {
+      const card = document.getElementById(`planner-player-${id}`);
+      card?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+      card?.querySelector<HTMLInputElement>('input')?.focus({preventScroll: true});
+    });
+  }
+
+  editCustomPlayer(playerId: number): void {
+    this.editingCustomPlayerIds.add(playerId);
+    this.updatePlannerUiState();
+  }
+
+  saveCustomPlayer(player: PlayerInfo): void {
+    this.customPlayers = this.customPlayers.map(existing => existing.id === player.id ? player : existing);
+    this.editingCustomPlayerIds.delete(player.id);
+    this.refreshPlayers();
+    this.ensurePlayerPlans();
+    this.updatePlannerUiState();
+    this.scheduleTeamTrainingRequest();
+  }
+
+  deleteCustomPlayer(playerId: number): void {
+    const player = this.customPlayers.find(player => player.id === playerId);
+    if (!player) {
+      return;
+    }
+    const name = [player.firstName, player.nickName ? `'${player.nickName}'` : '', player.lastName]
+      .filter(Boolean).join(' ').trim();
+    if (!window.confirm(this.translateService.instant('ehm.confirm-delete-custom-player', {name}))) {
+      return;
+    }
+    this.customPlayers = this.customPlayers.filter(player => player.id !== playerId);
+    this.editingCustomPlayerIds.delete(playerId);
+    delete this.trainingPlanPercents[playerId];
+    delete this.hoverWeekByPlayerId[playerId];
+    delete this.hoverTimelinePercentByPlayerId[playerId];
+    this.teamTrainingRequestSub?.unsubscribe();
+    this.teamTrainingRequestSub = null;
+    this.teamTrainingRequestToken++;
+    this.stopTeamTrainingProgressPolling(true);
+    this.inFlightTeamTrainingRequestKey = null;
+    this.lastSuccessfulTeamTrainingRequestKey = null;
+    this.isTeamTrainingLoading = false;
+    this.hasRestoredPersistedTeamTraining = false;
+    this.teamTrainingResponse = null;
+    this.endWeekInfo = null;
+    this.latestResponseWeek = null;
+    this.plannerResultByPlayerId = {};
+    this.resetPlannerCaches();
+    this.onBestFormationTimelineLeave();
+    this.refreshPlayers();
+    this.updatePlannerUiState();
+    this.scheduleTeamTrainingRequest();
+  }
+
   togglePlannerRatings(): void {
     this.showPlannerRatings = !this.showPlannerRatings;
   }
@@ -876,6 +961,8 @@ export class MainComponent implements OnInit, OnDestroy {
     this.isTeamTrainingLoading = false;
     this.trainingPlans = [];
     this.trainingPlanPercents = {};
+    this.customPlayers = [];
+    this.editingCustomPlayerIds.clear();
     this.refreshPlayers();
     this.autoRefreshBestFormation = false;
     this.bestFormationCriteria = 'HATSTATS';
@@ -905,6 +992,7 @@ export class MainComponent implements OnInit, OnDestroy {
       this.playService.goToSeasonAndWeek(planner.iniSeason, planner.iniWeek);
     }
     this.trainingPlans = JSON.parse(JSON.stringify(planner.trainingPlans ?? [])) as ProjectTrainingStage[];
+    this.customPlayers = structuredClone(planner.customPlayers ?? []);
     this.trainingPlanPercents = JSON.parse(JSON.stringify(planner.trainingPlanPercents ?? {})) as Record<number, number[]>;
     this.autoRefreshBestFormation = planner.autoRefreshBestFormation ?? false;
     this.bestFormationCriteria = planner.bestFormationCriteria ?? 'HATSTATS';
@@ -933,7 +1021,7 @@ export class MainComponent implements OnInit, OnDestroy {
     if (!this.selectedProject) {
       return;
     }
-    if (this.trainingPlans.length === 0) {
+    if (!this.canSavePlannerState()) {
       this.updatePlannerUiState();
       return;
     }
@@ -975,6 +1063,8 @@ export class MainComponent implements OnInit, OnDestroy {
     this.scheduledCalculateBestFormation = false;
     this.trainingPlans = [];
     this.trainingPlanPercents = {};
+    this.customPlayers = [];
+    this.editingCustomPlayerIds.clear();
     this.refreshPlayers();
     this.autoRefreshBestFormation = false;
     this.bestFormationCriteria = 'HATSTATS';
@@ -1027,6 +1117,7 @@ export class MainComponent implements OnInit, OnDestroy {
       filter: persistedPlanner?.filter ? JSON.parse(JSON.stringify(persistedPlanner.filter)) : undefined,
       sort: persistedPlanner?.sort ? JSON.parse(JSON.stringify(persistedPlanner.sort)) : undefined,
       trainingPlans: JSON.parse(JSON.stringify(this.trainingPlans)) as ProjectTrainingStage[],
+      customPlayers: structuredClone(this.customPlayers),
       trainingPlanPercents: JSON.parse(JSON.stringify(this.trainingPlanPercents)) as Record<number, number[]>,
       autoRefreshBestFormation: this.autoRefreshBestFormation,
       bestFormationCriteria: this.bestFormationCriteria,
@@ -1037,7 +1128,8 @@ export class MainComponent implements OnInit, OnDestroy {
   }
 
   private buildPersistedTeamTrainingState(): Pick<ProjectTrainingPlanner, 'teamTrainingResponse'> {
-    if (!this.buildTeamTrainingRequest(this.autoRefreshBestFormation) || !this.teamTrainingResponse) {
+    const request = this.buildTeamTrainingRequest(this.autoRefreshBestFormation);
+    if (!request || !this.teamTrainingResponse || this.buildTeamTrainingRequestKey(request) !== this.lastSuccessfulTeamTrainingRequestKey) {
       return {};
     }
     return {
@@ -1051,9 +1143,15 @@ export class MainComponent implements OnInit, OnDestroy {
 
   private updatePlannerUiState(): void {
     const plannerState = this.buildProjectPlannerState();
-    this.playService.setPlannerCanSave(this.trainingPlans.length > 0);
-    this.playService.setPlannerDirty(this.getPlannerSignature(plannerState) !== this.savedPlannerSignature);
+    this.playService.setPlannerCanSave(this.canSavePlannerState());
+    this.playService.setPlannerDirty(this.editingCustomPlayerIds.size > 0 || this.getPlannerSignature(plannerState) !== this.savedPlannerSignature);
     this.playService.setPlannerCanClear(!this.isPlannerEmpty(plannerState));
+  }
+
+  private canSavePlannerState(): boolean {
+    return this.editingCustomPlayerIds.size === 0
+      && (this.trainingPlans.length > 0 || this.customPlayers.length > 0
+        || !!this.selectedProject?.planner?.customPlayers?.length);
   }
 
   private isPlannerEmpty(planner: ProjectTrainingPlanner | null): boolean {
@@ -1068,6 +1166,7 @@ export class MainComponent implements OnInit, OnDestroy {
       iniSeason: null,
       iniWeek: null,
       trainingPlans: [],
+      customPlayers: [],
       trainingPlanPercents: {},
       autoRefreshBestFormation: false,
       bestFormationCriteria: 'HATSTATS' as BestFormationCriteria,
@@ -1085,6 +1184,7 @@ export class MainComponent implements OnInit, OnDestroy {
       iniSeason: plannerState.iniSeason ?? null,
       iniWeek: plannerState.iniWeek ?? null,
       trainingPlans: plannerState.trainingPlans ?? [],
+      customPlayers: plannerState.customPlayers ?? [],
       trainingPlanPercents: sortedPercents,
       autoRefreshBestFormation: plannerState.autoRefreshBestFormation ?? false,
       bestFormationCriteria: plannerState.bestFormationCriteria ?? 'HATSTATS',
@@ -1123,7 +1223,7 @@ export class MainComponent implements OnInit, OnDestroy {
       };
     });
 
-    const players = this.getPlannerTrainingPlayers(iniWeek, trainingPlans);
+    const players = this.getPlannerTrainingPlayers(iniWeek, trainingPlans, plannerState?.customPlayers ?? this.customPlayers);
     this.syncPlannerPlayerWindows(players);
 
     const participations: StagePlayerParticipation[] = [];
@@ -1159,6 +1259,7 @@ export class MainComponent implements OnInit, OnDestroy {
     return this.buildTeamTrainingRequest(planner.autoRefreshBestFormation ?? false, {
       iniWeek,
       trainingPlans: planner.trainingPlans ?? [],
+      customPlayers: planner.customPlayers ?? [],
       trainingPlanPercents: planner.trainingPlanPercents ?? {},
       bestFormationCriteria: planner.bestFormationCriteria ?? 'HATSTATS',
       fixedFormationCode: planner.fixedFormationCode ?? null,
@@ -1585,23 +1686,28 @@ export class MainComponent implements OnInit, OnDestroy {
     if (this.viewMode !== 'training-planner' || this.trainingPlans.length === 0) {
       this.plannerPlayerWindowsByPlayerId = {};
       this.players = [...this.basePlayers];
+      if (this.viewMode === 'training-planner') {
+        this.players = this.playService.sortPlayers([...this.basePlayers, ...this.customPlayers]);
+      }
       return;
     }
     const plannerPlayers = this.getPlannerTrainingPlayers();
     this.syncPlannerPlayerWindows(plannerPlayers);
-    this.players = plannerPlayers.map(teamTrainingPlayer => teamTrainingPlayer.player);
+    this.players = this.playService.sortPlayers(plannerPlayers.map(teamTrainingPlayer => teamTrainingPlayer.player));
   }
 
   private getPlannerTrainingPlayers(
     currentWeek: WeekInfo | null = this.playService.getCurrentWeekInfo(),
-    trainingPlans: ProjectTrainingStage[] = this.trainingPlans
+    trainingPlans: ProjectTrainingStage[] = this.trainingPlans,
+    customPlayers: PlayerInfo[] = this.customPlayers
   ): TeamTrainingPlayer[] {
+    const customTrainingPlayers = customPlayers.map(player => ({player, inclusionWeek: 1}));
     const team = this.selectedTeam;
     if (!team || !currentWeek) {
-      return this.players.map(player => ({
+      return [...this.basePlayers.map(player => ({
         player,
         inclusionWeek: 1
-      }));
+      })), ...customTrainingPlayers];
     }
 
     const weeklyData = team.weeklyData ?? [];
@@ -1609,10 +1715,10 @@ export class MainComponent implements OnInit, OnDestroy {
       weekData.season === currentWeek.season && weekData.week === currentWeek.week
     );
     if (startIndex < 0) {
-      return this.players.map(player => ({
+      return [...this.basePlayers.map(player => ({
         player,
         inclusionWeek: 1
-      }));
+      })), ...customTrainingPlayers];
     }
 
     const totalWeeks = Math.max(1, this.getTrainingPlanWeekCount(trainingPlans));
@@ -1674,7 +1780,7 @@ export class MainComponent implements OnInit, OnDestroy {
         acc.push(teamTrainingPlayer);
       }
       return acc;
-    }, []);
+    }, []).concat(customTrainingPlayers);
   }
 
   private syncPlannerPlayerWindows(players: TeamTrainingPlayer[]): void {

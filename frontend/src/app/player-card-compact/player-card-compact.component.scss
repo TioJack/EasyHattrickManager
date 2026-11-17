@@ -8,6 +8,76 @@
   line-height: 1.2;
 }
 
+.card.custom-player-card {
+  --bs-card-bg: #fff7d6;
+  background-color: var(--bs-card-bg);
+  border-color: #e8ddba;
+}
+
+.player-card-actions {
+  order: 1;
+  flex: 0 0 auto;
+}
+
+.player-edit-button {
+  order: 1;
+  flex: 0 0 auto;
+  padding: 0.1rem 0.3rem;
+  font-size: 0.75rem;
+}
+
+.custom-player-editor {
+  font-size: 0.75rem;
+}
+
+.player-editor-field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 4.5rem;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.player-editor-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.player-editor-inline input,
+.player-editor-inline select {
+  flex: 1 1 0;
+  width: 0;
+}
+
+.player-editor-age {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.player-editor-age label {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  min-width: 0;
+  flex: 1 1 0;
+}
+
+.player-editor-age input {
+  flex: 1 1 0;
+  width: 0;
+}
+
+.custom-player-editor input,
+.custom-player-editor select {
+  min-width: 0;
+  font-size: 0.75rem;
+}
+
+.custom-player-editor .ng-invalid.ng-touched {
+  border-color: var(--bs-danger);
+}
+
 .icon {
   width: 1.2em;
   height: 1.2em;
