@@ -17,5 +17,7 @@ public class UserConfig {
     String dateFormat;
     boolean showTrainingInfo;
     boolean showSubSkills;
+    @Builder.Default
+    String playerListLayout = "cards";
     List<ProjectInfo> projects;
 }

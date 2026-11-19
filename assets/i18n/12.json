@@ -408,6 +408,8 @@
   "ehm.username-required" : "ユーザー名が必要です.",
   "ehm.very-high" : "非常に高い",
   "ehm.very-low" : "非常に低い",
+  "ehm.view-player-cards" : "プレイヤーカードを表示",
+  "ehm.view-player-table" : "プレイヤーテーブルを表示",
   "ehm.view-players" : "プレイヤー",
   "ehm.wage" : "ログイン",
   "ehm.week" : "週1日",

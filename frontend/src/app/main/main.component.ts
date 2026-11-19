@@ -12,8 +12,9 @@ import {
   TrainingInfo,
   UserConfig
 } from '../services/model/data-response';
-import {DatePipe, DecimalPipe, LowerCasePipe, NgForOf, NgIf} from '@angular/common';
+import {AsyncPipe, DatePipe, DecimalPipe, LowerCasePipe, NgForOf, NgIf} from '@angular/common';
 import {PlayerCardComponent} from '../player-card/player-card.component';
+import {PlayerTableComponent} from '../player-table/player-table.component';
 import {StaffComponent} from '../staff/staff.component';
 import {TrainingComponent} from '../training/training.component';
 import {PlayerStatsComponent} from '../player-stats/player-stats.component';
@@ -134,10 +135,12 @@ interface PlannerRequestState {
   imports: [
     NgForOf,
     NgIf,
+    AsyncPipe,
     DatePipe,
     DecimalPipe,
     LowerCasePipe,
     PlayerCardComponent,
+    PlayerTableComponent,
     StaffComponent,
     TrainingComponent,
     PlayerStatsComponent,
@@ -152,6 +155,7 @@ interface PlannerRequestState {
   styleUrls: ['./main.component.scss']
 })
 export class MainComponent implements OnInit, OnDestroy {
+  readonly playerListLayout$: PlayService['playerListLayout$'];
   @Input() dataResponse: DataResponse | null = null;
   players: PlayerInfo[] = [];
   basePlayers: PlayerInfo[] = [];
@@ -383,6 +387,7 @@ export class MainComponent implements OnInit, OnDestroy {
     private userConfigService: UserConfigService,
     private translateService: TranslateService
   ) {
+    this.playerListLayout$ = this.playService.playerListLayout$;
   }
 
   ngOnInit(): void {
@@ -587,6 +592,10 @@ export class MainComponent implements OnInit, OnDestroy {
     return this.trainingPlanPercents[playerId]?.[index] ?? 100;
   }
 
+  getMaxPlanPercent(index: number): number {
+    return this.trainingPlans[index]?.typeId === 2 ? 125 : 100;
+  }
+
   isPlanStageActive(playerId: number, index: number): boolean {
     const playerWindow = this.plannerPlayerWindowsByPlayerId[playerId];
     if (!playerWindow) {
@@ -697,7 +706,7 @@ export class MainComponent implements OnInit, OnDestroy {
     if (!this.trainingPlanPercents[playerId]) {
       this.trainingPlanPercents[playerId] = [];
     }
-    this.trainingPlanPercents[playerId][index] = Math.max(0, Math.min(100, Number(value)));
+    this.trainingPlanPercents[playerId][index] = Math.max(0, Math.min(this.getMaxPlanPercent(index), Number(value)));
   }
 
   onPlanPercentCommit(): void {
@@ -748,7 +757,7 @@ export class MainComponent implements OnInit, OnDestroy {
   private getDefaultParticipationValue(typeId: number, playerIndex: number): number {
     switch (typeId) {
       case 2: // SET_PIECES
-        return playerIndex < 22 ? 100 : 0;
+        return playerIndex < 4 ? 125 : (playerIndex < 22 ? 100 : 0);
       case 3: // DEFENDING
         return playerIndex < 10 ? 100 : 0;
       case 4: // SCORING

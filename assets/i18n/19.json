@@ -408,6 +408,8 @@
   "ehm.username-required" : "kullanıcı adı gereklidir.",
   "ehm.very-high" : "çok yüksek",
   "ehm.very-low" : "çok düşük",
+  "ehm.view-player-cards" : "show player kartları",
+  "ehm.view-player-table" : "show player table",
   "ehm.view-players" : "oyuncular",
   "ehm.wage" : "ücretli ücret",
   "ehm.week" : "hafta",

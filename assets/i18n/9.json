@@ -408,6 +408,8 @@
   "ehm.username-required" : "käyttäjätunnus vaaditaan.",
   "ehm.very-high" : "hyvin korkea",
   "ehm.very-low" : "hyvin alhainen",
+  "ehm.view-player-cards" : "pelikortit",
+  "ehm.view-player-table" : "näytä soittimen taulukko",
   "ehm.view-players" : "pelaajat",
   "ehm.wage" : "palkka",
   "ehm.week" : "viikko",

@@ -145,6 +145,7 @@ export interface UserConfig {
   dateFormat: string;
   showTrainingInfo: boolean;
   showSubSkills: boolean;
+  playerListLayout?: 'cards' | 'table';
   projects: Project[];
 }
 

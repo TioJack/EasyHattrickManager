@@ -695,6 +695,8 @@ public class UpdateTranslationService {
         addTranslation_EN_ES_CA("ehm.very-high", "very high", "muy alto", "molt alt");
         addTranslation_EN_ES_CA("ehm.training", "training", "entrenamiento", "entrenament");
         addTranslation_EN_ES_CA("ehm.view-players", "players", "jugadores", "jugadors");
+        addTranslation_EN_ES_CA("ehm.view-player-cards", "show player cards", "ver fichas de jugadores", "veure fitxes de jugadors");
+        addTranslation_EN_ES_CA("ehm.view-player-table", "show player table", "ver tabla de jugadores", "veure taula de jugadors");
         addTranslation_EN_ES_CA("ehm.training-planner", "training planner", "planificador de entrenamiento", "planificador d'entrenament");
         addTranslation_EN_ES_CA("ehm.plan-follow-up", "plan follow-up", "seguimiento del plan", "seguiment del pla");
         addTranslation_EN_ES_CA("ehm.planned", "planned", "planificado", "planificat");

@@ -1,0 +1,87 @@
+<div class="card" *ngIf="userConfig$ | async as config">
+  <div class="player-table-scroll" role="region" tabindex="0" [attr.aria-label]="'ehm.list-players' | translate | firstCapitalize">
+    <table class="table table-sm table-hover align-middle mb-0 player-table">
+      <caption class="visually-hidden">{{ 'ehm.list-players' | translate | firstCapitalize }}</caption>
+      <thead>
+        <tr>
+          <th scope="col" [title]="'ehm.shirt-number' | translate"><span aria-hidden="true">#</span><span class="visually-hidden">{{ 'ehm.shirt-number' | translate }}</span></th>
+          <th scope="col" [title]="'ehm.player-id' | translate">ID</th>
+          <th scope="col" class="player-name-cell">{{ 'ehm.name' | translate | firstCapitalize }}</th>
+          <th scope="col" [title]="'ht.specialty' | translate"><abbr>{{ ('ht.specialty' | translate).slice(0, 3) }}</abbr></th>
+          <th scope="col" [title]="'ehm.age' | translate">{{ 'ehm.age' | translate | firstCapitalize }}</th>
+          <th scope="col">TSI</th>
+          <ng-container *ngFor="let column of skillColumns">
+            <th scope="col" [class.group-start]="column.groupStart" [title]="column.label | translate | firstCapitalize">
+              <abbr>{{ (column.label | translate | firstCapitalize).slice(0, 3) }}</abbr>
+            </th>
+            <th *ngIf="column.key === 'loyalty'" scope="col" [title]="'ehm.mother-club-bonus' | translate">
+              <img class="status-icon" src="assets/status/motherClubBonus.png" [alt]="'ehm.mother-club-bonus' | translate">
+            </th>
+          </ng-container>
+          <th scope="col" class="group-start" [title]="'ehm.htms-ability' | translate">HTMS</th>
+          <th scope="col" [title]="'ehm.htms-potential' | translate">HTMS28</th>
+          <th scope="col">{{ 'ehm.wage' | translate | firstCapitalize }}</th>
+          <th scope="col"><span class="visually-hidden">{{ 'ehm.evolution' | translate }}</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let player of players; trackBy: trackByPlayerId">
+          <td class="text-muted">{{ player.playerNumber ?? '–' }}</td>
+          <td class="text-muted">{{ player.id }}</td>
+          <th scope="row" class="player-name-cell">
+            <div class="d-flex align-items-center gap-1">
+              <img class="country-flag shadow-2" src="assets/flags/{{ player.countryId }}.png" alt="">
+              <a target="_blank" rel="noopener" class="player-link"
+                 href="http://hattrick.org/goto.ashx?path=/Club/Players/Player.aspx?playerId={{ player.id }}">
+                {{ player.firstName }} <span *ngIf="player.nickName">'{{ player.nickName }}'</span> {{ player.lastName }}
+              </a>
+              <span *ngIf="player.playerCategoryId" class="badge text-bg-primary" [title]="'ehm.category-name-' + player.playerCategoryId | translate">
+                {{ 'ehm.category-abbr-' + player.playerCategoryId | translate }}
+              </span>
+              <img *ngIf="player.injuryLevel >= 0" class="status-icon" src="assets/injury/{{ player.injuryLevel === 0 ? 0 : 1 }}.png"
+                   [alt]="'ehm.injuries' | translate" [title]="player.injuryLevel === 999 ? '∞' : player.injuryLevel">
+              <img *ngIf="player.cards > 0" class="status-icon" src="assets/cards/{{ player.cards }}.png" [alt]="'ehm.cards' | translate">
+              <img *ngIf="player.transferListed" class="status-icon" src="assets/status/onSale.png" alt="">
+            </div>
+          </th>
+          <td [title]="'ht.specialty-' + player.specialty | translate">
+            <img *ngIf="player.specialty > 0; else noSpecialty" class="status-icon" src="assets/specialty/{{ player.specialty }}.png" [alt]="'ht.specialty-' + player.specialty | translate">
+            <ng-template #noSpecialty>–</ng-template>
+          </td>
+          <td>{{ player.age }}{{ 'ehm.years' | translate | firstLetter }} {{ player.ageDays }}{{ 'ehm.days' | translate | firstLetter }}</td>
+          <td class="text-end">{{ player.tsi | numberSeparator }}</td>
+          <ng-container *ngFor="let column of skillColumns">
+            <td class="skill-cell" [class.group-start]="column.groupStart"
+                [ngStyle]="getTrainingStyle(player, column, config.showTrainingInfo)"
+                [title]="(column.label | translate) + (config.showTrainingInfo && column.training && player.playerTraining && player.playerTraining[column.training] ? ' ' + player.playerTraining[column.training].toFixed(2) + '%' : '')">
+              <ng-container *ngIf="getSkillParts(player, column, config.showSubSkills) as parts">
+                {{ parts[0] }}<span *ngIf="parts[1]" class="subskill">.{{ parts[1] }}</span>
+              </ng-container>
+              <span *ngIf="player.changes?.[column.key] as change" class="skill-change" [class.text-success]="change > 0" [class.text-danger]="change < 0">
+                {{ change > 0 ? '+' : '−' }}
+              </span>
+            </td>
+            <td *ngIf="column.key === 'loyalty'"><img *ngIf="player.motherClubBonus" class="status-icon" src="assets/status/motherClubBonus.png" [alt]="'ehm.mother-club-bonus' | translate"></td>
+          </ng-container>
+          <td class="text-end group-start">
+            {{ player.htms | numberSeparator }}
+            <div *ngIf="config.showSubSkills && player.playerSubSkill" class="subskill">{{ player.playerSubSkill.htms | numberSeparator }}</div>
+          </td>
+          <td class="text-end">
+            {{ player.htms28 | numberSeparator }}
+            <div *ngIf="config.showSubSkills && player.playerSubSkill" class="subskill">{{ player.playerSubSkill.htms28 | numberSeparator }}</div>
+          </td>
+          <td class="text-end">{{ player.salary | salary:config.currency }}</td>
+          <td>
+            <a [routerLink]="['/player', player.id]" target="_blank" [title]="'ehm.evolution' | translate" [attr.aria-label]="'ehm.evolution' | translate">
+              <i class="bi bi-bar-chart" aria-hidden="true"></i>
+            </a>
+          </td>
+        </tr>
+        <tr *ngIf="!players.length">
+          <td [attr.colspan]="skillColumns.length + 11" class="text-muted text-center py-4">{{ 'ehm.no-players' | translate | firstCapitalize }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

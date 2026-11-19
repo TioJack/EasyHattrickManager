@@ -408,6 +408,8 @@
   "ehm.username-required" : "brukernavn er nødvendig.",
   "ehm.very-high" : "veldig høy",
   "ehm.very-low" : "veldig lav",
+  "ehm.view-player-cards" : "vis spillerkort",
+  "ehm.view-player-table" : "show spiller bord",
   "ehm.view-players" : "spillerne",
   "ehm.wage" : "lønn",
   "ehm.week" : "uke",

@@ -409,6 +409,8 @@
   "ehm.username-required" : "el nombre de usuario es obligatorio.",
   "ehm.very-high" : "muy alto",
   "ehm.very-low" : "muy bajo",
+  "ehm.view-player-cards" : "ver fichas de jugadores",
+  "ehm.view-player-table" : "ver tabla de jugadores",
   "ehm.view-players" : "jugadores",
   "ehm.wage" : "salario",
   "ehm.week" : "semana",

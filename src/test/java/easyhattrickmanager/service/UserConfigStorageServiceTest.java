@@ -18,6 +18,45 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 class UserConfigStorageServiceTest {
 
     @Test
+    void persistsAndRestoresPlayerListLayout() throws Exception {
+        ObjectMapper mapper = Jackson2ObjectMapperBuilder.json().build();
+        UserConfigDAO configDAO = mock(UserConfigDAO.class);
+        UserPlannerDAO plannerDAO = mock(UserPlannerDAO.class);
+        AtomicReference<String> configJson = new AtomicReference<>();
+        when(configDAO.get(42)).thenAnswer(call -> configJson.get());
+        doAnswer(call -> { configJson.set(call.getArgument(1)); return null; }).when(configDAO).insert(eq(42), anyString());
+        doAnswer(call -> { configJson.set(call.getArgument(1)); return null; }).when(configDAO).update(eq(42), anyString());
+        UserConfigStorageService service = new UserConfigStorageService(configDAO, plannerDAO, mapper);
+
+        for (String layout : List.of("table", "cards")) {
+            UserConfig config = UserConfig.builder().languageId(6).showSubSkills(true)
+                .playerListLayout(layout).projects(List.of()).build();
+            service.saveUserConfig(42, config);
+
+            assertEquals(layout, mapper.readTree(configJson.get()).get("playerListLayout").asText());
+            UserConfig restored = new UserConfigStorageService(configDAO, plannerDAO, mapper).getUserConfig(42);
+            assertNotNull(restored);
+            assertEquals(layout, restored.getPlayerListLayout());
+            assertEquals(6, restored.getLanguageId());
+            assertTrue(restored.isShowSubSkills());
+        }
+    }
+
+    @Test
+    void defaultsToCardsWhenLoadingALegacyConfiguration() {
+        UserConfigDAO configDAO = mock(UserConfigDAO.class);
+        UserPlannerDAO plannerDAO = mock(UserPlannerDAO.class);
+        when(configDAO.get(42)).thenReturn("{\"projects\":[]}");
+        UserConfigStorageService service = new UserConfigStorageService(configDAO, plannerDAO,
+            Jackson2ObjectMapperBuilder.json().build());
+
+        UserConfig restored = service.getUserConfig(42);
+        assertNotNull(restored);
+        assertEquals("cards", restored.getPlayerListLayout());
+        assertEquals("cards", UserConfig.builder().build().getPlayerListLayout());
+    }
+
+    @Test
     void persistsAndRestoresCustomPlayersAndParticipationInThePlannerStorage() throws Exception {
         ObjectMapper mapper = Jackson2ObjectMapperBuilder.json().build();
         UserConfigDAO configDAO = mock(UserConfigDAO.class);

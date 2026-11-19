@@ -12,6 +12,7 @@ import {NumberSeparatorPipe} from '../pipes/number-separator.pipe';
 import {DEFAULT_AVATAR, trainingTypeColor} from '../constants/global.constant';
 import {RouterLink} from '@angular/router';
 import {TruncateDecimalsPipe} from '../pipes/truncate-decimals.pipe';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-player-card',
@@ -28,6 +29,7 @@ export class PlayerCardComponent implements OnInit, AfterViewInit, OnDestroy {
   private resizeObserver?: ResizeObserver;
   private textObserver?: MutationObserver;
   private rafId?: number;
+  private userConfigSubscription?: Subscription;
   private readonly truncateDecimalsPipe = new TruncateDecimalsPipe();
 
   constructor(
@@ -37,7 +39,7 @@ export class PlayerCardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.userConfigService.userConfig$.subscribe(userConfig => {
+    this.userConfigSubscription = this.userConfigService.userConfig$.subscribe(userConfig => {
       this.userConfig = userConfig;
     });
   }
@@ -48,6 +50,7 @@ export class PlayerCardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.userConfigSubscription?.unsubscribe();
     this.resizeObserver?.disconnect();
     this.textObserver?.disconnect();
     if (!this.resizeObserver) {

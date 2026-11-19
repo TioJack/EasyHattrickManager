@@ -408,6 +408,8 @@
   "ehm.username-required" : "o nome de usuário é necessário.",
   "ehm.very-high" : "muito alto",
   "ehm.very-low" : "muito baixo",
+  "ehm.view-player-cards" : "mostrar cartas de jogador",
+  "ehm.view-player-table" : "mostrar mesa do jogador",
   "ehm.view-players" : "jogadores",
   "ehm.wage" : "salário",
   "ehm.week" : "semana",

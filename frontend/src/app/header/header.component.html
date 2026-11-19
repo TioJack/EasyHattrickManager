@@ -105,6 +105,18 @@
       </button>
     </div>
 
+    <ng-container *ngIf="playService.playerListLayout$ | async as playerListLayout">
+    <button *ngIf="isViewMode('players')" class="btn btn-outline-primary" type="button"
+            id="playerListLayoutButton"
+            [attr.aria-pressed]="playerListLayout === 'table'"
+            [attr.aria-label]="(playerListLayout === 'table' ? 'ehm.view-player-cards' : 'ehm.view-player-table') | translate | firstCapitalize"
+            [title]="(playerListLayout === 'table' ? 'ehm.view-player-cards' : 'ehm.view-player-table') | translate | firstCapitalize"
+            (click)="playService.togglePlayerListLayout()">
+      <i class="bi" [class.bi-table]="playerListLayout !== 'table'"
+         [class.bi-grid]="playerListLayout === 'table'" aria-hidden="true"></i>
+    </button>
+    </ng-container>
+
     <div class="dropdown">
       <button class="btn btn-primary" type="button" id="dropdownFilterButton" data-bs-toggle="dropdown" aria-expanded="false">
         <i class="bi bi-filter"></i>

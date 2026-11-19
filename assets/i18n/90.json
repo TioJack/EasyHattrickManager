@@ -408,6 +408,8 @@
   "ehm.username-required" : "username is required.",
   "ehm.very-high" : "very high",
   "ehm.very-low" : "very low",
+  "ehm.view-player-cards" : "show player cards",
+  "ehm.view-player-table" : "show player table",
   "ehm.view-players" : "players",
   "ehm.wage" : "wage",
   "ehm.week" : "week",

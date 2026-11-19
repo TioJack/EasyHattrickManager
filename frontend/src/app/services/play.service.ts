@@ -1,12 +1,13 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Subject} from 'rxjs';
-import {PlayerFilter, PlayerInfo, PlayerSort, PlayerTrainingInfo, Project, StaffInfo, TeamExtendedInfo, TrainingInfo} from './model/data-response';
+import {BehaviorSubject, distinctUntilChanged, map, Observable, Subject} from 'rxjs';
+import {PlayerFilter, PlayerInfo, PlayerSort, PlayerSubSkillInfo, PlayerTrainingInfo, Project, StaffInfo, TeamExtendedInfo, TrainingInfo} from './model/data-response';
 import {TrainingStats} from './model/training-stats';
 import {PlayerStats} from './model/player-stats';
 import {WeekInfo} from '../player/model/week-info';
 import {UserConfigService} from './user-config.service';
 
 export type ViewMode = 'players' | 'training-planner' | 'training-plan-viewer';
+export type PlayerListLayout = 'cards' | 'table';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,16 @@ export type ViewMode = 'players' | 'training-planner' | 'training-plan-viewer';
 export class PlayService {
 
   private categorySort: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 11, 12, 9, 10, 13];
+  private readonly skillSubSkills: Partial<Record<keyof PlayerInfo, keyof PlayerSubSkillInfo>> = {
+    staminaSkill: 'stamina',
+    keeperSkill: 'keeper',
+    defenderSkill: 'defender',
+    playmakerSkill: 'playmaker',
+    wingerSkill: 'winger',
+    passingSkill: 'passing',
+    scorerSkill: 'scorer',
+    setPiecesSkill: 'setPieces'
+  };
 
   private selectedProjectSubject = new BehaviorSubject<Project | null>(null);
   private selectedTeamSubject = new BehaviorSubject<TeamExtendedInfo | null>(null);
@@ -45,6 +56,7 @@ export class PlayService {
   trainingStats$ = this.trainingStatsSubject.asObservable();
   playerStats$ = this.playerStatsSubject.asObservable();
   viewMode$ = this.viewModeSubject.asObservable();
+  readonly playerListLayout$: Observable<PlayerListLayout>;
   plannerDirty$ = this.plannerDirtySubject.asObservable();
   plannerCanSave$ = this.plannerCanSaveSubject.asObservable();
   plannerCanClear$ = this.plannerCanClearSubject.asObservable();
@@ -53,6 +65,10 @@ export class PlayService {
   plannerReloadRequest$ = this.plannerReloadRequestSubject.asObservable();
 
   constructor(private userConfigService: UserConfigService) {
+    this.playerListLayout$ = this.userConfigService.userConfig$.pipe(
+      map((config): PlayerListLayout => config?.playerListLayout === 'table' ? 'table' : 'cards'),
+      distinctUntilChanged()
+    );
   }
 
   selectProject(project: Project): void {
@@ -69,6 +85,17 @@ export class PlayService {
 
   getSelectedProject(): Project | null {
     return this.selectedProjectSubject.value;
+  }
+
+  togglePlayerListLayout(): void {
+    const config = this.userConfigService.getUserConfig();
+    if (!config) {
+      return;
+    }
+    this.userConfigService.setAndSaveUserConfig({
+      ...config,
+      playerListLayout: config.playerListLayout === 'table' ? 'cards' : 'table'
+    });
   }
 
   setViewMode(mode: ViewMode): void {
@@ -206,6 +233,11 @@ export class PlayService {
     } else {
       valueA = (a as any)[sort.criteria] !== undefined ? (a as any)[sort.criteria] : null;
       valueB = (b as any)[sort.criteria] !== undefined ? (b as any)[sort.criteria] : null;
+      const subSkill = this.skillSubSkills[sort.criteria as keyof PlayerInfo];
+      if (subSkill) {
+        if (typeof valueA === 'number') valueA += a.playerSubSkill?.[subSkill] ?? 0;
+        if (typeof valueB === 'number') valueB += b.playerSubSkill?.[subSkill] ?? 0;
+      }
     }
 
     if (valueA == null && valueB != null) return 1;

@@ -408,6 +408,8 @@
   "ehm.username-required" : "vajalik on kasutajanimi.",
   "ehm.very-high" : "väga kõrge",
   "ehm.very-low" : "madalal",
+  "ehm.view-player-cards" : "näidismängijate kaardid",
+  "ehm.view-player-table" : "showmängija tabel",
   "ehm.view-players" : "mängijad",
   "ehm.wage" : "palga",
   "ehm.week" : "nädal",

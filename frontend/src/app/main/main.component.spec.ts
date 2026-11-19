@@ -2,6 +2,7 @@ import {fakeAsync, tick} from '@angular/core/testing';
 import {MainComponent} from './main.component';
 import {PlayerInfo, PlayerSort, Project, UserConfig} from '../services/model/data-response';
 import {PlayService} from '../services/play.service';
+import {of} from 'rxjs';
 
 describe('Planner custom players', () => {
   let component: MainComponent;
@@ -15,6 +16,7 @@ describe('Planner custom players', () => {
     play.getCurrentWeekInfo.and.returnValue(week);
     play.sortPlayers.and.callFake((players: PlayerInfo[]) => players);
     configService = jasmine.createSpyObj('UserConfigService', ['getUserConfig', 'setUserConfig', 'saveUserConfig']);
+    configService.userConfig$ = of(null);
     component = new MainComponent(play, {} as any, configService, {
       instant: (key: string, params: {suffix?: string; name?: string}) => key === 'ehm.confirm-delete-custom-player'
         ? `¿Eliminar a «${params.name}» de esta planificación?` : `jugador ${params.suffix}`
@@ -24,6 +26,54 @@ describe('Planner custom players', () => {
     spyOn(state, 'scheduleTeamTrainingRequest');
     component.basePlayers = [{id: 123, firstName: 'Real'} as PlayerInfo];
     state.refreshPlayers();
+  });
+
+  it('assigns four set-pieces slots at 125%, eighteen at 100% and the rest at zero', () => {
+    component.basePlayers = Array.from({length: 23}, (_, index) => ({id: index + 1} as PlayerInfo));
+    state.refreshPlayers();
+    component.trainingPlans = [{typeId: 2, weeks: 4, coach: 5, assistants: 10, intensity: 100, stamina: 10}];
+    component.onStageTypeChanged(0);
+
+    const expected = [...Array(4).fill(125), ...Array(18).fill(100), 0];
+    expect(component.players.map(player => component.getPlanPercent(player.id, 0))).toEqual(expected);
+    const request = state.buildTeamTrainingRequest(false);
+    expect(request.stages[0].training).toBe('SET_PIECES');
+    expect(request.participations.map((entry: any) => entry.participation)).toEqual(expected);
+
+    component.trainingPlans[0].typeId = 4;
+    component.onStageTypeChanged(0);
+    expect(component.players.map(player => component.getPlanPercent(player.id, 0)))
+      .toEqual([...Array(6).fill(100), ...Array(17).fill(0)]);
+  });
+
+  it('allows up to 125% only in set-pieces stages and keeps the remaining stages capped at 100%', () => {
+    component.trainingPlans = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(typeId =>
+      ({typeId, weeks: 4, coach: 5, assistants: 10, intensity: 100, stamina: 10}));
+    component.trainingPlans.forEach((plan, index) => {
+      const maximum = plan.typeId === 2 ? 125 : 100;
+      expect(component.getMaxPlanPercent(index)).toBe(maximum);
+      component.setPlanPercent(123, index, 150);
+      expect(component.getPlanPercent(123, index)).toBe(maximum);
+      component.setPlanPercent(123, index, 75);
+      expect(component.getPlanPercent(123, index)).toBe(75);
+      component.setPlanPercent(123, index, -1);
+      expect(component.getPlanPercent(123, index)).toBe(0);
+    });
+  });
+
+  it('preserves 125% participation when saving, reloading and requesting a set-pieces plan', () => {
+    const project = {name: 'Plan', teamId: 1, iniSeason: 90, iniWeek: 3} as Project;
+    configService.getUserConfig.and.returnValue({projects: [project]});
+    state.selectedProject = project;
+    component.trainingPlans = [{typeId: 2, weeks: 4, coach: 5, assistants: 10, intensity: 100, stamina: 10}];
+    component.setPlanPercent(123, 0, 125);
+    state.savePlannerState();
+    expect(project.planner!.trainingPlanPercents[123]).toEqual([125]);
+
+    state.resetPlannerState();
+    state.loadPlannerState(project);
+    expect(component.getPlanPercent(123, 0)).toBe(125);
+    expect(state.buildTeamTrainingRequest(false).participations[0].participation).toBe(125);
   });
 
   it('inserts new players at the beginning in edit mode, including when the list was collapsed', fakeAsync(() => {

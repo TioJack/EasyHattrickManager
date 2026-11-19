@@ -1,6 +1,6 @@
 <main class="flex-grow-1 d-flex flex-column justify-content-center align-items-center text-center">
-  <div *ngIf="viewMode === 'players'; else nonPlayersView">
-    <div class="row g-3 p-3 align-items-stretch">
+  <div *ngIf="viewMode === 'players'; else nonPlayersView" class="players-view">
+    <div class="row g-3 p-3 m-0 align-items-stretch">
       <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-4 d-flex">
         <app-player-stats class="flex-fill w-100"></app-player-stats>
       </div>
@@ -10,9 +10,16 @@
       <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-4 d-flex">
         <app-training class="flex-fill w-100"></app-training>
       </div>
-      <div *ngFor="let player of basePlayers; trackBy: trackByPlayerId" class="col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-4 d-flex">
-        <app-player-card class="flex-fill w-100" [player]="player" [training]="training"></app-player-card>
-      </div>
+      <ng-container *ngIf="(playerListLayout$ | async) === 'table'; else playerCards">
+        <div class="col-12">
+          <app-player-table [players]="basePlayers" [training]="training"></app-player-table>
+        </div>
+      </ng-container>
+      <ng-template #playerCards>
+        <div *ngFor="let player of basePlayers; trackBy: trackByPlayerId" class="col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-4 d-flex">
+          <app-player-card class="flex-fill w-100" [player]="player" [training]="training"></app-player-card>
+        </div>
+      </ng-template>
     </div>
   </div>
 
@@ -286,7 +293,7 @@
                           type="range"
                           orient="vertical"
                           min="0"
-                          max="100"
+                          [max]="getMaxPlanPercent(i)"
                           [disabled]="!isPlanStageActive(player.id, i)"
                           [style.accentColor]="trainingTypeColor(plan.typeId)"
                           [ngModel]="getPlanPercent(player.id, i)"

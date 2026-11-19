@@ -98,6 +98,7 @@ public class UserConfigStorageService {
             .dateFormat(userConfig.getDateFormat())
             .showTrainingInfo(userConfig.isShowTrainingInfo())
             .showSubSkills(userConfig.isShowSubSkills())
+            .playerListLayout(userConfig.getPlayerListLayout())
             .projects(sanitizedProjects)
             .build();
     }

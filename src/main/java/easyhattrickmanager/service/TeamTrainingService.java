@@ -672,14 +672,14 @@ public class TeamTrainingService {
         double scorerOld = player.getScorerSkill() + playerSubSkill.getScorer();
         double setPiecesOld = player.getSetPiecesSkill() + playerSubSkill.getSetPieces();
 
-        int minutes = 90 * participation / 100;
+        // Scale the full-week factor directly so bonuses such as 125% retain their precision.
         double trainingBaseFactor = participation == 0 ? 0.0 : playerTrainingService.getTrainingBaseFactor(
             trainingStage.getCoach(),
             trainingStage.getAssistants(),
             trainingStage.getIntensity(),
             trainingStage.getStamina(),
             age,
-            minutes);
+            90) * participation / 100.0;
 
         double dropKeeper = playerTrainingService.getDropAge(Skill.GOALKEEPING, age);
         double dropDefender = playerTrainingService.getDropAge(Skill.DEFENDING, age);

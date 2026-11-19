@@ -408,6 +408,8 @@
   "ehm.username-required" : "a felhasználónév szükséges.",
   "ehm.very-high" : "nagyon magas",
   "ehm.very-low" : "nagyon alacsony",
+  "ehm.view-player-cards" : "show player cards",
+  "ehm.view-player-table" : "show player table",
   "ehm.view-players" : "játékosok",
   "ehm.wage" : "bérek",
   "ehm.week" : "hét",

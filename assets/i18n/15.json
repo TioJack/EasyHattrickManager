@@ -408,6 +408,8 @@
   "ehm.username-required" : "需要用户名.",
   "ehm.very-high" : "非常高,请检查date=中的日期值 (帮助)",
   "ehm.very-low" : "低级",
+  "ehm.view-player-cards" : "显示玩家牌",
+  "ehm.view-player-table" : "显示玩家表格",
   "ehm.view-players" : "玩家",
   "ehm.wage" : "工资",
   "ehm.week" : "星期内",
