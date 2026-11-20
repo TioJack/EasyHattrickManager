@@ -195,7 +195,8 @@ public class PlayerRatingService {
         // Hattrick formulas use calculation scale: visible skill reduced by 1.
         final double calcSkill = rawSkill < 1.0 ? 0.0 : rawSkill - 1.0;
         double value = Math.max(0.0, calcSkill + this.getLoyaltyHomegrownBonus(player));
-        final double xp = player.getExperience() <= 0 ? 0.0 : (4.0 / 3.0) * Math.log10(player.getExperience());
+        final double experience = player.getPlayerExpInfo() != null ? player.getPlayerExpInfo().getExp() : player.getExperience();
+        final double xp = experience <= 0 ? 0.0 : (4.0 / 3.0) * Math.log10(experience);
         value += xp;
         form = Math.max(form, 1.0);
         form = Math.min(form, 8.0);

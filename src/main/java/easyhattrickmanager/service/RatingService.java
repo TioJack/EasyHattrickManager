@@ -180,7 +180,8 @@ public class RatingService {
         // Loyalty/homegrown bonus applies to the effective skill and can lift very low skills.
         final double calcSkill = rawSkill < 1.0 ? 0.0 : rawSkill - 1.0;
         double skill = Math.max(0.0, calcSkill + this.getLoyaltyHomegrownBonus(player));
-        final double xp = player.getExperience() <= 0 ? 0.0 : props.getOrDefault(multiXpLog10, 0.0) * Math.log10(player.getExperience());
+        final double experience = player.getPlayerExpInfo() != null ? player.getPlayerExpInfo().getExp() : player.getExperience();
+        final double xp = experience <= 0 ? 0.0 : props.getOrDefault(multiXpLog10, 0.0) * Math.log10(experience);
         skill += props.getOrDefault(skillDelta, 0.0) + xp;
         // Excel fidelity: Ef(F) = SQRT(IF(F<=1;6;F-1)/7)
         // Keep configured min/max clamps to avoid invalid out-of-range inputs.
