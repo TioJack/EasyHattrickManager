@@ -46,4 +46,10 @@ public class RepairController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("playerExp")
+    public ResponseEntity<Void> getPlayerExp() {
+        repairService.getPlayerExp();
+        return ResponseEntity.ok().build();
+    }
+
 }

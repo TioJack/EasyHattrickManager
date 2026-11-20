@@ -99,6 +99,7 @@ export class PlayerCardCompactComponent implements OnInit, OnChanges {
       player.playerSubSkill[field.sub] = Number((value - Math.floor(value)).toFixed(2));
     }
     player.playerFormInfo = undefined;
+    player.playerExpInfo = undefined;
     this.isSavingPlayer = true;
     this.playerCalculationFailed = false;
     this.dataService.calculateCustomPlayer(player).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({

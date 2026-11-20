@@ -5,9 +5,11 @@ import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 import easyhattrickmanager.repository.model.Player;
 import easyhattrickmanager.repository.model.PlayerData;
 import easyhattrickmanager.repository.model.PlayerForm;
+import easyhattrickmanager.repository.model.PlayerExp;
 import easyhattrickmanager.repository.model.PlayerSubSkill;
 import easyhattrickmanager.repository.model.PlayerTraining;
 import easyhattrickmanager.service.model.dataresponse.PlayerFormInfo;
+import easyhattrickmanager.service.model.dataresponse.PlayerExpInfo;
 import easyhattrickmanager.service.model.dataresponse.PlayerInfo;
 import easyhattrickmanager.service.model.dataresponse.PlayerSubSkillInfo;
 import easyhattrickmanager.service.model.dataresponse.PlayerTrainingInfo;
@@ -23,7 +25,8 @@ public interface PlayerInfoMapper {
     @Mapping(target = "htms28", source = "playerData.htms28")
     @Mapping(target = "playerSubSkill", source = "playerSubSkill")
     @Mapping(target = "playerFormInfo", source = "calculatedForm")
-    PlayerInfo toInfo(Player player, PlayerData playerData, PlayerTraining playerTraining, PlayerSubSkill playerSubSkill, PlayerForm calculatedForm);
+    @Mapping(target = "playerExpInfo", source = "calculatedExp")
+    PlayerInfo toInfo(Player player, PlayerData playerData, PlayerTraining playerTraining, PlayerSubSkill playerSubSkill, PlayerForm calculatedForm, PlayerExp calculatedExp);
 
     @Mapping(target = "pieces", source = "setPieces")
     PlayerTrainingInfo toInfo(PlayerTraining playerTraining);
@@ -32,4 +35,6 @@ public interface PlayerInfoMapper {
     PlayerSubSkillInfo toInfo(PlayerSubSkill playerSubSkill);
 
     PlayerFormInfo toInfo(PlayerForm playerForm);
+
+    PlayerExpInfo toInfo(PlayerExp playerExp);
 }

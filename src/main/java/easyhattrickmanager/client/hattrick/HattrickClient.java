@@ -17,12 +17,14 @@ import easyhattrickmanager.client.hattrick.model.managercompendium.ManagerCompen
 import easyhattrickmanager.client.hattrick.model.matchdetail.MatchDetail;
 import easyhattrickmanager.client.hattrick.model.matchesarchive.MatchesArchive;
 import easyhattrickmanager.client.hattrick.model.matchlineup.MatchLineup;
+import easyhattrickmanager.client.hattrick.model.nationalteammatches.NationalTeamMatches;
 import easyhattrickmanager.client.hattrick.model.playerdetails.PlayerDetails;
 import easyhattrickmanager.client.hattrick.model.playerdetails33.PlayerDetails33;
 import easyhattrickmanager.client.hattrick.model.players.Players;
 import easyhattrickmanager.client.hattrick.model.staffavatars.StaffAvatars;
 import easyhattrickmanager.client.hattrick.model.stafflist.Stafflist;
 import easyhattrickmanager.client.hattrick.model.teamdetails.TeamDetails;
+import easyhattrickmanager.client.hattrick.model.tournamentfixtures.TournamentFixtures;
 import easyhattrickmanager.client.hattrick.model.training.Training;
 import easyhattrickmanager.client.hattrick.model.translations.Translations;
 import easyhattrickmanager.client.hattrick.model.worlddetails.WorldDetails;
@@ -194,8 +196,12 @@ public class HattrickClient {
     }
 
     public MatchDetail getMatchDetail(OAuth1AccessToken accessToken, int matchId) {
+        return getMatchDetail(accessToken, matchId, "Hattrick");
+    }
+
+    public MatchDetail getMatchDetail(OAuth1AccessToken accessToken, int matchId, String sourceSystem) {
         try {
-            String xml = this.getXML(accessToken, "matchdetails&version=3.1&matchEvents=false&matchID=" + matchId);
+            String xml = this.getXML(accessToken, "matchdetails&version=3.1&matchEvents=false&matchID=" + matchId + "&sourceSystem=" + sourceSystem);
             MatchDetail matchDetail = XMLMAPPER.readValue(xml, MatchDetail.class);
             return matchDetail;
         } catch (JsonProcessingException e) {
@@ -204,10 +210,32 @@ public class HattrickClient {
     }
 
     public MatchLineup getMatchLineup(OAuth1AccessToken accessToken, int teamId, int matchId) {
+        return getMatchLineup(accessToken, teamId, matchId, "Hattrick");
+    }
+
+    public MatchLineup getMatchLineup(OAuth1AccessToken accessToken, int teamId, int matchId, String sourceSystem) {
         try {
-            String xml = this.getXML(accessToken, "matchlineup&version=2.1&teamID=" + teamId + "&matchID=" + matchId);
+            String xml = this.getXML(accessToken, "matchlineup&version=2.1&teamID=" + teamId + "&matchID=" + matchId + "&sourceSystem=" + sourceSystem);
             MatchLineup matchLineup = XMLMAPPER.readValue(xml, MatchLineup.class);
             return matchLineup;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public TournamentFixtures getTournamentFixtures(OAuth1AccessToken token, int tournamentId, int season) {
+        try {
+            String xml = getXML(token, "tournamentfixtures&version=1.1&tournamentId=" + tournamentId + "&season=" + season);
+            return XMLMAPPER.readValue(xml, TournamentFixtures.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public NationalTeamMatches getNationalTeamMatches(OAuth1AccessToken token, int officeType) {
+        try {
+            String xml = getXML(token, "nationalteammatches&version=1.4&LeagueOfficeTypeID=" + officeType);
+            return XMLMAPPER.readValue(xml, NationalTeamMatches.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e.getMessage());
         }

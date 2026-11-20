@@ -721,6 +721,7 @@ public class TeamTrainingService {
             .TSI((int) TSI)
             .playerForm(player.getPlayerForm())
             .experience(player.getExperience())
+            .playerExpInfo(player.getPlayerExpInfo())
             .loyalty(player.getLoyalty())
             .motherClubBonus(player.isMotherClubBonus())
             .leadership(player.getLeadership())

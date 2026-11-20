@@ -1,6 +1,7 @@
 package easyhattrickmanager.client.hattrick.model.matchdetail;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.Data;
@@ -50,11 +51,13 @@ public class Match {
     @JacksonXmlProperty(localName = "Scorers")
     private List<Goal> goals;
 
-    @JacksonXmlProperty(localName = "Bookings")
-    private String bookings;
+    @JacksonXmlElementWrapper(localName = "Bookings")
+    @JacksonXmlProperty(localName = "Booking")
+    private List<Booking> bookings;
 
-    @JacksonXmlProperty(localName = "Injuries")
-    private String injuries;
+    @JacksonXmlElementWrapper(localName = "Injuries")
+    @JacksonXmlProperty(localName = "Injury")
+    private List<Injury> injuries;
 
     @JacksonXmlProperty(localName = "PossessionFirstHalfHome")
     private int possessionFirstHalfHome;

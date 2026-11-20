@@ -120,6 +120,13 @@ export class PlayerCardComponent implements OnInit, AfterViewInit, OnDestroy {
     return {whole, decimal: decimal ?? ''};
   }
 
+  getExperienceParts(): {whole: string; decimal: string} | null {
+    if (!this.player) {
+      return null;
+    }
+    return this.getDecimalParts(this.player.playerExpInfo?.exp ?? this.player.experience, 2);
+  }
+
   getFormWithSublevel(): number {
     const visualForm = this.player?.playerForm ?? 0;
     if (visualForm === 8) {

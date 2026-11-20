@@ -9,6 +9,7 @@ import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 
 import easyhattrickmanager.repository.LeagueDAO;
 import easyhattrickmanager.repository.PlayerDataDAO;
+import easyhattrickmanager.repository.PlayerExpDAO;
 import easyhattrickmanager.repository.PlayerFormDAO;
 import easyhattrickmanager.repository.PlayerSubSkillDAO;
 import easyhattrickmanager.repository.PlayerTrainingDAO;
@@ -55,8 +56,10 @@ public class RepairService {
     private final PlayerTrainingDAO playerTrainingDAO;
     private final PlayerSubSkillDAO playerSubSkillDAO;
     private final PlayerFormDAO playerFormDAO;
+    private final PlayerExpDAO playerExpDAO;
     private final TrainingPercentageService trainingPercentageService;
     private final PlayerTrainingService playerTrainingService;
+    private final PlayerExperienceService playerExperienceService;
 
     public void fillInGaps() {
         teamDAO.getActiveTeams().forEach(team -> {
@@ -493,6 +496,25 @@ public class RepairService {
                     );
                     playerForms.forEach(playerFormDAO::insert);
                 });
+        });
+    }
+
+    public void getPlayerExp() {
+        teamDAO.getActiveTeams().forEach(team -> {
+            System.out.println("Repair playerExp: " + team.getName() + " (" + team.getId() + ")");
+            var existing = playerExpDAO.get(team.getId()).stream()
+                .map(exp -> exp.getSeasonWeek() + ":" + exp.getId()).collect(Collectors.toSet());
+            Map<String, List<PlayerData>> playersByWeek = playerDataDAO.get(team.getId()).stream()
+                .collect(groupingBy(PlayerData::getSeasonWeek));
+            playersByWeek.keySet().stream().sorted()
+                .filter(week -> playersByWeek.get(week).stream().anyMatch(player -> !existing.contains(week + ":" + player.getId())))
+                .forEach(week -> {
+                    var experiencePoints = trainingPercentageService.calculateWeeklyExperiencePoints(week, team.getId());
+                    playerExperienceService.calculatePlayerExp(week, team.getId(), playersByWeek.get(week), experiencePoints).stream()
+                        .filter(exp -> !existing.contains(week + ":" + exp.getId()))
+                        .forEach(playerExpDAO::insert);
+                });
+
         });
     }
 

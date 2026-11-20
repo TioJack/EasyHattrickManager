@@ -45,7 +45,7 @@ describe('Player table with zero skills', () => {
         const skills = rows[0].querySelectorAll<HTMLElement>('.skill-cell');
         expect(skills.length).toBe(12);
         skills.forEach((cell, index) => {
-          const hasSublevel = showSubSkills && index !== 0 && index !== 1 && index !== 4;
+          const hasSublevel = showSubSkills && index !== 0 && index !== 4;
           expect(cell.textContent?.trim()).toBe(hasSublevel ? '0.00' : '0');
           expect(cell.title).not.toContain('%');
         });
@@ -61,4 +61,29 @@ describe('Player table with zero skills', () => {
       });
     }
   }
+
+  it('shows the calculated experience sublevel and falls back to the known integer when it is hidden', () => {
+    config.next({...config.value, showSubSkills: true});
+    const fixture = TestBed.createComponent(PlayerTableComponent);
+    fixture.componentRef.setInput('players', [{...zeroPlayer, experience: 6, playerExpInfo: {exp: 6.0385}}]);
+    fixture.detectChanges();
+    const experience: HTMLElement = fixture.nativeElement.querySelectorAll('.skill-cell')[1];
+    expect(experience.textContent?.trim()).toBe('6.03');
+    config.next({...config.value, showSubSkills: false});
+    fixture.detectChanges();
+    expect(experience.textContent?.trim()).toBe('6');
+  });
+
+  it('truncates experience to two decimal places without displaying an unobserved level-up', () => {
+    config.next({...config.value, showSubSkills: true});
+    const fixture = TestBed.createComponent(PlayerTableComponent);
+    fixture.componentRef.setInput('players', [
+      {...zeroPlayer, playerExpInfo: {exp: 0.35 / 100}},
+      {...zeroPlayer, experience: 6, playerExpInfo: {exp: 6.999999999999999}}
+    ]);
+    fixture.detectChanges();
+    const rows = fixture.nativeElement.querySelectorAll('tbody tr');
+    expect(rows[0].querySelectorAll('.skill-cell')[1].textContent.trim()).toBe('0.00');
+    expect(rows[1].querySelectorAll('.skill-cell')[1].textContent.trim()).toBe('6.99');
+  });
 });

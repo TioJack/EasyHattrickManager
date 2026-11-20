@@ -34,7 +34,7 @@
       <div class="row">
         <div class="col-12 text-start fs-90 text-nowrap">
           {{ 'ehm.has' | translate | firstCapitalize }}
-          {{ 'ht.skill-level-' + player.experience | translate }} ({{ player.experience }})
+          {{ 'ht.skill-level-' + player.experience | translate }} (<ng-container *ngIf="getExperienceParts() as parts">{{ parts.whole }}<span *ngIf="userConfig.showSubSkills" class="green">.{{ parts.decimal }}</span></ng-container>)
           {{ 'ht.skill-experience' | translate | lowercase }},
           {{ 'ht.skill-level-' + player.leadership | translate }} ({{ player.leadership }})
           {{ 'ht.skill-leadership' | translate | lowercase }} {{ 'ehm.and' | translate }}

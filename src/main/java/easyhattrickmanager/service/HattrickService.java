@@ -7,12 +7,14 @@ import easyhattrickmanager.client.hattrick.model.managercompendium.ManagerCompen
 import easyhattrickmanager.client.hattrick.model.matchdetail.MatchDetail;
 import easyhattrickmanager.client.hattrick.model.matchesarchive.MatchesArchive;
 import easyhattrickmanager.client.hattrick.model.matchlineup.MatchLineup;
+import easyhattrickmanager.client.hattrick.model.nationalteammatches.NationalTeamMatches;
 import easyhattrickmanager.client.hattrick.model.playerdetails.PlayerDetails;
 import easyhattrickmanager.client.hattrick.model.playerdetails33.PlayerDetails33;
 import easyhattrickmanager.client.hattrick.model.players.Players;
 import easyhattrickmanager.client.hattrick.model.staffavatars.StaffAvatars;
 import easyhattrickmanager.client.hattrick.model.stafflist.Stafflist;
 import easyhattrickmanager.client.hattrick.model.teamdetails.TeamDetails;
+import easyhattrickmanager.client.hattrick.model.tournamentfixtures.TournamentFixtures;
 import easyhattrickmanager.client.hattrick.model.training.Training;
 import easyhattrickmanager.client.hattrick.model.translations.Translations;
 import easyhattrickmanager.client.hattrick.model.worlddetails.WorldDetails;
@@ -100,6 +102,18 @@ public class HattrickService {
         return this.hattrickClient.getMatchLineup(getAccessTokenByTeamId(teamId), teamId, matchId);
     }
 
+    public TournamentFixtures getTournamentFixtures(int clubTeamId, int tournamentId, int season) {
+        return hattrickClient.getTournamentFixtures(getAccessTokenByTeamId(clubTeamId), tournamentId, season);
+    }
+
+    public MatchDetail getMatchDetail(int clubTeamId, int matchId, String sourceSystem) {
+        return hattrickClient.getMatchDetail(getAccessTokenByTeamId(clubTeamId), matchId, sourceSystem);
+    }
+
+    public MatchLineup getMatchLineup(int clubTeamId, int nationalTeamId, int matchId, String sourceSystem) {
+        return hattrickClient.getMatchLineup(getAccessTokenByTeamId(clubTeamId), nationalTeamId, matchId, sourceSystem);
+    }
+
     private OAuth1AccessToken getAccessTokenByUser(User user) {
         return new OAuth1AccessToken(user.getToken(), user.getTokenSecret());
     }
@@ -107,5 +121,9 @@ public class HattrickService {
     private OAuth1AccessToken getAccessTokenByTeamId(int teamId) {
         User user = userDAO.getByTeamId(teamId);
         return new OAuth1AccessToken(user.getToken(), user.getTokenSecret());
+    }
+
+    public NationalTeamMatches getNationalTeamMatches(int clubTeamId, int officeType) {
+        return hattrickClient.getNationalTeamMatches(getAccessTokenByTeamId(clubTeamId), officeType);
     }
 }

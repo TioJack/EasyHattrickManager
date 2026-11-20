@@ -61,4 +61,5 @@ public class PlayerInfo {
     PlayerTrainingInfo playerTraining;
     PlayerSubSkillInfo playerSubSkill;
     PlayerFormInfo playerFormInfo;
+    PlayerExpInfo playerExpInfo;
 }

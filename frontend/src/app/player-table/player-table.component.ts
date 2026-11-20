@@ -58,9 +58,11 @@ export class PlayerTableComponent {
 
   getSkillParts(player: PlayerInfo, column: SkillColumn, showSubSkills: boolean): string[] {
     let value = player[column.key];
-    const hasSublevel = showSubSkills && (column.sub != null || column.key === 'playerForm');
+    const hasSublevel = showSubSkills && (column.sub != null || column.key === 'playerForm' || column.key === 'experience');
     if (hasSublevel && column.sub) {
       value += player.playerSubSkill?.[column.sub] ?? 0;
+    } else if (hasSublevel && column.key === 'experience') {
+      value = player.playerExpInfo?.exp ?? value;
     } else if (hasSublevel && column.key === 'playerForm' && value < 8) {
       const form = player.playerFormInfo?.form ?? value;
       value = Math.floor(form) === value ? form : (form > value ? value + 0.99 : value);

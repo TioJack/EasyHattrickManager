@@ -10,6 +10,7 @@ import easyhattrickmanager.repository.LeagueDAO;
 import easyhattrickmanager.repository.PlayerDAO;
 import easyhattrickmanager.repository.PlayerDataDAO;
 import easyhattrickmanager.repository.PlayerFormDAO;
+import easyhattrickmanager.repository.PlayerExpDAO;
 import easyhattrickmanager.repository.PlayerSubSkillDAO;
 import easyhattrickmanager.repository.PlayerTrainingDAO;
 import easyhattrickmanager.repository.TeamDAO;
@@ -17,6 +18,7 @@ import easyhattrickmanager.repository.UserDAO;
 import easyhattrickmanager.repository.model.League;
 import easyhattrickmanager.repository.model.Player;
 import easyhattrickmanager.repository.model.PlayerForm;
+import easyhattrickmanager.repository.model.PlayerExp;
 import easyhattrickmanager.repository.model.PlayerSubSkill;
 import easyhattrickmanager.repository.model.PlayerTraining;
 import easyhattrickmanager.repository.model.Team;
@@ -42,6 +44,7 @@ public class PlayerDataService {
     private final PlayerDAO playerDAO;
     private final PlayerDataDAO playerDataDAO;
     private final PlayerFormDAO playerFormDAO;
+    private final PlayerExpDAO playerExpDAO;
     private final PlayerSubSkillDAO playerSubSkillDAO;
     private final PlayerTrainingDAO playerTrainingDAO;
     private final UserConfigStorageService userConfigStorageService;
@@ -62,6 +65,7 @@ public class PlayerDataService {
         List<PlayerTraining> playerTrainingByWeek = playerTrainingDAO.getPlayer(team.getId(), playerId);
         List<PlayerSubSkill> playerSubSkillByWeek = playerSubSkillDAO.getPlayer(team.getId(), playerId);
         List<PlayerForm> playerFormByWeek = playerFormDAO.getPlayer(team.getId(), playerId);
+        List<PlayerExp> playerExpByWeek = playerExpDAO.getPlayer(team.getId(), playerId);
         List<PlayerWeeklyInfo> playerWeeklyInfo = playerDataDAO.getPlayer(team.getId(), playerId).stream()
             .map(playerData -> {
                 String seasonWeek = playerData.getSeasonWeek();
@@ -70,7 +74,8 @@ public class PlayerDataService {
                     playerData,
                     getPlayerTraining(playerTrainingByWeek, seasonWeek),
                     getPlayerSubSkill(playerSubSkillByWeek, seasonWeek),
-                    getPlayerForm(playerFormByWeek, seasonWeek)
+                    getPlayerForm(playerFormByWeek, seasonWeek),
+                    getPlayerExp(playerExpByWeek, seasonWeek)
                 );
                 return PlayerWeeklyInfo.builder()
                     .season(Integer.parseInt(seasonWeek.substring(1, 4)) + league.getSeasonOffset())
@@ -93,6 +98,10 @@ public class PlayerDataService {
 
     private PlayerForm getPlayerForm(List<PlayerForm> playerForms, String seasonWeek) {
         return isEmpty(playerForms) ? null : playerForms.stream().filter(playerForm -> seasonWeek.equals(playerForm.getSeasonWeek())).findFirst().orElse(null);
+    }
+
+    private PlayerExp getPlayerExp(List<PlayerExp> playerExps, String seasonWeek) {
+        return isEmpty(playerExps) ? null : playerExps.stream().filter(playerExp -> seasonWeek.equals(playerExp.getSeasonWeek())).findFirst().orElse(null);
     }
 
     private UserConfig getUserConfig(int userId) {

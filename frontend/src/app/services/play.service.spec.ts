@@ -60,6 +60,19 @@ describe('Player sorting with subskills', () => {
     play = new PlayService(new UserConfigService({} as DataService));
   });
 
+  it('sorts experience using its calculated sublevel, including a zero value', () => {
+    const players = [
+      {id: 1, experience: 6, playerExpInfo: {exp: 6.9}},
+      {id: 2, experience: 6, playerExpInfo: {exp: 6.035}},
+      {id: 3, experience: 0, playerExpInfo: {exp: 0}},
+      {id: 4, experience: 6}
+    ] as PlayerInfo[];
+    expect(play.sortPlayers(players, {criteria: 'experience', mode: 'asc'}).map(player => player.id))
+      .toEqual([3, 4, 2, 1]);
+    expect(play.sortPlayers(players, {criteria: 'experience', mode: 'desc'}).map(player => player.id))
+      .toEqual([1, 2, 4, 3]);
+  });
+
   const skills = [
     ['staminaSkill', 'stamina'], ['keeperSkill', 'keeper'], ['defenderSkill', 'defender'],
     ['playmakerSkill', 'playmaker'], ['wingerSkill', 'winger'], ['passingSkill', 'passing'],

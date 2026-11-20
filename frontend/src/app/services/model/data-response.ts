@@ -107,6 +107,7 @@ export interface PlayerInfo {
   playerTraining: PlayerTrainingInfo;
   playerSubSkill?: PlayerSubSkillInfo;
   playerFormInfo?: PlayerFormInfo;
+  playerExpInfo?: PlayerExpInfo;
   changes: Record<string, number>;
 }
 
@@ -137,6 +138,10 @@ export interface PlayerFormInfo {
   form: number;
   hiddenForm: number;
   expectedForm: number;
+}
+
+export interface PlayerExpInfo {
+  exp: number;
 }
 
 export interface UserConfig {

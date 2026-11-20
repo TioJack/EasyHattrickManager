@@ -5,6 +5,7 @@ import static java.lang.Integer.compare;
 
 import easyhattrickmanager.client.hattrick.model.matchdetail.MatchDetail;
 import easyhattrickmanager.client.hattrick.model.matchesarchive.MatchesArchive;
+import easyhattrickmanager.client.hattrick.model.matchesarchive.Match;
 import easyhattrickmanager.client.hattrick.model.matchlineup.MatchLineup;
 import easyhattrickmanager.client.hattrick.model.matchlineup.Player;
 import easyhattrickmanager.client.hattrick.model.matchlineup.Substitution;
@@ -17,14 +18,17 @@ import easyhattrickmanager.repository.model.Training;
 import easyhattrickmanager.service.model.PercentageBySkill;
 import easyhattrickmanager.service.model.PlayerPerTrained;
 import easyhattrickmanager.service.model.PlayerRole;
+import easyhattrickmanager.service.model.WeeklyPlayerTraining;
 import easyhattrickmanager.utils.SeasonWeekUtils;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -38,45 +42,12 @@ public class TrainingPercentageService {
     private final HattrickService hattrickService;
 
     public List<PlayerTraining> calculateTrainingPercentage(String seasonWeek, int teamId, Training training, int trainerLevel, int assistantsLevel) {
-        Team team = teamDAO.get(teamId);
-        League league = leagueDAO.get(team.getLeagueId()).orElseThrow();
+        return calculateWeeklyTraining(seasonWeek, teamId, training, trainerLevel, assistantsLevel).players();
+    }
 
-        ZonedDateTime trainingDate = SeasonWeekUtils.seasonWeekTrainingDate(seasonWeek, league.getTrainingDate());
-        MatchesArchive matchesArchive = hattrickService.getMatchesArchive(teamId, trainingDate.minusWeeks(1), trainingDate);
-
-        List<PlayerRole> playerRoles = new ArrayList<>();
-        matchesArchive.getTeam().getMatches()
-            .stream().filter(matchHT -> matchHT.getMatchType() < 10)
-            .forEach(matchHT -> {
-                List<PlayerRole> playerRolesMatch = new ArrayList<>();
-                MatchDetail matchDetail = hattrickService.getMatchDetail(teamId, matchHT.getMatchId());
-                MatchLineup matchLineup = hattrickService.getMatchLineup(teamId, matchHT.getMatchId());
-                int matchMinutes = getMatchMinutes(matchDetail);
-                Optional<Integer> setPiecesPlayerId = matchLineup.getTeam().getLineup().stream()
-                    .filter(player -> player.getRoleId() == 17)
-                    .map(Player::getPlayerId)
-                    .findFirst();
-
-                matchLineup.getTeam().getStartingLineup().stream()
-                    .filter(player -> !List.of(17, 18).contains(player.getRoleId()))
-                    .forEach(player ->
-                        playerRolesMatch.add(PlayerRole.builder()
-                            .playerId(player.getPlayerId())
-                            .roleId(player.getRoleId())
-                            .start(0)
-                            .end(matchMinutes)
-                            .perTrainingByRole(getTrainedSkills(training.getTrainingType(), player.getRoleId(), setPiecesPlayerId.isPresent() && setPiecesPlayerId.get() == player.getPlayerId()))
-                            .build()));
-
-                matchLineup.getTeam().getSubstitutions().forEach(substitution -> {
-                    if (substitution.getOrderType() == 1) {
-                        handleSubstitution(playerRolesMatch, substitution, matchMinutes, training.getTrainingType(), setPiecesPlayerId);
-                    } else if (substitution.getOrderType() == 3) {
-                        handlePlayerSwap(playerRolesMatch, substitution, matchMinutes, training.getTrainingType(), setPiecesPlayerId);
-                    }
-                });
-                playerRoles.addAll(playerRolesMatch);
-            });
+    public WeeklyPlayerTraining calculateWeeklyTraining(String seasonWeek, int teamId, Training training, int trainerLevel, int assistantsLevel) {
+        WeeklyMatchData matchData = calculateWeeklyMatchData(seasonWeek, teamId, training.getTrainingType());
+        List<PlayerRole> playerRoles = matchData.playerRoles();
 
         playerRoles.sort((a, b) -> {
             int playerIdComparison = compare(a.getPlayerId(), b.getPlayerId());
@@ -94,7 +65,7 @@ public class TrainingPercentageService {
 
         Map<Integer, Integer> playerMinutes = calculatePlayerMinutes(playerRoles);
 
-        return minLevStaTraAss.stream()
+        List<PlayerTraining> players = minLevStaTraAss.stream()
             .map(playerPerTrained -> PlayerTraining.builder()
                 .teamId(teamId)
                 .seasonWeek(seasonWeek)
@@ -109,6 +80,92 @@ public class TrainingPercentageService {
                 .minutes(playerMinutes.getOrDefault(playerPerTrained.getPlayerId(), 0))
                 .build())
             .toList();
+        return new WeeklyPlayerTraining(players, matchData.experiencePoints());
+    }
+
+    public Map<Integer, Double> calculateWeeklyExperiencePoints(String seasonWeek, int teamId) {
+        return calculateWeeklyMatchData(seasonWeek, teamId, 0).experiencePoints();
+    }
+
+    private record WeeklyMatchData(List<PlayerRole> playerRoles, Map<Integer, Double> experiencePoints) {}
+
+    private WeeklyMatchData calculateWeeklyMatchData(String seasonWeek, int teamId, int trainingType) {
+        Team team = teamDAO.get(teamId);
+        League league = leagueDAO.get(team.getLeagueId()).orElseThrow();
+
+        ZonedDateTime trainingDate = SeasonWeekUtils.seasonWeekTrainingDate(seasonWeek, league.getTrainingDate());
+        MatchesArchive matchesArchive = hattrickService.getMatchesArchive(teamId, trainingDate.minusWeeks(1), trainingDate);
+
+        List<PlayerRole> playerRoles = new ArrayList<>();
+        Map<Integer, Double> experiencePoints = new HashMap<>();
+        Set<Integer> processedMatches = new HashSet<>();
+        var matches = matchesArchive.getTeam().getMatches();
+        (matches == null ? List.<Match>of() : matches)
+            .stream().filter(matchHT -> matchHT.getMatchType() < 10)
+            .filter(matchHT -> processedMatches.add(matchHT.getMatchId()))
+            .forEach(matchHT -> {
+                MatchDetail matchDetail = hattrickService.getMatchDetail(teamId, matchHT.getMatchId());
+                MatchLineup matchLineup = hattrickService.getMatchLineup(teamId, matchHT.getMatchId());
+                List<PlayerRole> playerRolesMatch = getPlayerRoles(matchDetail, matchLineup, trainingType);
+                double points = PlayerExperienceService.getMatchPoints(matchHT.getMatchType(), matchHT.getCupLevel(),
+                    matchHT.getCupId() > 0 ? matchHT.getCupId() : matchHT.getMatchContextId());
+                calculatePlayerMinutes(playerRolesMatch).forEach((playerId, minutes) ->
+                    experiencePoints.merge(playerId, points * Math.min(90, Math.max(0, minutes)) / 90.0, Double::sum));
+                playerRoles.addAll(playerRolesMatch);
+            });
+
+        return new WeeklyMatchData(playerRoles, experiencePoints);
+    }
+
+    public Map<Integer, Double> calculateMatchExperiencePoints(MatchDetail detail, MatchLineup lineup, double points) {
+        Map<Integer, Double> result = new HashMap<>();
+        calculatePlayerMinutes(getPlayerRoles(detail, lineup, 0)).forEach((id, minutes) ->
+            result.put(id, points * Math.min(90, Math.max(0, minutes)) / 90.0));
+        return result;
+    }
+
+    private List<PlayerRole> getPlayerRoles(MatchDetail matchDetail, MatchLineup matchLineup, int trainingType) {
+        List<PlayerRole> playerRolesMatch = new ArrayList<>();
+        int matchMinutes = getMatchMinutes(matchDetail);
+        var finalLineup = matchLineup.getTeam().getLineup();
+        Optional<Integer> setPiecesPlayerId = (finalLineup == null ? List.<Player>of() : finalLineup).stream()
+            .filter(player -> player.getRoleId() == 17)
+            .map(Player::getPlayerId)
+            .findFirst();
+
+        var startingLineup = matchLineup.getTeam().getStartingLineup();
+        (startingLineup == null ? List.<Player>of() : startingLineup).stream()
+            .filter(player -> !List.of(17, 18).contains(player.getRoleId()))
+            .forEach(player ->
+                playerRolesMatch.add(PlayerRole.builder()
+                    .playerId(player.getPlayerId())
+                    .roleId(player.getRoleId())
+                    .start(0)
+                    .end(matchMinutes)
+                    .perTrainingByRole(getTrainedSkills(trainingType, player.getRoleId(), setPiecesPlayerId.isPresent() && setPiecesPlayerId.get() == player.getPlayerId()))
+                    .build()));
+
+        var substitutions = matchLineup.getTeam().getSubstitutions();
+        (substitutions == null ? List.<Substitution>of() : substitutions).forEach(substitution -> {
+            if (substitution.getOrderType() == 1) {
+                handleSubstitution(playerRolesMatch, substitution, matchMinutes, trainingType, setPiecesPlayerId);
+            } else if (substitution.getOrderType() == 3) {
+                handlePlayerSwap(playerRolesMatch, substitution, matchMinutes, trainingType, setPiecesPlayerId);
+            }
+        });
+        var bookings = matchDetail.getMatch().getBookings();
+        if (bookings != null) {
+            bookings.stream().filter(booking -> booking.getType() == 2).forEach(booking ->
+                playerRolesMatch.stream().filter(role -> role.getPlayerId() == booking.getPlayerId()).forEach(role ->
+                    role.setEnd(Math.max(role.getStart(), Math.min(role.getEnd(), booking.getMinute())))));
+        }
+        var injuries = matchDetail.getMatch().getInjuries();
+        if (injuries != null) {
+            injuries.stream().filter(injury -> injury.getType() == 2).forEach(injury ->
+                playerRolesMatch.stream().filter(role -> role.getPlayerId() == injury.getPlayerId()).forEach(role ->
+                    role.setEnd(Math.max(role.getStart(), Math.min(role.getEnd(), injury.getMinute())))));
+        }
+        return playerRolesMatch;
     }
 
     private int getMatchMinutes(MatchDetail matchDetail) {

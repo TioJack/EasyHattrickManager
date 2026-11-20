@@ -22,6 +22,7 @@ import easyhattrickmanager.repository.LeagueDAO;
 import easyhattrickmanager.repository.PlayerDAO;
 import easyhattrickmanager.repository.PlayerDataDAO;
 import easyhattrickmanager.repository.PlayerFormDAO;
+import easyhattrickmanager.repository.PlayerExpDAO;
 import easyhattrickmanager.repository.PlayerSubSkillDAO;
 import easyhattrickmanager.repository.PlayerTrainingDAO;
 import easyhattrickmanager.repository.PlayerTransferDAO;
@@ -72,6 +73,7 @@ public class UpdateService {
     private final PlayerDataDAO playerDataDAO;
     private final PlayerTrainingDAO playerTrainingDAO;
     private final PlayerFormDAO playerFormDAO;
+    private final PlayerExpDAO playerExpDAO;
     private final PlayerTransferDAO playerTransferDAO;
     private final PlayerSubSkillDAO playerSubSkillDAO;
     private final TrainingDAO trainingDAO;
@@ -84,6 +86,7 @@ public class UpdateService {
     private final CheckDataDAO checkDataDAO;
     private final TrainingPercentageService trainingPercentageService;
     private final PlayerTrainingService playerTrainingService;
+    private final PlayerExperienceService playerExperienceService;
     private List<String> images = new ArrayList<>();
 
     public void update() {
@@ -127,12 +130,15 @@ public class UpdateService {
         staff.getStaffList().getStaffs().forEach(staffHT -> staffMemberDAO.insert(getStaffMember(teamId, staffHT, seasonWeek)));
         saveAvatars(hattrickService.getAvatars(teamId));
         saveStaffAvatars(hattrickService.getStaffAvatars(teamId));
-        List<PlayerTraining> playerTrainings = trainingPercentageService.calculateTrainingPercentage(seasonWeek, teamId, training, getTrainerLevel(staff), getAssistantsLevel(staff));
+        var weeklyTraining = trainingPercentageService.calculateWeeklyTraining(seasonWeek, teamId, training, getTrainerLevel(staff), getAssistantsLevel(staff));
+        List<PlayerTraining> playerTrainings = weeklyTraining.players();
         playerTrainings.forEach(playerTrainingDAO::insert);
         List<PlayerSubSkill> playerSubSkills = playerTrainingService.calculateSubSkillTraining(seasonWeek, teamId, training, getTrainerLevel(staff), getAssistantsLevel(staff), playerDatas, playerTrainings);
         playerSubSkills.forEach(playerSubSkillDAO::insert);
         List<PlayerForm> playerForms = playerTrainingService.calculatePlayerForm(seasonWeek, teamId, playerDatas, playerSubSkills);
         playerForms.forEach(playerFormDAO::insert);
+        playerExperienceService.calculatePlayerExp(seasonWeek, teamId, playerDatas, weeklyTraining.experiencePoints())
+            .forEach(playerExpDAO::insert);
     }
 
     private int getTrainerLevel(Stafflist staff) {

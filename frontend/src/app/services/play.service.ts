@@ -221,6 +221,9 @@ export class PlayService {
     if (sort.criteria === 'name') {
       valueA = `${a.firstName || ''} ${a.nickName || ''} ${a.lastName || ''}`.trim();
       valueB = `${b.firstName || ''} ${b.nickName || ''} ${b.lastName || ''}`.trim();
+    } else if (sort.criteria === 'experience') {
+      valueA = a.playerExpInfo?.exp ?? a.experience;
+      valueB = b.playerExpInfo?.exp ?? b.experience;
     } else if (sort.criteria === 'age') {
       valueA = (a.age || 0) + ((a.ageDays || 0) / 111);
       valueB = (b.age || 0) + ((b.ageDays || 0) / 111);
