@@ -1,5 +1,7 @@
 package easyhattrickmanager.configuration;
 
+import java.util.HashSet;
+import java.util.Set;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -15,5 +17,6 @@ public class EhmConfiguration {
     private String cronAddActiveUpdateExecutions;
     private String cronCheckData;
     private String cronCheckActive;
+    private Set<Integer> privilegedTeamIds = new HashSet<>();
 
 }

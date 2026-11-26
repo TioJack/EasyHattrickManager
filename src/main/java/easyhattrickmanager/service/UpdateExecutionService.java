@@ -89,7 +89,11 @@ public class UpdateExecutionService {
 
     private ZonedDateTime getNextUpdateExecution(Team team) {
         var league = updateService.getLeague(team.getLeagueId());
-        return getNextDayOfWeek(league.getTrainingDate()).plusHours(1).plusMinutes(random.nextInt(120));
+        ZonedDateTime executionTime = getNextDayOfWeek(league.getTrainingDate()).plusHours(1);
+        if (ehmConfiguration.getPrivilegedTeamIds().contains(team.getId())) {
+            return executionTime;
+        }
+        return executionTime.plusMinutes(random.nextInt(120));
     }
 
     private ZonedDateTime getNextDayOfWeek(ZonedDateTime inputDate) {
