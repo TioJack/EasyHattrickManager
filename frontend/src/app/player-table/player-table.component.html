@@ -54,8 +54,9 @@
             <td class="skill-cell" [class.group-start]="column.groupStart"
                 [ngStyle]="getTrainingStyle(player, column, config.showTrainingInfo)"
                 [title]="(column.label | translate) + (config.showTrainingInfo && column.training && player.playerTraining && player.playerTraining[column.training] ? ' ' + player.playerTraining[column.training].toFixed(2) + '%' : '')">
-              <ng-container *ngIf="getSkillParts(player, column, config.showSubSkills) as parts">
-                {{ parts[0] }}<span *ngIf="parts[1]" class="subskill">.{{ parts[1] }}</span>
+              <ng-container *ngIf="getSkillParts(player, column, config.showSubSkills || subskillEditor.editing) as parts">
+                {{ parts[0] }}<span *ngIf="parts[1]" class="subskill"><app-subskill-input *ngIf="editableSkill(column) as skill" [player]="player" [skill]="skill"
+                  [label]="column.label" [decimal]="parts[1]" [locked]="(skill === 'stamina' && player.staminaSkill >= 9) || (skill === 'form' && player.playerForm >= 8)"></app-subskill-input></span>
               </ng-container>
               <span *ngIf="player.changes?.[column.key] as change" class="skill-change" [class.text-success]="change > 0" [class.text-danger]="change < 0">
                 {{ change > 0 ? '+' : '−' }}
@@ -65,11 +66,11 @@
           </ng-container>
           <td class="text-end group-start">
             {{ player.htms | numberSeparator }}
-            <div *ngIf="config.showSubSkills && player.playerSubSkill" class="subskill">{{ player.playerSubSkill.htms | numberSeparator }}</div>
+            <div *ngIf="(config.showSubSkills || subskillEditor.editing) && subskillEditor.getHtms(player) as subskills" class="subskill">{{ subskills.htms | numberSeparator }}</div>
           </td>
           <td class="text-end">
             {{ player.htms28 | numberSeparator }}
-            <div *ngIf="config.showSubSkills && player.playerSubSkill" class="subskill">{{ player.playerSubSkill.htms28 | numberSeparator }}</div>
+            <div *ngIf="(config.showSubSkills || subskillEditor.editing) && subskillEditor.getHtms(player) as subskills" class="subskill">{{ subskills.htms28 | numberSeparator }}</div>
           </td>
           <td class="text-end">{{ player.salary | salary:config.currency }}</td>
           <td>

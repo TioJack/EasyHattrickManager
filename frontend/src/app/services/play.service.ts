@@ -14,6 +14,10 @@ export type PlayerListLayout = 'cards' | 'table';
 })
 export class PlayService {
 
+  subskillEditing = false;
+
+  getSelectedTeam(): TeamExtendedInfo | null { return this.selectedTeamSubject.value; }
+
   private categorySort: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 11, 12, 9, 10, 13];
   private readonly skillSubSkills: Partial<Record<keyof PlayerInfo, keyof PlayerSubSkillInfo>> = {
     staminaSkill: 'stamina',
@@ -72,6 +76,7 @@ export class PlayService {
   }
 
   selectProject(project: Project): void {
+    if (this.subskillEditing) return;
     this.setPlannerDirty(false);
     this.setPlannerCanSave(false);
     this.setPlannerCanClear(false);
@@ -99,6 +104,7 @@ export class PlayService {
   }
 
   setViewMode(mode: ViewMode): void {
+    if (this.subskillEditing) return;
     if (mode === 'training-planner' && this.viewModeSubject.value === 'players') {
       this.playersViewWeekInfo = this.getCurrentWeekInfo();
     }
@@ -126,6 +132,7 @@ export class PlayService {
   }
 
   selectTeam(team: TeamExtendedInfo): void {
+    if (this.subskillEditing) return;
     this.selectedTeamSubject.next(team);
     this.clearSeasonWeek();
   }
@@ -144,6 +151,7 @@ export class PlayService {
   }
 
   private selectSeasonAndWeek(season: number, week: number): void {
+    if (this.subskillEditing && (season !== this.selectedSeasonSubject.value || week !== this.selectedWeekSubject.value)) return;
     this.selectedSeasonSubject.next(season);
     this.selectedWeekSubject.next(week);
     const team = this.selectedTeamSubject.value;

@@ -149,6 +149,20 @@ CREATE TABLE IF NOT EXISTS `player_subskill` (
     KEY `idx_player_subskill_team_week_id` (`team_id`, `season_week`, `id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS player_subskill_manual_history (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    team_id INT NOT NULL,
+    player_id INT NOT NULL,
+    season_week VARCHAR(7) NOT NULL,
+    skill VARCHAR(20) NOT NULL,
+    old_value DOUBLE NOT NULL,
+    new_value DOUBLE NOT NULL,
+    changed_at TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    PRIMARY KEY (id),
+    KEY idx_manual_subskill_player (team_id, player_id, season_week, changed_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE IF NOT EXISTS `player_form` (
     id INT NOT NULL,
     season_week VARCHAR(7) NOT NULL,

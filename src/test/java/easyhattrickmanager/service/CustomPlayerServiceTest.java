@@ -34,7 +34,7 @@ class CustomPlayerServiceTest {
 
     @Test
     void endpointReturnsCalculatedStatsUsingTheFrontendJsonNamesAndRejectsRealPlayerIds() throws Exception {
-        MockMvc mvc = MockMvcBuilders.standaloneSetup(new DataController(null, null, null, null, null, service)).build();
+        MockMvc mvc = MockMvcBuilders.standaloneSetup(new DataController(null, null, null, null, null, service, null)).build();
         String body = """
             {"id":-1,"firstName":"jugador A","age":19,"ageDays":35,"playerForm":7,"specialty":1,
              "staminaSkill":5,"keeperSkill":1,"defenderSkill":6,"playmakerSkill":7,"wingerSkill":8,

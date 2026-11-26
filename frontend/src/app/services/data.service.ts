@@ -1,3 +1,4 @@
+import type {SubskillChange} from './subskill-edit.service';
 import {Injectable} from '@angular/core';
 import {map, Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
@@ -18,6 +19,10 @@ export class DataService {
   private apiUrl = '/backend/data';
 
   constructor(private http: HttpClient) {
+  }
+
+  saveSubskills(request: {teamId: number; season: number; week: number; changes: SubskillChange[]}): Observable<PlayerInfo[]> {
+    return this.http.post<PlayerInfo[]>(`${this.apiUrl}/players/subskills`, request);
   }
 
   getData(): Observable<DataResponse> {

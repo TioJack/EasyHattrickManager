@@ -2,9 +2,11 @@ package easyhattrickmanager.controller;
 
 import easyhattrickmanager.controller.model.DataResponse;
 import easyhattrickmanager.controller.model.PlayerDataResponse;
+import easyhattrickmanager.controller.model.ManualSubSkillRequest;
 import easyhattrickmanager.service.CustomPlayerService;
 import easyhattrickmanager.service.DataService;
 import easyhattrickmanager.service.PlayerDataService;
+import easyhattrickmanager.service.ManualSubSkillService;
 import easyhattrickmanager.service.TeamTrainingFollowUpService;
 import easyhattrickmanager.service.TeamTrainingService;
 import easyhattrickmanager.service.UpdateService;
@@ -41,6 +43,7 @@ public class DataController {
     private final TeamTrainingService teamTrainingService;
     private final TeamTrainingFollowUpService teamTrainingFollowUpService;
     private final CustomPlayerService customPlayerService;
+    private final ManualSubSkillService manualSubSkillService;
 
     @GetMapping
     public ResponseEntity<DataResponse> getData() {
@@ -80,6 +83,13 @@ public class DataController {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         PlayerDataResponse playerDataResponse = playerDataService.getPlayerData(username, playerId);
         return ResponseEntity.ok(playerDataResponse);
+    }
+
+    @PostMapping("/players/subskills")
+    public List<PlayerInfo> saveManualSubSkills(
+        @RequestBody ManualSubSkillRequest request) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return manualSubSkillService.save(username, request);
     }
 
     @PostMapping("/teamTraining")

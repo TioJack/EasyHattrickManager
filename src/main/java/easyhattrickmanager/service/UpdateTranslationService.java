@@ -696,6 +696,15 @@ public class UpdateTranslationService {
         addTranslation_EN_ES_CA("ehm.training", "training", "entrenamiento", "entrenament");
         addTranslation_EN_ES_CA("ehm.view-players", "players", "jugadores", "jugadors");
         addTranslation_EN_ES_CA("ehm.view-player-cards", "show player cards", "ver fichas de jugadores", "veure fitxes de jugadors");
+        addTranslation_EN_ES_CA("ehm.edit-subskills", "Edit sublevels", "Editar subniveles", "Editar subnivells");
+        addTranslation_EN_ES_CA("ehm.finish-subskills", "Finish editing sublevels", "Finalizar edición de subniveles", "Finalitzar edició de subnivells");
+        addTranslation_EN_ES_CA("ehm.subskill-exit-question", "Do you want to save your changes before leaving edit mode?", "¿Quieres salir del modo edición guardando los cambios o sin guardarlos?", "Vols sortir del mode edició desant els canvis o sense desar-los?");
+        addTranslation_EN_ES_CA("ehm.keep-editing-subskills", "Keep editing", "Seguir editando", "Continuar editant");
+        addTranslation_EN_ES_CA("ehm.discard-subskills", "Exit without saving", "Salir sin guardar", "Sortir sense desar");
+        addTranslation_EN_ES_CA("ehm.save-exit-subskills", "Save and exit", "Guardar y salir", "Desar i sortir");
+        addTranslation_EN_ES_CA("ehm.subskill-range", "Enter the two sublevel digits, from 00 to 99.", "Introduce los dos decimales del subnivel, de 00 a 99.", "Introdueix els dos decimals del subnivell, de 00 a 99.");
+        addTranslation_EN_ES_CA("ehm.subskill-save-error", "Could not save. Your changes are still available; try again.", "No se han podido guardar los cambios. Conservas tu borrador; vuelve a intentarlo.", "No s’han pogut desar els canvis. Conserves l’esborrany; torna-ho a provar.");
+        addTranslation_EN_ES_CA("ehm.subskill-conflict", "A sublevel has changed since you started editing. Exit without saving and reload the page before trying again.", "Un subnivel ha cambiado desde que empezaste a editar. Sal sin guardar y recarga la página antes de volver a intentarlo.", "Un subnivell ha canviat des que has començat a editar. Surt sense desar i recarrega la pàgina abans de tornar-ho a provar.");
         addTranslation_EN_ES_CA("ehm.view-player-table", "show player table", "ver tabla de jugadores", "veure taula de jugadors");
         addTranslation_EN_ES_CA("ehm.training-planner", "training planner", "planificador de entrenamiento", "planificador d'entrenament");
         addTranslation_EN_ES_CA("ehm.plan-follow-up", "plan follow-up", "seguimiento del plan", "seguiment del pla");

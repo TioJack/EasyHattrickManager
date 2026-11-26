@@ -1,3 +1,4 @@
+import {SubskillEditService} from '../services/subskill-edit.service';
 import {TestBed} from '@angular/core/testing';
 import {provideRouter} from '@angular/router';
 import {provideTranslateService} from '@ngx-translate/core';
@@ -23,7 +24,7 @@ describe('Player table with zero skills', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [PlayerTableComponent],
-      providers: [provideRouter([]), provideTranslateService(),
+      providers: [{provide: SubskillEditService, useValue: {editing: false, getHtms: (player: any) => player.playerSubSkill}}, provideRouter([]), provideTranslateService(),
         {provide: UserConfigService, useValue: {userConfig$: config}}]
     });
   });

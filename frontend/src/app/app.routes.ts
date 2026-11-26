@@ -1,3 +1,5 @@
+import {inject} from '@angular/core';
+import {SubskillEditService} from './services/subskill-edit.service';
 import {Routes} from '@angular/router';
 import {LoginComponent} from './login/login.component';
 import {HomeComponent} from './home/home.component';
@@ -13,7 +15,7 @@ export const routes: Routes = [
   {path: 'save', component: SaveComponent},
   {path: 'login', component: LoginComponent},
   {path: 'manual', component: ManualComponent},
-  {path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
+  {path: 'home', component: HomeComponent, canActivate: [AuthGuard], canDeactivate: [() => inject(SubskillEditService).requestLeave()]},
   {path: 'player/:playerId', component: PlayerComponent, canActivate: [AuthGuard]},
   {path: 'projects', component: ProjectsComponent, canActivate: [AuthGuard]},
   {path: '**', redirectTo: 'login'}

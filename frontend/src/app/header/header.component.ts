@@ -1,3 +1,4 @@
+import {SubskillControlsComponent} from '../subskill-controls/subskill-controls.component';
 import {Component, HostListener, Input, OnInit, ViewChild} from '@angular/core';
 import {AuthService} from '../services/auth.service';
 import {PlayerInfo, Project, TeamExtendedInfo, WeeklyInfo} from '../services/model/data-response';
@@ -21,7 +22,7 @@ import {DEFAULT_DATE_FORMAT} from '../constants/global.constant';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [NgForOf, NgIf, TranslatePipe, LanguageComponent, CurrencyComponent, FirstCapitalizePipe, AsyncPipe, RouterLink, PlayerFilterComponent, PlayerSortComponent, AlertComponent, DatePipe, DateFormatComponent, ShowTrainingInfoComponent, ShowSubSkillsComponent],
+  imports: [SubskillControlsComponent, NgForOf, NgIf, TranslatePipe, LanguageComponent, CurrencyComponent, FirstCapitalizePipe, AsyncPipe, RouterLink, PlayerFilterComponent, PlayerSortComponent, AlertComponent, DatePipe, DateFormatComponent, ShowTrainingInfoComponent, ShowSubSkillsComponent],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
@@ -77,6 +78,7 @@ export class HeaderComponent implements OnInit {
   }
 
   logout(): void {
+    if (this.playService.subskillEditing) return;
     this.authService.logout();
   }
 
@@ -97,6 +99,7 @@ export class HeaderComponent implements OnInit {
   }
 
   update(): void {
+    if (this.playService.subskillEditing) return;
     this.dataService.update().subscribe({
       next: () => {
         this.alertComponent.showAlert('ehm.update-ok', 'success');
@@ -108,6 +111,7 @@ export class HeaderComponent implements OnInit {
   }
 
   selectProject(project: Project): void {
+    if (this.playService.subskillEditing) return;
     this.selectedProject = project;
     this.filteredPlayersForFilter = this.buildFilteredPlayersForProject(project);
     this.playService.setViewMode('players');
@@ -123,6 +127,7 @@ export class HeaderComponent implements OnInit {
 
   @HostListener('window:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent): void {
+    if (this.playService.subskillEditing || (event.target as HTMLElement)?.closest('input, textarea, select, [contenteditable]')) return;
     if (event.key === 'ArrowRight') {
       this.playService.onNextWeek();
     }
@@ -151,6 +156,7 @@ export class HeaderComponent implements OnInit {
   }
 
   setViewMode(mode: ViewMode): void {
+    if (this.playService.subskillEditing) return;
     this.playService.setViewMode(mode);
     if (mode === 'training-planner' || mode === 'training-plan-viewer') {
       const planner = this.selectedProject?.planner;

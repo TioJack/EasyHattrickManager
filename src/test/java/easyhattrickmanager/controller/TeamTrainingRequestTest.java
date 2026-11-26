@@ -32,7 +32,7 @@ class TeamTrainingRequestTest {
             new WageService(), tsi, mock(FormationRatingService.class));
         var controller = new DataController(mock(DataService.class), mock(UpdateService.class),
             mock(PlayerDataService.class), service, mock(TeamTrainingFollowUpService.class),
-            mock(CustomPlayerService.class));
+            mock(CustomPlayerService.class), mock(easyhattrickmanager.service.ManualSubSkillService.class));
         MockMvc mvc = MockMvcBuilders.standaloneSetup(controller)
             .setMessageConverters(new MappingJackson2HttpMessageConverter(mapper)).build();
         String request = """

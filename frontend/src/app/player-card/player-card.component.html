@@ -34,7 +34,7 @@
       <div class="row">
         <div class="col-12 text-start fs-90 text-nowrap">
           {{ 'ehm.has' | translate | firstCapitalize }}
-          {{ 'ht.skill-level-' + player.experience | translate }} (<ng-container *ngIf="getExperienceParts() as parts">{{ parts.whole }}<span *ngIf="userConfig.showSubSkills" class="green">.{{ parts.decimal }}</span></ng-container>)
+          {{ 'ht.skill-level-' + player.experience | translate }} (<ng-container *ngIf="getExperienceParts() as parts">{{ parts.whole }}<span *ngIf="(userConfig.showSubSkills || subskillEditor.editing)" class="green"><app-subskill-input [player]="player" skill="experience" label="ht.skill-experience" [decimal]="parts.decimal"></app-subskill-input></span></ng-container>)
           {{ 'ht.skill-experience' | translate | lowercase }},
           {{ 'ht.skill-level-' + player.leadership | translate }} ({{ player.leadership }})
           {{ 'ht.skill-leadership' | translate | lowercase }} {{ 'ehm.and' | translate }}
@@ -72,8 +72,8 @@
             <app-skill [skill]="player.keeperSkill" [max]="20" [change]="player.changes['keeperSkill']"></app-skill>
           </td>
           <td class="text-end" style="width: 3%;" [title]="getTraining('keeper')" [ngStyle]="getBackgroundColor('keeper')">
-            <ng-container *ngIf="getDecimalParts((userConfig?.showSubSkills ? player.keeperSkill + (player.playerSubSkill?.keeper ?? 0) : player.keeperSkill), 2) as parts">
-              {{ parts.whole }}<span *ngIf="userConfig?.showSubSkills" class="green" [ngStyle]="getDecimalColor('keeper')">.{{ parts.decimal }}</span>
+            <ng-container *ngIf="getSubskillParts(player.keeperSkill, player.playerSubSkill?.keeper) as parts">
+              {{ parts.whole }}<span *ngIf="(userConfig?.showSubSkills || subskillEditor.editing)" class="green" [ngStyle]="getDecimalColor('keeper')"><app-subskill-input [player]="player" skill="keeper" label="ht.skill-keeper" [decimal]="parts.decimal"></app-subskill-input></span>
             </ng-container>
           </td>
         </tr>
@@ -87,8 +87,8 @@
             <app-skill [skill]="player.defenderSkill" [max]="20" [change]="player.changes['defenderSkill']"></app-skill>
           </td>
           <td class="text-end" [title]="getTraining('defender')" [ngStyle]="getBackgroundColor('defender')">
-            <ng-container *ngIf="getDecimalParts((userConfig?.showSubSkills ? player.defenderSkill + (player.playerSubSkill?.defender ?? 0) : player.defenderSkill), 2) as parts">
-              {{ parts.whole }}<span *ngIf="userConfig?.showSubSkills" class="green" [ngStyle]="getDecimalColor('defender')">.{{ parts.decimal }}</span>
+            <ng-container *ngIf="getSubskillParts(player.defenderSkill, player.playerSubSkill?.defender) as parts">
+              {{ parts.whole }}<span *ngIf="(userConfig?.showSubSkills || subskillEditor.editing)" class="green" [ngStyle]="getDecimalColor('defender')"><app-subskill-input [player]="player" skill="defender" label="ht.skill-defender" [decimal]="parts.decimal"></app-subskill-input></span>
             </ng-container>
           </td>
         </tr>
@@ -100,8 +100,8 @@
             <app-skill [skill]="player.playmakerSkill" [max]="20" [change]="player.changes['playmakerSkill']"></app-skill>
           </td>
           <td class="text-end" [title]="getTraining('playmaker')" [ngStyle]="getBackgroundColor('playmaker')">
-            <ng-container *ngIf="getDecimalParts((userConfig?.showSubSkills ? player.playmakerSkill + (player.playerSubSkill?.playmaker ?? 0) : player.playmakerSkill), 2) as parts">
-              {{ parts.whole }}<span *ngIf="userConfig?.showSubSkills" class="green" [ngStyle]="getDecimalColor('playmaker')">.{{ parts.decimal }}</span>
+            <ng-container *ngIf="getSubskillParts(player.playmakerSkill, player.playerSubSkill?.playmaker) as parts">
+              {{ parts.whole }}<span *ngIf="(userConfig?.showSubSkills || subskillEditor.editing)" class="green" [ngStyle]="getDecimalColor('playmaker')"><app-subskill-input [player]="player" skill="playmaker" label="ht.skill-playmaker" [decimal]="parts.decimal"></app-subskill-input></span>
             </ng-container>
           </td>
         </tr>
@@ -115,8 +115,8 @@
             <app-skill [skill]="player.wingerSkill" [max]="20" [change]="player.changes['wingerSkill']"></app-skill>
           </td>
           <td class="text-end" [title]="getTraining('winger')" [ngStyle]="getBackgroundColor('winger')">
-            <ng-container *ngIf="getDecimalParts((userConfig?.showSubSkills ? player.wingerSkill + (player.playerSubSkill?.winger ?? 0) : player.wingerSkill), 2) as parts">
-              {{ parts.whole }}<span *ngIf="userConfig?.showSubSkills" class="green" [ngStyle]="getDecimalColor('winger')">.{{ parts.decimal }}</span>
+            <ng-container *ngIf="getSubskillParts(player.wingerSkill, player.playerSubSkill?.winger) as parts">
+              {{ parts.whole }}<span *ngIf="(userConfig?.showSubSkills || subskillEditor.editing)" class="green" [ngStyle]="getDecimalColor('winger')"><app-subskill-input [player]="player" skill="winger" label="ht.skill-winger" [decimal]="parts.decimal"></app-subskill-input></span>
             </ng-container>
           </td>
         </tr>
@@ -126,8 +126,8 @@
             <app-skill [skill]="player.playerForm" [max]="8"></app-skill>
           </td>
           <td class="text-start text-nowrap align-middle" [attr.title]="getExpectedFormTooltip()">
-            <ng-container *ngIf="getDecimalParts((userConfig?.showSubSkills ? getFormWithSublevel() : player.playerForm), 2) as parts">
-              {{ parts.whole }}<span *ngIf="userConfig?.showSubSkills" class="green">.{{ parts.decimal }}</span>
+            <ng-container *ngIf="getDecimalParts(((userConfig?.showSubSkills || subskillEditor.editing) ? getFormWithSublevel() : player.playerForm), 2) as parts">
+              {{ parts.whole }}<span *ngIf="(userConfig?.showSubSkills || subskillEditor.editing)" class="green"><app-subskill-input [player]="player" skill="form" label="ht.skill-form" [locked]="player.playerForm >= 8" [decimal]="parts.decimal"></app-subskill-input></span>
             </ng-container>
           </td>
           <td class="text-end pe-1 hidden-text" [attr.title]="('ht.skill-passer' | translate) + (getTraining('passing') ? ' ' + getTraining('passing') : '')" [ngStyle]="getBackgroundColor('passing')">{{ 'ht.skill-passer' | translate }}</td>
@@ -135,8 +135,8 @@
             <app-skill [skill]="player.passingSkill" [max]="20" [change]="player.changes['passingSkill']"></app-skill>
           </td>
           <td class="text-end" [title]="getTraining('passing')" [ngStyle]="getBackgroundColor('passing')">
-            <ng-container *ngIf="getDecimalParts((userConfig?.showSubSkills ? player.passingSkill + (player.playerSubSkill?.passing ?? 0) : player.passingSkill), 2) as parts">
-              {{ parts.whole }}<span *ngIf="userConfig?.showSubSkills" class="green" [ngStyle]="getDecimalColor('passing')">.{{ parts.decimal }}</span>
+            <ng-container *ngIf="getSubskillParts(player.passingSkill, player.playerSubSkill?.passing) as parts">
+              {{ parts.whole }}<span *ngIf="(userConfig?.showSubSkills || subskillEditor.editing)" class="green" [ngStyle]="getDecimalColor('passing')"><app-subskill-input [player]="player" skill="passing" label="ht.skill-passer" [decimal]="parts.decimal"></app-subskill-input></span>
             </ng-container>
           </td>
         </tr>
@@ -146,8 +146,8 @@
             <app-skill [skill]="player.staminaSkill" [max]="9"></app-skill>
           </td>
           <td class="text-start text-nowrap align-middle">
-            <ng-container *ngIf="getDecimalParts((userConfig?.showSubSkills ? player.staminaSkill + (player.playerSubSkill?.stamina ?? 0) : player.staminaSkill), 2) as parts">
-              {{ parts.whole }}<span *ngIf="userConfig?.showSubSkills" class="green">.{{ parts.decimal }}</span>
+            <ng-container *ngIf="getSubskillParts(player.staminaSkill, player.playerSubSkill?.stamina) as parts">
+              {{ parts.whole }}<span *ngIf="(userConfig?.showSubSkills || subskillEditor.editing)" class="green"><app-subskill-input [player]="player" skill="stamina" label="ht.skill-stamina" [locked]="player.staminaSkill >= 9" [decimal]="parts.decimal"></app-subskill-input></span>
             </ng-container>
           </td>
           <td class="text-end pe-1 text-nowrap hidden-text" [attr.title]="('ht.skill-scorer' | translate) + (getTraining('scorer') ? ' ' + getTraining('scorer') : '')" [ngStyle]="getBackgroundColor('scorer')">{{ 'ht.skill-scorer' | translate }}</td>
@@ -155,8 +155,8 @@
             <app-skill [skill]="player.scorerSkill" [max]="20" [change]="player.changes['scorerSkill']"></app-skill>
           </td>
           <td class="text-end" [title]="getTraining('scorer')" [ngStyle]="getBackgroundColor('scorer')">
-            <ng-container *ngIf="getDecimalParts((userConfig?.showSubSkills ? player.scorerSkill + (player.playerSubSkill?.scorer ?? 0) : player.scorerSkill), 2) as parts">
-              {{ parts.whole }}<span *ngIf="userConfig?.showSubSkills" class="green" [ngStyle]="getDecimalColor('scorer')">.{{ parts.decimal }}</span>
+            <ng-container *ngIf="getSubskillParts(player.scorerSkill, player.playerSubSkill?.scorer) as parts">
+              {{ parts.whole }}<span *ngIf="(userConfig?.showSubSkills || subskillEditor.editing)" class="green" [ngStyle]="getDecimalColor('scorer')"><app-subskill-input [player]="player" skill="scorer" label="ht.skill-scorer" [decimal]="parts.decimal"></app-subskill-input></span>
             </ng-container>
           </td>
         </tr>
@@ -169,10 +169,10 @@
                 <td>|</td>
                 <td>{{ player.htms28 }}</td>
               </tr>
-              <tr *ngIf="player?.playerSubSkill && userConfig?.showSubSkills" class="green">
-                <td>{{ player.playerSubSkill?.htms }}</td>
+              <tr *ngIf="(userConfig?.showSubSkills || subskillEditor.editing) && subskillEditor.getHtms(player) as subskills" class="green">
+                <td>{{ subskills.htms }}</td>
                 <td>|</td>
-                <td>{{ player.playerSubSkill?.htms28 }}</td>
+                <td>{{ subskills.htms28 }}</td>
               </tr>
             </table>
           </td>
@@ -181,8 +181,8 @@
             <app-skill [skill]="player.setPiecesSkill" [max]="20" [change]="player.changes['setPiecesSkill']"></app-skill>
           </td>
           <td class="text-end align-top" [title]="getTraining('setPieces')" [ngStyle]="getBackgroundColor('setPieces')">
-            <ng-container *ngIf="getDecimalParts((userConfig?.showSubSkills ? player.setPiecesSkill + (player.playerSubSkill?.setPieces ?? 0) : player.setPiecesSkill), 2) as parts">
-              {{ parts.whole }}<span *ngIf="userConfig?.showSubSkills" class="green" [ngStyle]="getDecimalColor('setPieces')">.{{ parts.decimal }}</span>
+            <ng-container *ngIf="getSubskillParts(player.setPiecesSkill, player.playerSubSkill?.setPieces) as parts">
+              {{ parts.whole }}<span *ngIf="(userConfig?.showSubSkills || subskillEditor.editing)" class="green" [ngStyle]="getDecimalColor('setPieces')"><app-subskill-input [player]="player" skill="setPieces" label="ht.skill-kicker" [decimal]="parts.decimal"></app-subskill-input></span>
             </ng-container>
           </td>
         </tr>

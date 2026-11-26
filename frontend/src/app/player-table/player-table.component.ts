@@ -1,3 +1,5 @@
+import {SubskillInputComponent} from '../subskill-input/subskill-input.component';
+import {EditableSubskill, SubskillEditService} from '../services/subskill-edit.service';
 import {AsyncPipe, NgForOf, NgIf, NgStyle} from '@angular/common';
 import {Component, Input} from '@angular/core';
 import {RouterLink} from '@angular/router';
@@ -15,7 +17,7 @@ interface SkillColumn {
   key: 'leadership' | 'experience' | 'playerForm' | 'loyalty' | 'staminaSkill' | 'keeperSkill' |
     'defenderSkill' | 'playmakerSkill' | 'wingerSkill' | 'passingSkill' | 'scorerSkill' | 'setPiecesSkill';
   label: string;
-  sub?: keyof PlayerSubSkillInfo;
+  sub?: Exclude<keyof PlayerSubSkillInfo, 'htms' | 'htms28'>;
   training?: keyof PlayerTrainingInfo;
   groupStart?: boolean;
 }
@@ -23,7 +25,7 @@ interface SkillColumn {
 @Component({
   selector: 'app-player-table',
   standalone: true,
-  imports: [AsyncPipe, NgForOf, NgIf, NgStyle, RouterLink, TranslatePipe, FirstCapitalizePipe,
+  imports: [SubskillInputComponent, AsyncPipe, NgForOf, NgIf, NgStyle, RouterLink, TranslatePipe, FirstCapitalizePipe,
     FirstLetterPipe, NumberSeparatorPipe, SalaryPipe],
   templateUrl: './player-table.component.html',
   styleUrls: ['./player-table.component.scss']
@@ -48,7 +50,7 @@ export class PlayerTableComponent {
   ];
   private readonly truncateDecimals = new TruncateDecimalsPipe();
 
-  constructor(private userConfigService: UserConfigService) {
+  constructor(private userConfigService: UserConfigService, public subskillEditor: SubskillEditService) {
     this.userConfig$ = this.userConfigService.userConfig$;
   }
 
@@ -56,11 +58,15 @@ export class PlayerTableComponent {
     return player.id;
   }
 
+  editableSkill(column: SkillColumn): EditableSubskill | null {
+    return column.sub ?? (column.key === 'playerForm' ? 'form' : column.key === 'experience' ? 'experience' : null);
+  }
+
   getSkillParts(player: PlayerInfo, column: SkillColumn, showSubSkills: boolean): string[] {
     let value = player[column.key];
     const hasSublevel = showSubSkills && (column.sub != null || column.key === 'playerForm' || column.key === 'experience');
     if (hasSublevel && column.sub) {
-      value += player.playerSubSkill?.[column.sub] ?? 0;
+      return [String(value), this.truncateDecimals.transform(player.playerSubSkill?.[column.sub] ?? 0, 2).split('.')[1]];
     } else if (hasSublevel && column.key === 'experience') {
       value = player.playerExpInfo?.exp ?? value;
     } else if (hasSublevel && column.key === 'playerForm' && value < 8) {

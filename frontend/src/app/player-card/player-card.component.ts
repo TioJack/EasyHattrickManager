@@ -1,3 +1,5 @@
+import {SubskillInputComponent} from '../subskill-input/subskill-input.component';
+import {SubskillEditService} from '../services/subskill-edit.service';
 import {AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {PlayerInfo, PlayerTrainingInfo, TrainingInfo, UserConfig} from '../services/model/data-response';
 import {LowerCasePipe, NgIf, NgStyle} from '@angular/common';
@@ -17,7 +19,7 @@ import {Subscription} from 'rxjs';
 @Component({
   selector: 'app-player-card',
   standalone: true,
-  imports: [NgIf, SalaryPipe, SkillComponent, TranslatePipe, FirstLetterPipe, SpecialtyComponent, LowerCasePipe, FirstCapitalizePipe, NumberSeparatorPipe, NgStyle, RouterLink],
+  imports: [SubskillInputComponent, NgIf, SalaryPipe, SkillComponent, TranslatePipe, FirstLetterPipe, SpecialtyComponent, LowerCasePipe, FirstCapitalizePipe, NumberSeparatorPipe, NgStyle, RouterLink],
   templateUrl: './player-card.component.html',
   styleUrls: ['./player-card.component.scss']
 })
@@ -34,7 +36,8 @@ export class PlayerCardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private userConfigService: UserConfigService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    public subskillEditor: SubskillEditService
   ) {
   }
 
@@ -118,6 +121,10 @@ export class PlayerCardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     const [whole, decimal] = formatted.split('.');
     return {whole, decimal: decimal ?? ''};
+  }
+
+  getSubskillParts(level: number, sublevel: number = 0): {whole: string; decimal: string} {
+    return {whole: String(level), decimal: this.getDecimalParts(sublevel, 2)?.decimal ?? '00'};
   }
 
   getExperienceParts(): {whole: string; decimal: string} | null {
